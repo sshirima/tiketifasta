@@ -1,0 +1,1 @@
+<li class="{{Request::is('merchant/booking*') ? 'active' : ''}}"><a href="{{route('merchant.bookings.index')}}" >{{__('merchant_pages.page_bookings_panel_option_daily_bookings')}}</a></li>

@@ -1,0 +1,1 @@
+<li class="{{Request::is('merchant/buses*') ? 'active' : ''}}"><a href="{{route('merchant.buses.index')}}" >{{__('merchant_pages.page_bus_index_panel_bus_view')}}</a></li>

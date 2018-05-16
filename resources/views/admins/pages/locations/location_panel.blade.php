@@ -1,0 +1,1 @@
+<li class="{{Request::is('admin/location*') ? 'active' : ''}}"><a href="{{route('admin.location.index')}}">{{__('admin_pages.page_locations_panel_tab_locations')}}</a></li>

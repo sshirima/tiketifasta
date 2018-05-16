@@ -1,0 +1,1 @@
+<li class="{{Request::is('admin/schedule*') ? 'active' : ''}}"><a href="{{route('admin.schedules.index')}}" >{{__('admin_pages.page_schedules_panel_option_daily_schedules')}}</a></li>

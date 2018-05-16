@@ -1,0 +1,1 @@
+<li class="{{Request::is('merchant/staff*') ? 'active' : ''}}"><a href="#" data-toggle="tab">View staffs</a></li>
