@@ -1,2 +1,0 @@
-<li class="{{Request::is('admin/buses*') ? 'active' : ''}}"><a href="{{route('admin.buses.index')}}" >View buses</a></li>
-<li class="{{Request::is('admin/bustype*') ? 'active' : ''}}"><a href="{{route('admin.bustype.index')}}" >Bus type</a></li>

@@ -1,1 +1,0 @@
-<li class="{{Request::is('admin/booking*') ? 'active' : ''}}"><a href="{{route('admin.bookings.index')}}" >{{__('admin_pages.page_bookings_panel_option_daily_bookings')}}</a></li>
