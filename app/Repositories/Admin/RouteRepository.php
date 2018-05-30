@@ -43,9 +43,9 @@ class RouteRepository extends BaseRepository
      * @param $array
      * @return mixed
      */
-    public function getRouteArray($array){
+    public static function getRouteArray($array){
 
-        $routes = $this->all();
+        $routes = Route::all();
 
         foreach ($routes as $route) {
             $array[$route->id] = $route[Route::COLUMN_ROUTE_NAME];

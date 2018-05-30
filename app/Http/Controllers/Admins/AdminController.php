@@ -14,11 +14,12 @@ class AdminController extends BaseController
 
     public function __construct()
     {
-        $this->middleware('auth:admin');
+        parent::__construct();
     }
 
     public function homepage(){
-        return view('admins.pages.home')->with($this->defaultParameters());
+        $this->getDefaultViewData();
+        return view('admins.pages.home')->with($this->viewData);
     }
 
 }

@@ -1,15 +1,36 @@
 @extends('layouts.master_user_v2')
 
-@section('footer')
-    <div class="push"></div>
-    <footer class="footer" style="background-color:#ececec">
+@section('import_css')
+    <link rel="stylesheet" href="{{ URL::asset('css/signin.css') }}">
+@endsection
+
+@section('header')
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+
         <div class="container">
-            <div class="pull-right hidden-xs">
-                <b>Version</b> 1.0.0
+            <a class="navbar-brand" href="{{route('user.home')}}"><b>Admin</b>LTE</a>
+            <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse" id="navbarCollapse" style="">
+                <ul class="navbar-nav mr-auto ">
+
+                </ul>
+                <ul class="navbar-nav navbar-right">
+
+                    <li class="nav-item  {{Request::is('register') ? 'active' : ''}}">
+                        <a class="nav-link" href="{{route('register')}}">Register</a>
+                    </li>
+                    <li class="nav-item  {{Request::is('login') ? 'active' : ''}}">
+                        <a class="nav-link" href="{{route('login')}}">Login</a>
+                    </li>
+                </ul>
             </div>
-            <strong>Copyright © 2014-2016 </strong> All rights
-            reserved.
         </div>
-        <!-- /.container -->
-    </footer>
+    </nav>
+@endsection
+
+
+@section('footer')
+    @include('layouts.footer_v2')
 @endsection

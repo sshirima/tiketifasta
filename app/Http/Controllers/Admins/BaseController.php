@@ -11,6 +11,7 @@ namespace App\Http\Controllers\Admins;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Laracasts\Flash\Flash;
 
 class BaseController extends Controller
 {
@@ -33,5 +34,23 @@ class BaseController extends Controller
     public function getDefaultViewErrorData($message): void
     {
         $this->viewErrorData[self::PARAM_ERROR_MESSAGE] = $message;
+    }
+
+    /**
+     * @param $model
+     * @param $successMsg
+     * @param $errorMessage
+     */
+    public function createFlashResponse($model,$successMsg,$errorMessage): void
+    {
+        if (empty($model)) {
+            if(isset($errorMessage)){
+                Flash::error($errorMessage);
+            }
+        } else{
+            if(isset($successMsg)){
+                Flash::success($successMsg);
+            }
+        }
     }
 }

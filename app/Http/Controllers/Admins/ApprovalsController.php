@@ -35,7 +35,7 @@ class ApprovalsController extends BaseController
      */
     public function __construct(TimetableRepository $scheduleRepository, BookingRepository $bookingRepository)
     {
-        $this->middleware('auth:admin');
+        parent::__construct();
         $this->timetableRepo = $scheduleRepository;
         $this->bookingRepo = $bookingRepository;
     }
@@ -60,7 +60,7 @@ class ApprovalsController extends BaseController
      */
     public function reassignedSchedules(Request $request){
         $merchantArray = Merchant::getMerchantsArray();
-        $routes = RouteRepository::getRouteArray();
+        $routes = RouteRepository::getRouteArray(array());
         $request->flash();
 
         $request['reassigned_buses_status'] = 0;

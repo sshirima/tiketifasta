@@ -1,4 +1,4 @@
-@extends('users.layouts.master-v2')
+@extends('users.layouts.master_v2')
 
 @section('title')
     Home

@@ -1,18 +1,28 @@
-@extends('layouts.master')
+@extends('layouts.master_admin_v2')
 
 @section('header')
-    @include('admins.includes.header.master')
+    @include('admins.includes.sections.header')
 @endsection
 
-@section('nav-bar-horizontal')
-
+@section('sidebar-left')
+    @include('admins.includes.sections.sidebar-left')
 @endsection
 
 @section('content')
-    @include('admins.includes.body.navigation')
-    @include('includes.body.panel')
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+    @yield('content-head')
+    <!-- Operation status -->
+        <div style="padding: 10px">
+            @include('flash::message')
+            @include('includes.errors.message')
+        </div>
+        <!-- Main content -->
+    @yield('content-body')
+    <!-- /.content -->
+    </div>
 @endsection
 
 @section('footer')
-    @include('layouts.footer')
+    @include('admins.includes.sections.footer')
 @endsection

@@ -10,7 +10,7 @@ class Staff extends Authenticatable
     use Notifiable;
 
     const COLUMN_ID = 'id';
-    const COLUMN_FIRST_NAME = 'firtname';
+    const COLUMN_FIRST_NAME = 'firstname';
     const COLUMN_LAST_NAME = 'lastname';
     const COLUMN_PHONE_NUMBER = 'phonenumber';
     const COLUMN_EMAIL = 'email';

@@ -60,7 +60,7 @@ class ScheduleController extends BaseController
 
         $this->viewData[self::PARAM_MERCHANT] = $this->merchantRepo->getSelectMerchantData(array(__('admin_pages.page_routes_create_fields_select_merchant_default')));
 
-        $this->viewData[self::PARAM_ROUTES] = $this->routeRepo->getSelectRouteData(array('Select routes'));
+        $this->viewData[self::PARAM_ROUTES] = $this->routeRepo->getSelectRouteData(array('All routes'));
 
         $this->viewData[self::PARAM_TABLE]= $this->getBusSchedules($request);
 

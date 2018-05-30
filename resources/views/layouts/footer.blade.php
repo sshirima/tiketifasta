@@ -18,20 +18,7 @@
             </div>
             <div class="col-md-4">
                 <h3 class="center-footer">{{ __('footer.contact_us') }}</h3>
-                <ul class="center-footer social-icons">
-                    <li><a target="_blank" href="#"> <span
-                                    class="fa parallax-one-footer-icons icon-social-facebook transparent-text-dark"></span>
-                        </a></li>
-                    <li><a target="_blank" href="#"> <span
-                                    class="fa parallax-one-footer-icons icon-social-twitter transparent-text-dark"></span>
-                        </a></li>
-                    <li><a target="_blank" href="#"> <span
-                                    class="fa parallax-one-footer-icons icon-social-googleplus transparent-text-dark"></span>
-                        </a></li>
-                    <li><a target="_blank" href="#"> <span
-                                    class="fa parallax-one-footer-icons icon-social-pinterest transparent-text-dark"></span>
-                        </a></li>
-                </ul>
+
             </div>
         </div>
     </div>

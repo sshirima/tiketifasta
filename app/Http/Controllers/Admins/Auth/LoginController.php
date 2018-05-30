@@ -30,9 +30,7 @@ class LoginController extends Controller
     protected $redirectTo = '/admin';
 
     /**
-     * Create a new controller instance.
-     *
-     * @return void
+     * LoginController constructor.
      */
     public function __construct()
     {

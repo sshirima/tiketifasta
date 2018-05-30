@@ -1,31 +1,45 @@
 @extends('admins.layouts.master')
+
 @section('custom-import')
     <link rel="stylesheet" href="{{ URL::asset('css/admin/routes_create.css') }}">
-    <script src="{{ URL::asset('js/admin/routes_create.js') }}"></script>
 @endsection
 
 @section('title')
-    {{ __('admin_pages.page_routes_create_title') }}
+    {{ __('admin_page_routes.page_title') }}
 @endsection
 
-@section('panel_heading')
-    @include('admins.pages.routes.route_panel')
+
+@section('content-head')
+    <section class="content-header">
+        <h1>
+            {{__('admin_page_routes.content_header_title')}}
+            <small>{{__('admin_page_routes.content_header_sub_title')}}</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <a href="{{route('admin.route.index')}}"> {{__('admin_page_routes.navigation_link_index')}}</a>
+            </li>
+            <li class="active">{{__('admin_page_routes.navigation_link_create')}}</li>
+        </ol>
+    </section>
 @endsection
 
-@section('panel_body')
-    @component('includes.components.info-box',['info'=> __('admin_pages_info.routes_create_info')])@endcomponent
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h5>{{__('admin_pages.page_routes_create_form_title')}}</h5>
-        </div>
-        <div class="panel-body">
-            @include('includes.errors.message')
-            <div class="col-md-6">
-                <form class="form-horizontal" role="form" method="post"
-                      action="{{route('admin.route.store')}}" accept-charset="UTF-8" style="padding: 20px">
-                    @include('admins.pages.routes.fields')
-                </form>
+@section('content-body')
+    <section class="content container-fluid">
+        <div class="box box-success">
+
+            <div class="box-body">
+                <div class="col-md-6">
+                    <form class="form-horizontal" role="form" method="post"
+                          action="{{route('admin.route.store')}}" accept-charset="UTF-8" style="padding: 20px">
+                        @include('admins.pages.routes.fields')
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
+@endsection
+
+@section('import_js')
+    <script src="{{ URL::asset('js/admin/routes_create.js') }}"></script>
 @endsection

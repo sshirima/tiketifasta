@@ -19,4 +19,15 @@ class UserController extends BaseController
         return view('users.pages.home');
     }
 
+    public function contactUs(){
+        return view('users.pages.contact_us');
+    }
+
+    public function aboutUs(){
+        return view('users.pages.about_us');
+    }
+    public function testimonials(){
+        return view('users.pages.testimonials');
+    }
+
 }

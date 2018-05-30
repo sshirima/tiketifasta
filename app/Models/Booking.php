@@ -19,11 +19,26 @@ class Booking extends Model
     const COLUMN_PHONE_NUMBER = 'phonenumber';
     const COLUMN_PAYMENT = 'payment';
     const COLUMN_EMAIL = 'email';
+    const COLUMN_STATUS = 'status';
     const COLUMN_SCHEDULE_ID = 'schedule_id';
     const COLUMN_SEAT_ID = 'seat_id';
     const COLUMN_SUB_ROUTE_ID = 'sub_route_id';
     const COLUMN_CREATED_AT = 'created_at';
     const COLUMN_UPDATED_AT = 'updated_at';
+
+    const ID = self::TABLE.'.'.'id';
+    const TITLE = self::TABLE.'.'.'title';
+    const FIRST_NAME = self::TABLE.'.'.'firstname';
+    const LAST_NAME = self::TABLE.'.'.'lastname';
+    const PHONE_NUMBER = self::TABLE.'.'.'phonenumber';
+    const PAYMENT = self::TABLE.'.'.'payment';
+    const EMAIL = self::TABLE.'.'.'email';
+    const STATUS = self::TABLE.'.'.self::COLUMN_STATUS;
+    const SCHEDULE_ID = self::TABLE.'.'.'schedule_id';
+    const SEAT_ID = self::TABLE.'.'.'seat_id';
+    const SUB_ROUTE_ID = self::TABLE.'.'.'sub_route_id';
+    const CREATED_TIME = self::TABLE.'.'.'created_at';
+    const UPDATED_TIME = self::TABLE.'.'.'updated_at';
 
     const TABLE = 'bookings';
 

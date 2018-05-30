@@ -32,7 +32,7 @@ class CreateMerchantRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|max:255',
+            'name' => 'required|max:255|unique:merchants',
             'firstname' => 'required|max:255',
             'lastname' => 'required|max:255',
             'phonenumber' => 'required|max:255',

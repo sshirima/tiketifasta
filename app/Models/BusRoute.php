@@ -70,4 +70,8 @@ class BusRoute extends Model
         }
         return $routes;
     }
+
+    public static function getBusRouteStatusArray(){
+        return ['all'=>'All','active'=>'Active','inactive'=>'Inactive'];
+    }
 }

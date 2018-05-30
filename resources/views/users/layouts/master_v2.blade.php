@@ -5,7 +5,7 @@
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
 
         <div class="container">
-            <a class="navbar-brand" href="#"><b>Admin</b>LTE</a>
+            <a class="navbar-brand" href="{{route('user.home')}}"><b>Admin</b>LTE</a>
             <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -14,26 +14,26 @@
 
                 </ul>
                 <ul class="navbar-nav navbar-right">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    <li class="nav-item  {{Request::is('/') ? 'active' : ''}}">
+                        <a class="nav-link" href="{{route('user.home')}}">Home <span class="sr-only">(current)</span></a>
                     </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="#">About</a>
+                    <li class="nav-item {{Request::is('about-us') ? 'active' : ''}}">
+                        <a class="nav-link " href="{{route('user.about_us')}}">About</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Cancel ticket</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Merchant</a>
+                        <a class="nav-link " href="{{route('merchant.home')}}">Merchant</a>
+                    </li>
+                    <li class="nav-item  {{Request::is('contact-us') ? 'active' : ''}}">
+                        <a class="nav-link" href="{{route('user.contact_us')}}">Contact</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Contact</a>
+                        <a class="nav-link" href="{{route('register')}}">Register</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Register</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Login</a>
+                        <a class="nav-link" href="{{route('login')}}">Login</a>
                     </li>
                 </ul>
             </div>
@@ -43,7 +43,7 @@
 
 
 @section('footer')
-    <footer class="main-footer">
+    <footer class="footer" style="background-color:#ececec">
         <div class="container">
             <div class="pull-right hidden-xs">
                 <b>Version</b> 1.0.0
@@ -51,6 +51,5 @@
             <strong>Copyright © 2014-2016 </strong> All rights
             reserved.
         </div>
-        <!-- /.container -->
     </footer>
 @endsection

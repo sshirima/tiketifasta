@@ -41,17 +41,20 @@ class Handler extends ExceptionHandler
     }
 
     /**
-     * Render an exception into an HTTP response.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Exception  $exception
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Request $request
+     * @param Exception $exception
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function render($request, Exception $exception)
     {
         return parent::render($request, $exception);
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @param AuthenticationException $exception
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
+     */
     protected function unauthenticated($request, AuthenticationException $exception)
     {
         $guard = array_get($exception->guards(),0);

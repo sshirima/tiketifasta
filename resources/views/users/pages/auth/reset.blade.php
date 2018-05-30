@@ -1,4 +1,4 @@
-@extends('users.layouts.auth')
+@extends('users.layouts.auth_master_v2')
 
 @section('title')
     {{ __('page_auth_reset.page_title') }}

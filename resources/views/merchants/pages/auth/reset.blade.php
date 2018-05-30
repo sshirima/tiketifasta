@@ -1,4 +1,4 @@
-@extends('merchants.layouts.auth')
+@extends('merchants.layouts.master-auth')
 
 @section('title')
     {{ __('page_auth_reset.page_title') }}

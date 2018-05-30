@@ -26,7 +26,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
           page. However, you can choose any other skin. Make sure you
           apply the skin class to the body tag so the changes take effect. -->
-    <link rel="stylesheet" href="{{asset('adminlte/dist/css/skins/skin-blue.min.css')}}">
+    <link rel="stylesheet" href="{{asset('adminlte/dist/css/skins/skin-green.min.css')}}">
 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css"
           integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
@@ -35,7 +35,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
 
-<body class="hold-transition skin-green-light sidebar-mini">
+<body class="hold-transition skin-green sidebar-mini">
 <div class="wrapper">
 
     <!-- Main Header -->
@@ -63,7 +63,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script src="{{asset('adminlte/bower_components/bootstrap/dist/js/bootstrap.min.js')}}"></script>
 <!-- AdminLTE App -->
 <script src="{{asset('adminlte/dist/js/adminlte.min.js')}}"></script>
-
 <!-- Optionally, you can add Slimscroll and FastClick plugins.
      Both of these plugins are recommended to enhance the
      user experience. -->

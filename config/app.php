@@ -164,6 +164,9 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        //Composer Service provider
+        App\Providers\Composers\AdminComposerSP::class,
+
     ],
 
     /*

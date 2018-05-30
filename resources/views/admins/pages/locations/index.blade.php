@@ -4,19 +4,32 @@
     {{ __('admin_pages.page_locations_title_index') }}
 @endsection
 
-@section('panel_heading')
-    @include('admins.pages.routes.route_panel')
+@section('content-head')
+    <section class="content-header">
+        <h1>
+            {{__('admin_page_locations.content_header_title')}}
+            <small>{{__('admin_page_locations.content_header_sub_title')}}</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <a href="{{route('admin.location.index')}}"> {{__('admin_page_locations.navigation_link_index')}}</a>
+            </li>
+            <li class="active">{{__('admin_page_locations.navigation_link_view')}}</li>
+        </ol>
+    </section>
 @endsection
 
-@section('panel_body')
-    @include('flash::message')
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 >{{__('admin_pages.page_locations_panel_title_locations')}}</h4>
+@section('content-body')
+    <section class="content container-fluid">
+        <div class="box box-success">
+            {{--<div class="box-header">
+                <div class="btn btn-success pull-right" data-toggle="modal">
+                    <a href="#" style="color: white"><i class="fas fa-plus"></i> {{__('merchant_page_location.panel_nav_tab_new_product')}}</a>
+                </div>
+            </div>--}}
+            <div class="box-body">
+                {!! $table->render() !!}
+            </div>
         </div>
-        <div class="panel-body">
-            @include('includes.errors.message')
-            {!! $table->render() !!}
-        </div>
-    </div>
+    </section>
 @endsection

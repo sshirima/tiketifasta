@@ -60,6 +60,7 @@ return [
 
     'page_bus_edit_title'=>'General information',
     'page_bus_edit_form_title'=>'Update bus timetables',
+    'page_bus_edit_panel_title_new_trips'=>'New routes',
     'page_bus_edit_field_sub_routes_title'=>'Existing trips',
     'page_bus_edit_field_label_reg_number'=>'Reg number:',
     'page_bus_edit_field_label_bus_type'=>'Bus type:',

@@ -10,7 +10,14 @@ namespace App\Http\Controllers\Admins;
 
 
 use App\Models\Booking;
+use App\Models\Bus;
+use App\Models\BusRoute;
+use App\Models\Day;
+use App\Models\Location;
 use App\Models\Merchant;
+use App\Models\Route;
+use App\Models\Schedule;
+use App\Models\SubRoute;
 use Illuminate\Http\Request;
 use Okipa\LaravelBootstrapTableList\TableList;
 
@@ -20,7 +27,7 @@ class BookingController extends BaseController
 
     public function __construct()
     {
-        $this->middleware('auth:admin');
+        parent::__construct();
     }
 
     public function index(Request $request){
@@ -30,11 +37,11 @@ class BookingController extends BaseController
         $request->flash();
 
         if ($request->filled('date')){
-            $this->conditions['operation_days.date'] = $request['date'];
-        } else {
+            $this->conditions[Day::COLUMN_DATE] = $request['date'];
+        } /*else {
             $now = new \DateTime();
-            $this->conditions['operation_days.date'] = $now->format('Y-m-d');
-        }
+            $this->conditions[Day::COLUMN_DATE] = $now->format('Y-m-d');
+        }*/
 
         if ($request->filled('merchant_id')){
             if($request['merchant_id'] > 0){
@@ -55,45 +62,61 @@ class BookingController extends BaseController
             ->setRoutes([
                 'index' => ['alias'=>'admin.bookings.index','parameters' => []]
             ])->addQueryInstructions(function ($query) {
-                $query->select(['bookings.firstname','bookings.lastname','operation_days.date','bus_route.start_time',
-                    'timetables.arrival_time','B.name as location_start','A.name as location_end','merchants.name as merchant_name','routes.route_name','bookings.email','buses.reg_number','bookings.status'])
-                    ->join('daily_timetables','daily_timetables.id','=','bookings.daily_timetable_id')
-                    ->join('operation_days','operation_days.id','=','daily_timetables.operation_day_id')
-                    ->join('bus_route','bus_route.id','=','daily_timetables.bus_route_id')
-                    ->join('routes','bus_route.route_id','=','routes.id')
-                    ->join('timetables','timetables.id','=','daily_timetables.timetable_id')
-                    ->join('buses','buses.id','=','bus_route.bus_id')
-                    ->join('merchants','merchants.id','=','buses.merchant_id')
-                    ->join('locations as A','A.id','=','timetables.location_id')
-                    ->join('locations as B','B.id','=','routes.start_location')
+                $query->select([
+                    Booking::FIRST_NAME.' as '.Booking::FIRST_NAME,
+                    Booking::LAST_NAME.' as '.Booking::LAST_NAME,
+                    Booking::EMAIL.' as '.Booking::EMAIL,
+                    Booking::STATUS.' as '.Booking::STATUS,
+                    SubRoute::SOURCE,'A.name as '.SubRoute::SOURCE,'B.name as '.SubRoute::DESTINATION,
+                    SubRoute::DEPART_TIME.' as '.SubRoute::DEPART_TIME,Day::DATE.' as '.Day::DATE,Bus::REG_NUMBER.' as '.Bus::REG_NUMBER,
+                    SubRoute::ARRIVAL_TIME.' as '.SubRoute::ARRIVAL_TIME,Merchant::NAME .' as '.Merchant::NAME])
+                    ->join(Schedule::TABLE, Schedule::ID, '=', Booking::SCHEDULE_ID)
+                    ->join(Day::TABLE, Day::ID, '=', Schedule::DAY_ID)
+                    ->join(SubRoute::TABLE, SubRoute::ID, '=', Booking::SUB_ROUTE_ID)
+                    ->join(BusRoute::TABLE, BusRoute::ID, '=', SubRoute::BUS_ROUTE_ID)
+                    ->join(Bus::TABLE, Bus::ID, '=', BusRoute::BUS_ID)
+                    ->join(Merchant::TABLE, Merchant::ID, '=', Bus::MERCHANT_ID)
+                    ->join(Location::TABLE.' as A', 'A.id', '=', SubRoute::SOURCE)
+                    ->join(Location::TABLE.' as B', 'B.id', '=', SubRoute::DESTINATION)
                     ->where($this->conditions);
             });
 
-        $table->addColumn('reg_number')->setTitle('Company/Bus')->isSortable()->isSearchable()->sortByDefault()->setCustomTable('buses')
+        $table->addColumn(Day::COLUMN_DATE)->setTitle('Date')->isSortable()->isSearchable()->setCustomTable(Day::TABLE)
             ->isCustomHtmlElement(function ($entity, $column) {
-               return $entity->merchant_name.'</br>'.'('.$entity->reg_number.')';
+                return $entity[Day::DATE];
             });
 
-        $table->addColumn('date')->setTitle('Client')->isSortable()->isSearchable()->setCustomTable('operation_days')
+        $table->addColumn(Booking::COLUMN_FIRST_NAME)->setTitle('First name')->isSortable()->isSearchable()->sortByDefault()
             ->isCustomHtmlElement(function ($entity, $column) {
-                return $entity->firstname.' '.$entity->lastname.'</br>'.'('.$entity->email.')';
+                return $entity[Booking::FIRST_NAME];
             });
-        $table->addColumn('email')->setTitle('Date/Time')->isSortable()
+        $table->addColumn(Booking::COLUMN_EMAIL)->setTitle('Email')->isSortable()->isSearchable()
             ->isCustomHtmlElement(function ($entity, $column) {
-                return $entity->date.'</br>'.'('.$entity->start_time.'-'.$entity->arrival_time.')';
+                return $entity[Booking::EMAIL];
             });
-        $table->addColumn()->setTitle('Route')->isSortable()->isSearchable()
+
+        $table->addColumn()->setTitle('From')->setCustomTable(Day::TABLE)
             ->isCustomHtmlElement(function ($entity, $column) {
-                return $entity->route_name.'</br>'.'('.$entity->location_start.' to '.$entity->location_end.')';
+                return $entity[SubRoute::SOURCE];
             });
+        $table->addColumn()->setTitle('To')
+            ->isCustomHtmlElement(function ($entity, $column) {
+                return $entity[SubRoute::DESTINATION];
+            });
+
+        $table->addColumn()->setTitle('Bus')
+            ->isCustomHtmlElement(function ($entity, $column) {
+                return $entity[Merchant::NAME].'<br>'.'('.$entity[Bus::REG_NUMBER].')';
+            });
+
         $table->addColumn('status')->setTitle('Status')
             ->isCustomHtmlElement(function ($entity, $column) {
-                if ($entity->status == Booking::$STATUS_PENDING){
-                    return "<span style='color: orange'>Pending <i class='fas fa-spinner'></i></span> ";
-                } else if ($entity->status == Booking::$STATUS_CONFIRMED){
-                    return "<span style='color: green;'>Confirmed <i class='fas fa-check-circle'></i></span>";
+                if ($entity[Booking::STATUS] == Booking::$STATUS_PENDING){
+                    return "<span class='label label-warning'>Pending </span> ";
+                } else if ($entity[Booking::STATUS] == Booking::$STATUS_CONFIRMED){
+                    return "<span class='label label-warning'>Confirmed </span>";
                 } else{
-                    return "<span style='color: red;'>Cancelled <i class='fas fa-times-circle'></i></span>";
+                    return "<span class='label label-danger'>Cancelled </span>";
                 }
             });
 

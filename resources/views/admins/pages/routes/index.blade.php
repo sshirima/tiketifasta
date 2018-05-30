@@ -4,19 +4,30 @@
     {{ __('admin_pages.page_routes_index_title') }}
 @endsection
 
-@section('panel_heading')
-    @include('admins.pages.routes.route_panel')
+@section('content-head')
+    <section class="content-header">
+        <h1>
+            {{__('admin_page_routes.content_header_title')}}
+            <small>{{__('admin_page_routes.content_header_sub_title')}}</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <a href="{{route('admin.bus-routes.index')}}"> {{__('admin_page_routes.navigation_link_index')}}</a>
+            </li>
+            <li class="active">{{__('admin_page_routes.navigation_link_view')}}</li>
+        </ol>
+    </section>
 @endsection
 
-@section('panel_body')
-    @include('flash::message')
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 >{{__('admin_pages.page_routes_index_form_tile')}}</h4>
+@section('content-body')
+    <section class="content container-fluid">
+        <div class="nav-tabs-custom">
+            <div class="nav nav-tabs">
+                @include('admins.pages.routes.route_panel')
+            </div>
+            <div class="tab-content">
+                {!! $table->render() !!}
+            </div>
         </div>
-        <div class="panel-body">
-            @include('includes.errors.message')
-            {!! $table->render() !!}
-        </div>
-    </div>
+    </section>
 @endsection

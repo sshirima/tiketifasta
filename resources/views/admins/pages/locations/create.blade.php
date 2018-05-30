@@ -4,19 +4,29 @@
     {{ __('admin_pages.page_locations_title_create') }}
 @endsection
 
-@section('panel_heading')
-    @include('admins.pages.locations.location_panel')
+@section('content-head')
+    <section class="content-header">
+        <h1>
+            {{__('admin_page_locations.content_header_title_create')}}
+            <small>{{__('admin_page_locations.content_header_sub_title')}}</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <a href="{{route('admin.location.index')}}"> {{__('admin_page_locations.navigation_link_index')}}</a>
+            </li>
+            <li class="active">{{__('admin_page_locations.navigation_link_create')}}</li>
+        </ol>
+    </section>
 @endsection
 
-@section('panel_body')
-    <section class="content-header">
-        <h3>
-            {{__('admin_pages.page_locations_create_form_title')}}
-        </h3>
-    </section>
-    <div class="content">
-        @include('includes.errors.message')
-        <div class="box box-primary">
+@section('content-body')
+    <section class="content container-fluid">
+        <div class="box box-success">
+            <div class="box-header">
+                <h3>
+                    {{__('admin_pages.page_locations_create_form_title')}}
+                </h3>
+            </div>
             <div class="box-body">
                 <div class="row">
                     <div class="container col-md-6 col-md-offset-1">
@@ -27,5 +37,5 @@
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 @endsection

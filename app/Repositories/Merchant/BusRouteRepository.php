@@ -81,6 +81,15 @@ class BusRouteRepository extends BaseRepository
                 $this->conditions['bus_route.id'] = $request['bus_route_id'];
             }
         }
+
+        if ($request->filled('status')) {
+            if ($request['status'] == 'active') {
+                $this->conditions[BusRoute::STATUS] = 1;
+            }
+            if ($request['status'] == 'inactive') {
+                $this->conditions[BusRoute::STATUS] = 0;
+            }
+        }
     }
 
     /**

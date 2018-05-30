@@ -77,7 +77,7 @@ return [
     'page_routes_panel_head_view_locations'=>'Locations',
 
     'page_routes_create_fields_select_location_default'=>'Select location',
-    'page_routes_create_fields_select_merchant_default'=>'Select merchant',
+    'page_routes_create_fields_select_merchant_default'=>'All merchants',
     'page_routes_create_fields_select_bus_type_default'=>'Select bus type',
     'page_routes_create_fields_select_route_default'=>'Select route name',
 

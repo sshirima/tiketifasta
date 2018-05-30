@@ -51,4 +51,15 @@ class Admin extends Authenticatable
         self::COLUMN_EMAIL=> 'required',
         self::COLUMN_PASSWORD => 'required',
     ];
+
+    /**
+     * Required values rules
+     * @var array
+     */
+    public static $create_rules = [
+        self::COLUMN_FIRST_NAME => 'required|max:255',
+        self::COLUMN_LAST_NAME => 'required|max:255',
+        self::COLUMN_EMAIL=> 'required|unique:'.self::TABLE,
+        self::COLUMN_PASSWORD => 'required|string|min:6|confirmed',
+    ];
 }

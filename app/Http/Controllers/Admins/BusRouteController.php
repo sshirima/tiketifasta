@@ -11,7 +11,6 @@ namespace App\Http\Controllers\Admins;
 
 use App\Models\Bus;
 use App\Models\BusRoute;
-use App\Models\Day;
 use App\Models\Merchant;
 use App\Models\Route;
 use App\Models\SubRoute;
@@ -24,6 +23,7 @@ class BusRouteController extends BaseController
 {
     const PARAM_TABLE = 'table';
     const PARAM_ROUTES = 'routes';
+    const PARAM_STATUS = 'route_status';
     const PARAM_MERCHANTS = 'merchants';
 
     const VIEW_INDEX = 'admins.pages.bus_routes.index';
@@ -68,7 +68,9 @@ class BusRouteController extends BaseController
 
         $this->viewData[self::PARAM_MERCHANTS] = $this->merchantRepo->getSelectMerchantData(array(__('admin_pages.page_routes_create_fields_select_merchant_default')));
 
-        $this->viewData[self::PARAM_ROUTES] = $this->routeRepo->getSelectRouteData(array('Select routes'));
+        $this->viewData[self::PARAM_ROUTES] = $this->routeRepo->getSelectRouteData(array('All routes'));
+
+        $this->viewData[self::PARAM_STATUS] = BusRoute::getBusRouteStatusArray();
 
         $request->flash();
 
@@ -89,31 +91,42 @@ class BusRouteController extends BaseController
                 return $entity[Day::DATE];
             });*/
 
-        $table->addColumn(Route::COLUMN_ROUTE_NAME)->setTitle(__('admin_pages.page_bus_edit_sub_route_table_head_route_name'))->sortByDefault()->setCustomTable(Route::TABLE)
-            ->isCustomHtmlElement(function ($entity, $column) {
-                return $entity[Route::ROUTE_NAME];
-            });
-
         $table->addColumn(Bus::COLUMN_REG_NUMBER)->setTitle(__('admin_pages.page_bus_edit_sub_route_table_head_bus'))
-            ->isSortable()->isSearchable()->setCustomTable(Bus::TABLE)
+            ->isSortable()->isSearchable()->sortByDefault()->setCustomTable(Bus::TABLE)
             ->isCustomHtmlElement(function ($entity, $column) {
                 return $entity[Merchant::NAME] . '<br>' . '(' . $entity[Bus::REG_NUMBER] . ')';
             });
 
-        $table->addColumn()->setTitle(__('admin_pages.page_bus_edit_sub_route_table_head_source'))->setCustomTable(SubRoute::TABLE)
+        $table->addColumn()->setTitle(__('admin_pages.page_bus_edit_sub_route_table_head_source'))->isSortable()->setCustomTable(SubRoute::TABLE)
             ->isCustomHtmlElement(function ($entity, $column) {
                 return $entity[Route::START_LOCATION];
             });
-        $table->addColumn()->setTitle(__('admin_pages.page_bus_edit_sub_route_table_head_destination'))->setCustomTable(SubRoute::TABLE)
+        $table->addColumn()->setTitle(__('admin_pages.page_bus_edit_sub_route_table_head_destination'))->isSortable()->setCustomTable(SubRoute::TABLE)
             ->isCustomHtmlElement(function ($entity, $column) {
                 return $entity[Route::END_LOCATION];
+            });
+
+        $table->addColumn(Route::COLUMN_ROUTE_NAME)->setTitle(__('admin_pages.page_bus_edit_sub_route_table_head_route_name'))->setCustomTable(Route::TABLE)
+            ->isCustomHtmlElement(function ($entity, $column) {
+                return $entity[Route::ROUTE_NAME];
             });
 
         $table->addColumn()->setTitle('Status')
             ->isCustomHtmlElement(function ($entity, $column) {
                 return $entity[BusRoute::STATUS] ?
-                    "<span style='color: green;'>Active <i class='fas fa-check-circle'></i></span>" :
-                    "<span style='color: red;'>Disabled <i class='fas fa-times-circle'></i></span>";
+                    "<span class='label label-success'>Active</span>" :
+                    "<span class='label label-danger'>Disabled</span>";
+            });
+
+        $table->addColumn()->setTitle(' ')
+            ->isCustomHtmlElement(function ($entity, $column) {
+                $form = '<form method="GET" action="' . \route('admin.bus-route.approve', $entity[BusRoute::ID]) . '" accept-charset="UTF-8">
+                            <input name="_token" type="hidden" value="' . csrf_token() . '">
+                            <button type="submit" class="btn btn-xs bg-olive btn-flat">Approve route</button>
+                        </form>';
+                return $entity[BusRoute::STATUS] ?
+                    ' ' :
+                    $form;
             });
     }
 
@@ -140,6 +153,10 @@ class BusRouteController extends BaseController
         $this->busRouteRepository->setConditions($request);
 
         $routeTable = $this->busRouteRepository->instantiateRoutes();
+
+        $routeTable->setRoutes([
+            'index' => ['alias' => 'admin.bus-routes.index', 'parameters' => []]
+        ]);
 
         $this->setBusRoutesColumns($routeTable);
 

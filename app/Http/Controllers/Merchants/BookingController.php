@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Merchants;
 
 
 use App\Models\Booking;
+use App\Models\Day;
 use App\Models\Merchant;
 use App\Repositories\Admin\BookingRepository;
 use Illuminate\Http\Request;
@@ -56,7 +57,7 @@ class BookingController extends BaseController
 
         $table->addColumn('reg_number')->setTitle('Bus#')->isSortable()->sortByDefault()->isSearchable()->setCustomTable('buses');
 
-        $table->addColumn('date')->setTitle('Client')->isSortable()->setCustomTable('operation_days')
+        $table->addColumn('date')->setTitle('Client')->isSortable()->setCustomTable(Day::TABLE)
             ->isCustomHtmlElement(function ($entity, $column) {
                 return $entity->firstname.' '.$entity->lastname.'</br>'.'('.$entity->email.')';
             });

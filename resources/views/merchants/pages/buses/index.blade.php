@@ -1,23 +1,35 @@
 @extends('merchants.layouts.master')
 
 @section('title')
-    {{ __('merchant_pages.page_bus_index_title') }}
+    {{ __('merchant_page_buses.page_bus_index_title') }}
 @endsection
 
-@section('panel_heading')
-    @include('merchants.pages.buses.buses_panel')
+
+@section('content-head')
+    <section class="content-header">
+        <h1>
+            {{__('merchant_page_buses.content_header_title')}}
+            <small>{{__('merchant_page_buses.content_header_sub_title')}}</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <a href="{{route('merchant.buses.index')}}"> {{__('merchant_page_buses.navigation_link_index')}}</a>
+            </li>
+            <li class="active">{{__('merchant_page_buses.navigation_link_view')}}</li>
+        </ol>
+    </section>
 @endsection
 
-@section('panel_body')
+@section('content-body')
     @include('flash::message')
-
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h5>{{__('merchant_pages.page_bus_index_form_title')}}</h5>
+    <section class="content container-fluid">
+        <div class="box box-success">
+            {{--<div class="box-header">
+                <h3>{{__('merchant_pages.page_bus_index_form_title')}}</h3>
+            </div>--}}
+            <div class="box-body">
+                {!! $table->render() !!}
+            </div>
         </div>
-        <div class="panel-body">
-            @include('includes.errors.message')
-            {!! $table->render() !!}
-        </div>
-    </div>
+    </section>
 @endsection

@@ -201,15 +201,16 @@ class ApproveRouteController extends BaseController
         $table->addColumn()->setTitle('Status')
             ->isCustomHtmlElement(function ($entity, $column) {
                 return $entity[BusRoute::STATUS] ?
-                    "<span style='color: green;'>Active <i class='fas fa-check-circle'></i></span>" :
-                    "<span style='color: red;'>Disabled <i class='fas fa-times-circle'></i></span>";
+                    "<span class='label label-success'>Active</span>" :
+                    "<span class='label label-danger'>Disabled</span>";
             });
         $table->addColumn()->setTitle(' ')
             ->isCustomHtmlElement(function ($entity, $column) {
-                return '<form method="GET" action="' . \route('admin.bus-route.approve', $entity[BusRoute::ID]) . '" accept-charset="UTF-8">
+                $form = '<form method="GET" action="' . \route('admin.bus-route.approve', $entity[BusRoute::ID]) . '" accept-charset="UTF-8">
                             <input name="_token" type="hidden" value="' . csrf_token() . '">
-                            <button type="submit" class="btn btn-primary">Approve route</button>
+                            <button type="submit" class="btn btn-xs btn-success">Approve route</button>
                         </form>';
+                return $form;
             });
     }
 

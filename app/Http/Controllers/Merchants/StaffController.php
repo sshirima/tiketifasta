@@ -26,7 +26,8 @@ class StaffController extends BaseController
     }
 
     public function index(){
-        $staff_table = app(TableList::class)->setModel(Staff::class)->setRoutes([
+        $staff_table = app(TableList::class)->setModel(Staff::class)->enableRowsNumberSelector()
+            ->setRoutes([
             'index' => ['alias'=>'merchant.staff.index','parameters' => []],
             'create'=> ['alias' => 'merchant.staff.create', 'parameters' => []],
             'destroy'=> ['alias' => 'merchant.staff.remove', 'parameters' => ['id']],
@@ -65,12 +66,6 @@ class StaffController extends BaseController
 
         return redirect(route('merchant.staff.index'));
     }
-
-    public function edit(){}
-
-    public function update(){}
-
-    public function delete(){}
 
     public function remove($id){
         $staff = $this->staffRepo->findWithoutFail($id);

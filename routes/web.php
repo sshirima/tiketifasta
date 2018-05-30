@@ -11,6 +11,9 @@
 |
 */
 Route::get('/', 'Users\UserController@homepage')->name('user.home');
+Route::get('/about-us', 'Users\UserController@aboutUs')->name('user.about_us');
+Route::get('/contact-us', 'Users\UserController@contactUs')->name('user.contact_us');
+Route::get('/testimonials', 'Users\UserController@testimonials')->name('user.testimonials');
 // Authentication Routes...
 Route::get('login', 'Users\Auth\LoginController@showLoginForm')->name('login');
 Route::post('login', 'Users\Auth\LoginController@login')->name('login');
@@ -109,9 +112,9 @@ Route::prefix('admin')->group(function () {
     //Inactive routes
     Route::get('inactive/bus-route', 'Admins\ApproveRouteController@showBusRoutes')->name('admin.bus-route.inactive.show');
     Route::get('bus-route', 'Admins\BusRouteController@index')->name('admin.bus-routes.index');
-    Route::get('inactive/bus-route/{id}/approve', 'Admins\ApproveRouteController@approveBusRoute')->name('admin.bus-route.approve');
-    Route::get('inactive/bus-route/{id}/confirm', 'Admins\ApproveRouteController@approveConfirm')->name('admin.bus-route.approve.confirm');
-    Route::post('inactive/bus-route/{id}/authorize', 'Admins\ApproveRouteController@authorizeBusRoute')->name('admin.bus-route.authorize');
+    Route::get('approvals/inactive/bus-route/{id}/approve', 'Admins\ApproveRouteController@approveBusRoute')->name('admin.bus-route.approve');
+    Route::get('approvals/inactive/bus-route/{id}/confirm', 'Admins\ApproveRouteController@approveConfirm')->name('admin.bus-route.approve.confirm');
+    Route::post('approvals/inactive/bus-route/{id}/authorize', 'Admins\ApproveRouteController@authorizeBusRoute')->name('admin.bus-route.authorize');
     //Admin approvals
     Route::get('approvals', 'Admins\ApprovalsController@index')->name('admin.approvals.index');
     Route::get('approvals/bus-routes', 'Admins\ApprovalsController@busRoutes')->name('admin.approvals.bus-routes');
@@ -128,6 +131,13 @@ Route::prefix('admin')->group(function () {
     Route::get('ticket_prices/{id)/delete', 'Admins\TicketPriceController@remove')->name('admin.ticket_prices.delete');
     Route::delete('ticket_prices/{id)/remove', 'Admins\TicketPriceController@remove')->name('admin.ticket_prices.remove');
     Route::get('trips', 'Admins\SubRouteController@index')->name('admin.sub_routes.index');
+
+
+    //Admin account CRUD routes (V2.0)
+    Route::get('accounts/admins', 'Admins\AdminAccountsController@index')->name('admin.admin_accounts.index');
+    Route::get('accounts/admins/create', 'Admins\AdminAccountsController@create')->name('admin.admin_accounts.create');
+    Route::post('accounts/admins/create', 'Admins\AdminAccountsController@store')->name('admin.admin_accounts.store');
+    Route::delete('accounts/admins/{id}/delete', 'Admins\AdminAccountsController@destroy')->name('admin.admin_accounts.destroy');
 
 });
 

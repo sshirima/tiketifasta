@@ -1,6 +1,6 @@
 <?php
 return [
 
-    'gulio' => 'Gulio',
-    'poa' => 'POA',
+    'first_word' => 'Company',
+    'second_word' => 'NAME',
 ];

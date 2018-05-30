@@ -7,3 +7,7 @@
 @section('content')
     @yield('content-body')
 @endsection
+
+@section('footer')
+    @include('merchants.includes.sections.footer')
+@endsection

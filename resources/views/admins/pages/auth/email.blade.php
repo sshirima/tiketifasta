@@ -1,4 +1,4 @@
-@extends('admins.layouts.auth')
+@extends('admins.layouts.master_auth')
 
 @section('title')
     {{ __('page_auth_email.page_title') }}

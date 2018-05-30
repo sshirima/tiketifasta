@@ -1,17 +1,13 @@
-@extends('layouts.master')
-
-@section('custom-import')
-    <link rel="stylesheet" href="{{ URL::asset('css/users/pages/login/forms/signin.css') }}">
-@endsection
+@extends('layouts.master_admin_auth_v2')
 
 @section('header')
-    @include('admins.includes.header.auth')
+    @include('admins.includes.sections.header-auth')
 @endsection
 
 @section('content')
-    @yield('contents')
+    @yield('content-body')
 @endsection
 
 @section('footer')
-    @include('layouts.footer')
+    @include('admins.includes.sections.footer')
 @endsection

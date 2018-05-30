@@ -6,7 +6,7 @@
  * Time: 11:14 PM
  */
 
-namespace App\Http\Requests\Admins;
+namespace App\Http\Requests\Admin\Accounts;
 
 use App\Models\Admin;
 use Illuminate\Foundation\Http\FormRequest;
@@ -31,7 +31,7 @@ class CreateAdminAccountRequest extends FormRequest
      */
     public function rules()
     {
-        return Admin::$register_rules;
+        return Admin::$create_rules;
     }
 
 }

@@ -24,7 +24,7 @@
                         <!-- The user image in the navbar-->
                         <img src="{{asset('adminlte/dist/img/boxed-bg.png')}}" class="user-image" alt="User Image">
                         <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                        <span class="hidden-xs">{{$merchant[\App\Models\Staff::COLUMN_FIRST_NAME].' '.$merchant[\App\Models\Staff::COLUMN_LAST_NAME]}}</span>
+                        <span class="hidden-xs">{{$admin[\App\Models\Admin::COLUMN_FIRST_NAME].' '.$admin[\App\Models\Admin::COLUMN_LAST_NAME]}}</span>
                     </a>
 
                     <ul class="dropdown-menu">
@@ -32,7 +32,7 @@
                             <img src="{{asset('adminlte/dist/img/boxed-bg.png')}}" class="img-circle" alt="User Image">
 
                             <p>
-                                {{$merchant[\App\Models\Staff::COLUMN_FIRST_NAME].' '.$merchant[\App\Models\Staff::COLUMN_LAST_NAME]}} - Role
+                                {{$admin[\App\Models\Admin::COLUMN_FIRST_NAME].' '.$admin[\App\Models\Admin::COLUMN_LAST_NAME]}} - Role
                                 <small>Member since Nov. 2012</small>
                             </p>
                         </li>
@@ -57,7 +57,7 @@
                                 <a href="#" class="btn btn-default btn-flat">{{__('merchant_header.profile')}}</a>
                             </div>
                             <div class="pull-right">
-                                <a href="{{route('merchant.logout')}}" class="btn btn-default btn-flat">{{__('merchant_header.option_sign_out')}}</a>
+                                <a href="{{route('admin.logout')}}" class="btn btn-default btn-flat">{{__('merchant_header.option_sign_out')}}</a>
                             </div>
                         </li>
                     </ul>

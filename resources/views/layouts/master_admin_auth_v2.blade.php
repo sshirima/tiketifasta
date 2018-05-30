@@ -24,7 +24,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
           page. However, you can choose any other skin. Make sure you
           apply the skin class to the body tag so the changes take effect. -->
-    <link rel="stylesheet" href="{{asset('adminlte/dist/css/skins/skin-green.min.css')}}">
+    <link rel="stylesheet" href="{{asset('adminlte/dist/css/skins/skin-blue.min.css')}}">
 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
 
@@ -40,15 +40,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
 
-<body class="skin-black-light sidebar-mini login-page" style="height: auto; min-height: 100%;">
+<body class="skin-blue layout-top-nav" style="height: auto; min-height: 100%;">
 <div class="wrapper">
-    <!-- Main Header -->
-@yield('header')
-<!-- Content Wrapper. Contains page content -->
-@yield('content')
-<!-- /.content-wrapper -->
 
-    <!-- Main Footer -->
+@yield('header')
+
+    <div class="content-wrapper">
+        <div class="container">
+            @yield('content')
+        </div>
+    </div>
+
     @yield('footer')
 
 </div>

@@ -73,7 +73,6 @@ class SubRouteRepository extends BaseRepository
             ->setRoutes([
                 'index' => ['alias' => SubRouteController::ROUTE_INDEX, 'parameters' => []]])
             ->setRowsNumber(10)
-            ->enableRowsNumberSelector()
             ->addQueryInstructions(function ($query) {
                 $query->select($this->entityColumns)
                     ->join(BusRoute::TABLE,  BusRoute::ID, '=',SubRoute::BUS_ROUTE_ID)

@@ -4,24 +4,33 @@
     {{ __('page_home.page_tile_admin') }}
 @endsection
 
-@section('panel_heading')
-    <li class="active"><a href="#" data-toggle="tab">View</a></li>
+@section('content-head')
+    <section class="content-header">
+        <h1>
+            {{__('admin_page_merchants.content_header_title')}}
+            <small>{{__('admin_page_merchants.content_header_sub_title')}}</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <a href="{{route('admin.merchant.index')}}"> {{__('admin_page_merchants.navigation_link_index')}}</a>
+            </li>
+            <li class="active">{{__('admin_page_merchants.navigation_link_view')}}</li>
+        </ol>
+    </section>
 @endsection
 
-@section('panel_body')
-    <div class="tab-pane fade in active" id="tab1info">
-        <section class="content-header">
-            <h2 class="pull-left">Merchants</h2>
-            <h1 class="pull-right">
-                <a class="btn btn-primary pull-right"
-                   href="{{route('admin.merchant.create')}}">Add merchant</a>
-            </h1>
-        </section>
-        <div class="content">
-            <div class="clearfix"></div>
-            @include('flash::message')
-            <div class="clearfix"></div>
+@section('content-body')
+    <section class="content container-fluid">
             <div class="box box-primary">
+                <div class="box-header">
+                    <section class="content-header">
+                        <h3 class="pull-left">Merchants</h3>
+                        <h3 class="pull-right">
+                            <a class="btn btn-primary pull-right"
+                               href="{{route('admin.merchant.create')}}">Add merchant</a>
+                        </h3>
+                    </section>
+                </div>
                 <div class="box-body">
                     @if(count($merchants) <=0)
                         No records
@@ -30,6 +39,5 @@
                     @endif
                 </div>
             </div>
-        </div>
-    </div>
+    </section>
 @endsection

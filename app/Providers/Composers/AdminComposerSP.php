@@ -8,10 +8,11 @@
 
 namespace App\Providers\Composers;
 
+use App\Http\ViewComposers\AdminComposer;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
-class AdminComposer extends ServiceProvider
+class AdminComposerSP extends ServiceProvider
 {
     /**
      * Register bindings in the container.
@@ -22,9 +23,11 @@ class AdminComposer extends ServiceProvider
     {
         // Using class based composers...
         View::composer(
-            ['admins.pages.dashboard',
+            [
+                'admins.pages.accounts.index',
+                'admins.pages.accounts.create',
             ],
-            AdminCom::class
+            AdminComposer::class
         );
     }
 }

@@ -35,7 +35,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
 
-<body class="hold-transition skin-green-light sidebar-mini">
+<body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
     <!-- Main Header -->
