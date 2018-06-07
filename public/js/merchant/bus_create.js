@@ -109,49 +109,52 @@ $( document ).ready(function() {
 var locations;
 var selectedLoc;
 var room = 1;
+var new_trip_fields = '<div class="col-sm-3">\n' +
+    '                        <label class="control-label">From:</label>\n' +
+    '                        <select class="form-control" id="educationDate" name="trips[]source">\n' +
+    '                               ' +selectedLoc+
+    '                        </select>\n' +
+    '                    </div>\n' +
+    '                    <div class="col-sm-3">\n' +
+    '                        <label class="control-label">To:</label>\n' +
+    '                        <select class="form-control" id="educationDate" name="trips[]destination">\n' +
+    '                               ' +selectedLoc+
+    '                        </select>\n' +
+    '                    </div>\n' +
+    '                    <div class="col-sm-2">\n' +
+    '                        <label class="control-label">Depart time:</label>\n' +
+    '                        <input class="form-control" type="time" value="" name="trips[]depart_time" placeholder="Time...">\n' +
+    '                    </div>\n' +
+    '                    <div class="col-sm-2">\n' +
+    '                        <label class="control-label">Arrival time:</label>\n' +
+    '                        <input class="form-control" type="time" value="" name="trips[]arrival_time" placeholder="Time...">\n' +
+    '                    </div>\n' +
+    '                    <div class="col-sm-2 form-group">\n' +
+    '                        <label class="control-label">Travelling days:</label>\n' +
+    '                        <div class="input-group">\n' +
+    '                            <select class="form-control" id="educationDate" name="trips[]travelling_days">\n' +
+    '                                <option value="1">1</option>\n' +
+    '                                <option value="2">2</option>\n' +
+    '                                <option value="3">3</option>\n' +
+    '                                <option value="4">4</option>\n' +
+    '                            </select>\n' +
+    '                            <div class="input-group-btn">\n' +
+    '                                <button class="btn btn-danger" type="button"  onclick="removeTrip('+ room +');"> <span class="glyphicon glyphicon-minus" aria-hidden="true"></span> </button>\n' +
+    '                            </div>\n' +
+    '                        </div>\n' +
+    '                    </div>';
 function addTrip() {
     room++;
     var objTo = document.getElementById('trip_fields');
     var divTest = document.createElement("div");
     divTest.setAttribute("class", "form-group routeTrip removeclass"+room);
     var rdiv = 'removeclass'+room;
-    divTest.innerHTML = '<div class="col-sm-3">\n' +
-        '                        <label class="control-label">From:</label>\n' +
-        '                        <select class="form-control" id="educationDate" name="source[]">\n' +
-        '                               ' +selectedLoc+
-        '                        </select>\n' +
-        '                    </div>\n' +
-        '                    <div class="col-sm-3">\n' +
-        '                        <label class="control-label">To:</label>\n' +
-        '                        <select class="form-control" id="educationDate" name="destination[]">\n' +
-        '                               ' +selectedLoc+
-        '                        </select>\n' +
-        '                    </div>\n' +
-        '                    <div class="col-sm-2">\n' +
-        '                        <label class="control-label">Depart time:</label>\n' +
-        '                        <input class="form-control" type="time" value="" name="depart_time[]" placeholder="Time...">\n' +
-        '                    </div>\n' +
-        '                    <div class="col-sm-2">\n' +
-        '                        <label class="control-label">Arrival time:</label>\n' +
-        '                        <input class="form-control" type="time" value="" name="arrival_time[]" placeholder="Time...">\n' +
-        '                    </div>\n' +
-        '                    <div class="col-sm-2 form-group">\n' +
-        '                        <label class="control-label">Travelling days:</label>\n' +
-        '                        <div class="input-group">\n' +
-        '                            <select class="form-control" id="educationDate" name="travelling_days[]">\n' +
-        '                                <option value="1">1</option>\n' +
-        '                                <option value="2">2</option>\n' +
-        '                                <option value="3">3</option>\n' +
-        '                                <option value="4">4</option>\n' +
-        '                            </select>\n' +
-        '                            <div class="input-group-btn">\n' +
-        '                                <button class="btn btn-danger" type="button"  onclick="removeTrip('+ room +');"> <span class="glyphicon glyphicon-minus" aria-hidden="true"></span> </button>\n' +
-        '                            </div>\n' +
-        '                        </div>\n' +
-        '                    </div>';
+    divTest.innerHTML = new_trip_fields;
 
     objTo.appendChild(divTest)
 }
+
+
 
 function onRouteSelected() {
     $('.routeTrip').remove();
@@ -160,28 +163,28 @@ function onRouteSelected() {
     divTest.setAttribute("class", "form-group routeTrip");
     divTest.innerHTML = '<div class="col-sm-3">\n' +
         '                        <label class="control-label">From:</label>\n' +
-        '                        <select class="form-control" id="educationDate" name="source[]">\n' +
+        '                        <select class="form-control" id="educationDate" name="trips[]source">\n' +
         '                            ' +selectedLoc+
         '                        </select>\n' +
         '                    </div>\n' +
         '                    <div class="col-sm-3">\n' +
         '                        <label class="control-label">To:</label>\n' +
-        '                        <select class="form-control" id="educationDate" name="destination[]">\n' +
+        '                        <select class="form-control" id="educationDate" name="trips[]destination">\n' +
         '                            ' +selectedLoc+
         '                        </select>\n' +
         '                    </div>\n' +
         '                    <div class="col-sm-2">\n' +
         '                        <label class="control-label">Depart time:</label>\n' +
-        '                        <input class="form-control" type="time" value="" name="depart_time[]" placeholder="Time...">\n' +
+        '                        <input class="form-control" type="time" value="" name="trips[]depart_time" placeholder="Time...">\n' +
         '                    </div>\n' +
         '                    <div class="col-sm-2">\n' +
         '                        <label class="control-label">Arrival time:</label>\n' +
-        '                        <input class="form-control" type="time" value="" name="arrival_time[]" placeholder="Time...">\n' +
+        '                        <input class="form-control" type="time" value="" name="trips[]arrival_time" placeholder="Time...">\n' +
         '                    </div>\n' +
         '                    <div class="col-sm-2 form-group">\n' +
         '                        <label class="control-label">Travelling days:</label>\n' +
         '                        <div class="input-group">\n' +
-        '                            <select class="form-control" id="educationDate" name="travelling_days[]">\n' +
+        '                            <select class="form-control" id="educationDate" name="trips[]travelling_days">\n' +
         '                                <option value="1">1</option>\n' +
         '                                <option value="2">2</option>\n' +
         '                                <option value="3">3</option>\n' +

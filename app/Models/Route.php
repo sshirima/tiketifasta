@@ -67,4 +67,19 @@ class Route extends Model
     {
         return $this->belongsToMany(Location::class,'location_route',self::COLUMN_ROUTE_ID,Location::COLUMN_LOCATION_ID);
     }
+
+    /**
+     * @param $array
+     * @return mixed
+     */
+    public static function getRoutesSelectArray($array){
+
+        $routes = Route::all();
+
+        foreach ($routes as $route) {
+            $array[$route[Route::COLUMN_ID]] = $route[Route::COLUMN_ROUTE_NAME];
+        }
+
+        return $array;
+    }
 }

@@ -166,6 +166,7 @@ return [
 
         //Composer Service provider
         App\Providers\Composers\AdminComposerSP::class,
+        App\Providers\Composers\MerchantComposerSP::class,
 
     ],
 

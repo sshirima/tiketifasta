@@ -71,6 +71,21 @@ class Merchant extends Model
     }
 
     /**
+     * @param $array
+     * @return mixed
+     */
+    public static function getMerchantSelectArray($array){
+
+        $merchants = Merchant::all();
+
+        foreach ($merchants as $merchant) {
+            $array[$merchant->id] = $merchant->name;
+        }
+
+        return $array;
+    }
+
+    /**
      * @return array
      */
     public function getMerchantBusArray(): array

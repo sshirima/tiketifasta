@@ -98,9 +98,12 @@ Route::prefix('admin')->group(function () {
     Route::get('bustype/{id}/delete', 'Admins\BusTypeController@delete')->name('admin.bustype.delete');
     Route::delete('bustype/{id}', 'Admins\BusTypeController@remove')->name('admin.bustype.remove');
     //Buses management routes
-    Route::get('buses', 'Admins\BusController@index')->name('admin.buses.index');
-    Route::get('buses/create', 'Admins\BusController@create')->name('admin.buses.create');
-    Route::post('buses/store', 'Admins\BusController@store')->name('admin.buses.store');
+    Route::get('buses', 'Admins\Buses\BusController@index')->name('admin.buses.index');
+    Route::get('buses/create', 'Admins\Buses\BusController@create')->name('admin.buses.create');
+    Route::post('buses/store', 'Admins\Buses\BusController@store')->name('admin.buses.store');
+    Route::get('buses/{id}/edit', 'Admins\Buses\BusController@edit')->name('admin.buses.edit');
+    Route::put('buses/{id}/update', 'Admins\Buses\BusController@update')->name('admin.buses.update');
+
     Route::get('buses/{id}/show', 'Admins\BusController@show')->name('admin.buses.show');
     Route::get('buses/{id}/delete', 'Admins\BusController@delete')->name('admin.buses.delete');
     Route::delete('buses/{id}', 'Admins\BusController@remove')->name('admin.buses.remove');
@@ -160,13 +163,7 @@ Route::prefix('merchant')->group(function () {
     Route::get('profile/view', 'Merchants\ProfileController@show')->name('merchant.profile.show');
     Route::get('profile/edit', 'Merchants\ProfileController@edit')->name('merchant.profile.edit');
     Route::put('profile/update/{id}', 'Merchants\ProfileController@update')->name('merchant.profile.update');
-//Buses management routes
-    Route::get('buses', 'Merchants\BusController@index')->name('merchant.buses.index');
-    Route::get('buses/create', 'Merchants\BusController@create')->name('merchant.buses.create');
-    Route::post('buses/store', 'Merchants\BusController@store')->name('merchant.buses.store');
-    Route::get('buses/{id}/show', 'Merchants\BusController@show')->name('merchant.buses.show');
-    Route::get('buses/{id}/delete', 'Merchants\BusController@delete')->name('merchant.buses.delete');
-    Route::delete('buses/{id}', 'Merchants\BusController@remove')->name('merchant.buses.remove');
+
 //Staff management routes
     Route::get('staff', 'Merchants\StaffController@index')->name('merchant.staff.index');
     Route::get('staff/create', 'Merchants\StaffController@create')->name('merchant.staff.create');
@@ -174,11 +171,19 @@ Route::prefix('merchant')->group(function () {
     Route::get('staff/{id}/show', 'Merchants\StaffController@show')->name('merchant.staff.show');
     Route::get('staff/{id}/delete', 'Merchants\StaffController@delete')->name('merchant.staff.delete');
     Route::delete('staff/{id}', 'Merchants\StaffController@remove')->name('merchant.staff.remove');
+
     //Buses CRUD
-    Route::get('buses', 'Merchants\BusController@index')->name('merchant.buses.index');
-    Route::get('buses/{id}/edit', 'Merchants\BusController@edit')->name('merchant.buses.edit');
-    Route::post('buses/{id}/edit', 'Merchants\BusController@update')->name('merchant.buses.update');
-    Route::delete('buses/{id}', 'Merchants\BusController@remove')->name('merchant.buses.remove');
+    Route::get('buses', 'Merchants\Buses\BusController@index')->name('merchant.buses.index');
+    Route::get('buses/{id}/edit', 'Merchants\Buses\BusController@edit')->name('merchant.buses.edit');
+    Route::put('buses/{id}/edit', 'Merchants\Buses\BusController@update')->name('merchant.buses.update');
+    Route::get('buses/{id}/show', 'Merchants\Buses\BusController@show')->name('merchant.buses.show');
+
+    Route::get('buses/{id}/routes/assign', 'Merchants\Buses\BusRoutesController@assignRoute')->name('merchant.buses.assign_routes');
+    Route::post('buses/{id}/routes/assign', 'Merchants\Buses\BusRoutesController@saveBusRoute')->name('merchant.buses.assign_routes');
+
+    Route::get('buses/{id}/routes/assign/{r_id}/locations', 'Merchants\Buses\BusRoutesController@getRouteLocations')->name('merchant.buses.routes.locations');
+
+    Route::delete('buses/{id}', 'Merchants\Buses\BusRoutesController@assignRoute')->name('merchant.buses.remove');
     //Out of service routes
     Route::get('buses/{id}/out-of-service', 'Merchants\OutOfServiceController@index')->name('merchant.buses.oos.index');
     Route::get('buses/{id}/out-of-service/confirm', 'Merchants\OutOfServiceController@confirm')->name('merchant.buses.oos.confirm');

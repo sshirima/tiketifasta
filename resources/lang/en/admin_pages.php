@@ -135,6 +135,7 @@ return [
     'page_bus_index_table_head_operation_end'=>'Operation end',
     'page_bus_fields_button_cancel'=>'Cancel',
     'page_bus_fields_button_save'=>'Submit bus information',
+    'page_bus_edit_fields_label_driver_name'=>'Driver name',
 
     'page_bus_edit_sub_route_table_head_route_name'=>'Route name',
     'page_bus_edit_sub_route_table_head_bus'=>'Company/Bus',

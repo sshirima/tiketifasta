@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use DateTime;
 
 class Day extends Model
 {
@@ -27,8 +28,35 @@ class Day extends Model
 
     public $timestamps = false;
 
+    /**
+     * @param $startingDate
+     * @param $dates
+     * @return mixed
+     */
+    protected static function nextDay($startingDate, $dates)
+    {
+        $startingDate->add(new \DateInterval('P1D'));
+        $dates[$startingDate->format('Y-m-d')] = $startingDate->format('Y-m-d');
+        return $dates;
+    }
+
     public function schedules()
     {
         return $this->hasMany(Schedule::class, Schedule::COLUMN_DAY_ID, self::COLUMN_ID);
+    }
+
+    /**
+     * @param int $interval
+     * @return array
+     */
+    public static function getSchedulingDays($interval = 30){
+        $dates = array();
+        $startingDate = new DateTime("now");
+
+        for ($i=0; $i<$interval; $i++){
+            $dates = self::nextDay($startingDate, $dates);
+        }
+
+        return $dates;
     }
 }

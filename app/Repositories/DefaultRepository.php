@@ -14,6 +14,11 @@ use Okipa\LaravelBootstrapTableList\TableList;
 
 trait DefaultRepository
 {
+    protected $routeIndex;
+    protected $routeEdit;
+    protected $routeCreate;
+    protected $routeDestroy;
+
     protected $conditions = array();
     protected $tableRoutes = array();
     protected $entityColumns = array();

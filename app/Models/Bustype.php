@@ -35,4 +35,19 @@ class Bustype extends Model
         return $this->hasMany(Bus::class,Bus::COLUMN_BUSTYPE_ID,self::COLUMN_ID);
     }
     public $timestamps = false;
+
+    /**
+     * @param $array
+     * @return mixed
+     */
+    public static function getBusTypeSelectArray($array){
+
+        $busTypes = Bustype::all();
+
+        foreach ($busTypes as $busType) {
+            $array[$busType[Bustype::COLUMN_ID]] = $busType[Bustype::COLUMN_NAME];
+        }
+
+        return $array;
+    }
 }

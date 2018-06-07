@@ -17,6 +17,20 @@ class Bus extends Model
     const COLUMN_CREATED_AT = 'created_at';
     const COLUMN_UPDATED_AT = 'updated_at';
     const COLUMN_STATE = 'state';
+    const COLUMN_DRIVER_NAME = 'driver_name';
+    const COLUMN_CONDUCTOR_NAME = 'conductor_name';
+    const COLUMN_BUS_CONDITION = 'condition';
+    const COLUMN_ROUTE_ID = 'route_id';
+
+    const STATE_DEFAULT_ENABLED = 'ENABLED';
+    const STATE_DEFAULT_DISABLED = 'DISABLED';
+    const STATE_DEFAULT_SUSPENDED = 'SUSPENDED';
+
+    const CONDITION_DEFAULT_OPERATIONAL = 'OPERATIONAL';
+    const CONDITION_DEFAULT_MAINTANANCE = 'MAINTANANCE';
+    const CONDITION_DEFAULT_ACCIDENT= 'ACCIDENT';
+
+    const DEFAULT_CONDITIONS = [self::CONDITION_DEFAULT_OPERATIONAL,self::CONDITION_DEFAULT_MAINTANANCE,self::CONDITION_DEFAULT_ACCIDENT];
 
     const ID = self::TABLE.'.'.self::COLUMN_ID;
     const REG_NUMBER = self::TABLE.'.'.self::COLUMN_REG_NUMBER;
@@ -27,7 +41,11 @@ class Bus extends Model
     const OPERATION_END = self::TABLE.'.'.self::COLUMN_OPERATION_END;
     const CREATED_AT = self::TABLE.'.'.self::COLUMN_CREATED_AT;
     const UPDATED_AT = self::TABLE.'.'.self::COLUMN_UPDATED_AT;
+    const BUS_CONDITION = self::TABLE.'.'.self::COLUMN_BUS_CONDITION;
+    const CONDUCTOR_NAME = self::TABLE.'.'.self::COLUMN_CONDUCTOR_NAME;
+    const DRIVER_NAME = self::TABLE.'.'.self::COLUMN_DRIVER_NAME;
     const STATE = self::TABLE.'.'.self::COLUMN_STATE;
+    const ROUTE_ID = self::TABLE.'.'.self::COLUMN_ROUTE_ID;
 
     const TABLE = 'buses';
 
@@ -38,7 +56,7 @@ class Bus extends Model
      */
     protected $fillable = [
         self::COLUMN_REG_NUMBER,self::COLUMN_CLASS,self::COLUMN_BUSTYPE_ID,self::COLUMN_OPERATION_START,self::COLUMN_OPERATION_END
-        ,self::COLUMN_STATE,self::COLUMN_MERCHANT_ID
+        ,self::COLUMN_STATE,self::COLUMN_MERCHANT_ID,self::COLUMN_DRIVER_NAME,self::COLUMN_CONDUCTOR_NAME,self::COLUMN_BUS_CONDITION
     ];
 
     public static $rules = [
@@ -48,16 +66,25 @@ class Bus extends Model
         self::COLUMN_OPERATION_END => 'required|date'
     ];
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function merchant(){
         return $this->belongsTo(Merchant::class,self::COLUMN_MERCHANT_ID,Merchant::COLUMN_ID);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function busType(){
         return $this->belongsTo(Bustype::class,self::COLUMN_BUSTYPE_ID,Bustype::COLUMN_ID);
     }
 
-    public function busRoutes(){
-        return $this->hasMany(BusRoute::class,BusRoute::COLUMN_BUS_ID,self::COLUMN_ID);
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function busTrips(){
+        return $this->hasMany(Trip::class,Trip::COLUMN_BUS_ID,self::COLUMN_ID);
     }
 
     public function seats(){

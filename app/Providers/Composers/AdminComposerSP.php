@@ -26,6 +26,8 @@ class AdminComposerSP extends ServiceProvider
             [
                 'admins.pages.accounts.index',
                 'admins.pages.accounts.create',
+                'admins.pages.buses.index',
+                'admins.pages.buses.create',
             ],
             AdminComposer::class
         );

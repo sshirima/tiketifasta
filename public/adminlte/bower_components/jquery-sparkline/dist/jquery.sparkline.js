@@ -3021,7 +3021,7 @@
         },
 
         replaceWithShapes: function (shapeids, shapes) {
-            // replace the first shapeid with all the new shapes then toast the remaining old shapes
+            // replace the first shapeid with all the new shapes then toaster the remaining old shapes
             var existing = $('#jqsshape' + shapeids[0]),
                 replace = '',
                 slen = shapes.length,

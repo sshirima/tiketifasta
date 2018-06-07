@@ -13,6 +13,8 @@ class SubRoute extends Model
     const COLUMN_ARRIVAL_TIME = 'arrival_time';
     const COLUMN_TRAVELLING_DAYS = 'travelling_days';
     const COLUMN_BUS_ROUTE_ID = 'bus_route_id';
+    const COLUMN_BUS_ID = 'bus_id';
+    const COLUMN_STATUS = 'status';
     const COLUMN_CREATED_AT = 'created_at';
     const COLUMN_UPDATED_AT = 'updated_at';
 
@@ -25,6 +27,8 @@ class SubRoute extends Model
     const ARRIVAL_TIME = self::TABLE.'.'.self::COLUMN_ARRIVAL_TIME;
     const TRAVELLING_DAYS = self::TABLE.'.'.self::COLUMN_TRAVELLING_DAYS;
     const BUS_ROUTE_ID = self::TABLE.'.'.self::COLUMN_BUS_ROUTE_ID;
+    const BUS_ID = self::TABLE.'.'.self::COLUMN_BUS_ID;
+    const STATUS = self::TABLE.'.'.self::COLUMN_STATUS;
 
     const REL_BUS_ROUTE = 'busRoute';
     const REL_SOURCE = 'source';

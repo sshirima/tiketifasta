@@ -76,8 +76,10 @@ return [
     'page_bus_edit_field_button_cancel'=>'Cancel',
     'page_bus_edit_field_select_route'=>'Select routes',
 
-    'page_bus_edit_panel_general_settings'=>'General settings',
+    'page_bus_edit_panel_general_settings'=>'Edit information',
+    'page_bus_edit_panel_show_information'=>'Bus details',
     'page_bus_edit_panel_schedules'=>'Bus schedules',
+    'page_bus_edit_panel_routes'=>'Routes',
     'page_bus_edit_panel_general_seats'=>'Bus seats',
     'page_bus_edit_panel_general_ticket_prices'=>'Ticket prices',
     'page_bus_edit_panel_general_out_of_service'=>'Out of service',

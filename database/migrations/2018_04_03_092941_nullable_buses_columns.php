@@ -19,8 +19,6 @@ class NullableBusesColumns extends Migration
             $table->date('operation_end')->nullable()->change();
             $table->dateTime('route_starttime')->nullable()->change();
             $table->dateTime('route_endtime')->nullable()->change();
-
-            $table->foreign('route_id')->references('id')->on('routes')->onDelete('cascade');
         });
     }
 

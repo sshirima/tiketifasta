@@ -83,7 +83,7 @@ class Seat extends Model
         return $seatArray;
     }
 
-    public static function createBusSeats($bus_id, $bustype_id, SeatRepository $seatRepository){
+    public static function createBusSeats($bus_id, $bustype_id, $seatRepository){
 
         $bus_type = DB::table(Bustype::TABLE)->select([Bustype::COLUMN_ARRANGEMENT])->find($bustype_id);
         $seats = array();
