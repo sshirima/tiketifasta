@@ -12,6 +12,7 @@
         "fideloper/proxy": "~4.0",
         "laracasts/flash": "^3.0",
         "laravel/framework": "5.6.*",
+        "laravel/passport": "^6.0",
         "laravel/tinker": "~1.0",
         "laravelcollective/html": "^5.5.0",
         "okipa/laravel-bootstrap-table-list": "^1.2",

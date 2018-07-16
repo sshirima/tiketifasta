@@ -3,7 +3,7 @@ return [
     'page_navigation_title'=>'Navigation bar',
     'page_navigation_option_dashboard'=>'Dashboard',
     'page_navigation_option_booking'=>'Bookings',
-    'page_navigation_option_schedules'=>'Schedules',
+    'page_navigation_option_schedules'=>'ScheduleController',
     'page_navigation_option_timetables'=>'Timetables',
     'page_navigation_option_buses'=>'Buses',
     'page_navigation_sub_option_view_buses'=>'My buses',
@@ -78,11 +78,18 @@ return [
 
     'page_bus_edit_panel_general_settings'=>'Edit information',
     'page_bus_edit_panel_show_information'=>'Bus details',
+
     'page_bus_edit_panel_schedules'=>'Bus schedules',
     'page_bus_edit_panel_routes'=>'Routes',
+    'page_bus_edit_panel_price'=>'Prices',
+    'page_bus_edit_panel_bus_schedules'=>'Schedules',
+    'page_bus_edit_panel_bus_authorizes'=>'Authorizes',
     'page_bus_edit_panel_general_seats'=>'Bus seats',
     'page_bus_edit_panel_general_ticket_prices'=>'Ticket prices',
     'page_bus_edit_panel_general_out_of_service'=>'Out of service',
+
+    'page_booking_panel_show_information'=>'Bookings',
+    'page_tickets_panel_show_information'=>'Tickets',
 
     'bus_save_success'=>'New bus has been added successful!',
     'bus_save_error'=>'Failed to save new bus...',

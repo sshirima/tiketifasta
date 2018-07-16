@@ -28,7 +28,7 @@
                 <h3>{{__('merchant_pages.page_bus_index_form_title')}}</h3>
             </div>--}}
             <div class="box-body">
-                {!! $table->render() !!}
+                {!! $busesTable->render() !!}
             </div>
         </div>
     </section>

@@ -14,6 +14,7 @@ return [
     'form_field_button_create'=>'Save',
     'form_field_button_edit'=>'Update',
     'form_field_button_cancel'=>'Cancel',
+    'form_field_button_approve'=>'Approve',
 
     'navigation_link_index'=>'Buses',
     'navigation_link_view'=>'View',

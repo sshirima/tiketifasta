@@ -55,15 +55,13 @@ class Bus extends Model
      * @var array
      */
     protected $fillable = [
-        self::COLUMN_REG_NUMBER,self::COLUMN_CLASS,self::COLUMN_BUSTYPE_ID,self::COLUMN_OPERATION_START,self::COLUMN_OPERATION_END
-        ,self::COLUMN_STATE,self::COLUMN_MERCHANT_ID,self::COLUMN_DRIVER_NAME,self::COLUMN_CONDUCTOR_NAME,self::COLUMN_BUS_CONDITION
+        self::COLUMN_REG_NUMBER,self::COLUMN_CLASS,self::COLUMN_BUSTYPE_ID,self::COLUMN_STATE,self::COLUMN_MERCHANT_ID,
+        self::COLUMN_DRIVER_NAME,self::COLUMN_CONDUCTOR_NAME,self::COLUMN_BUS_CONDITION
     ];
 
     public static $rules = [
         self::COLUMN_REG_NUMBER => 'required|max:255',
         self::COLUMN_BUSTYPE_ID => 'required|numeric|min:1',
-        self::COLUMN_OPERATION_START => 'required|date',
-        self::COLUMN_OPERATION_END => 'required|date'
     ];
 
     /**
@@ -81,18 +79,86 @@ class Bus extends Model
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function route(){
+        return $this->belongsTo(Route::class,self::COLUMN_ROUTE_ID,Route::COLUMN_ID);
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function busTrips(){
         return $this->hasMany(Trip::class,Trip::COLUMN_BUS_ID,self::COLUMN_ID);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function schedules(){
+        return $this->hasMany(Schedule::class,Schedule::COLUMN_BUS_ID,self::COLUMN_ID);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function trips(){
+        return $this->hasMany(Trip::class,Trip::COLUMN_BUS_ID,self::COLUMN_ID);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function scheduledDays(){
+        return $this->belongsToMany(Day::class,Schedule::TABLE, Schedule::COLUMN_BUS_ID, Schedule::COLUMN_DAY_ID);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function sources(){
+        return $this->belongsToMany(Location::class,Trip::TABLE, Trip::COLUMN_BUS_ID, Trip::COLUMN_SOURCE)
+            ->withPivot(Trip::COLUMN_ID, Trip::COLUMN_PRICE,
+                Trip::COLUMN_ARRIVAL_TIME,Trip::COLUMN_STATUS,Trip::COLUMN_DIRECTION,
+                Trip::COLUMN_DEPART_TIME, Trip::COLUMN_TRAVELLING_DAYS);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function destinations(){
+        return $this->belongsToMany(Location::class,Trip::TABLE, Trip::COLUMN_BUS_ID, Trip::COLUMN_DESTINATION)
+            ->withPivot(Trip::COLUMN_ID, Trip::COLUMN_PRICE,
+                Trip::COLUMN_ARRIVAL_TIME,Trip::COLUMN_STATUS,Trip::COLUMN_DIRECTION,
+                Trip::COLUMN_DEPART_TIME, Trip::COLUMN_TRAVELLING_DAYS);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function seats(){
         return $this->hasMany(Seat::class,Seat::COLUMN_BUS_ID,self::COLUMN_ID);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function reassignedSchedule(){
         return $this->belongsTo(ReassignBus::class,self::COLUMN_ID,ReassignBus::COLUMN_REASSIGNED_BUS_ID);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function bookings(){
+        return $this->hasManyThrough(Booking::class,Schedule::class, Schedule::COLUMN_BUS_ID, Booking::COLUMN_SCHEDULE_ID,Bus::COLUMN_ID,Schedule::COLUMN_ID);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function bookedSeats(){
+        return $this->hasManyThrough(ScheduleSeat::class,Schedule::class, Schedule::COLUMN_BUS_ID, ScheduleSeat::COLUMN_SCHEDULE_ID,Bus::COLUMN_ID,Schedule::COLUMN_ID);
     }
 
     public function seatsCounts(){
@@ -105,40 +171,20 @@ class Bus extends Model
 
         foreach ($seats as $seat){
             $arrangement[$seat->seat_name]['status']= $seat->status;
-            $arrangement[$seat->seat_name]['class']= $seat->type;
             $arrangement[$seat->seat_name]['name']= $seat->seat_name;
             $array[$arrangement[$seat->seat_name]['index']]= $arrangement[$seat->seat_name];
         }
         return $array;
     }
 
-    /*public function ticketPrices(){
-        return $this->hasManyThrough(TicketPrice::class,Timetables::class,'bus_id','timetable_id','id','id');
-    }*/
-
-    public function ticketPricesWithName($bus_id){
-        return DB::table('ticketprices')->select(['ticketprices.id','ticketprices.ticket_type','ticketprices.price','ticketprices.updated_at','locations.name'])
-            ->join('timetables','ticketprices.timetable_id','=','timetables.id')
-            ->join('locations','timetables.location_id','=','locations.id')
-            ->orderBy('locations.name','asc')
-            ->where(['timetables.bus_id'=>$bus_id])->get();
-    }
-
-    public static function getScheduledBuses($startLocation, $destination, $travelDate){
-        return DB::table('timetables')
-            ->select(['merchants.name as merchant_name','buses.reg_number','bus_route.start_time as depart_time','timetables.arrival_time','timetables.id as timetable_id','buses.id as bus_id','ticketprices.price'])
-            ->join('bus_route','timetables.busroute_id','=','bus_route.id')
-            ->join('daily_timetables','bus_route.id','=','daily_timetables.bus_route_id')
-            ->join('operation_days','operation_days.id','=','daily_timetables.operation_day_id')
-            ->join('buses','bus_route.bus_id','=','buses.id')
-            ->join('ticketprices','timetables.id','=','ticketprices.timetable_id')
-            ->join('routes','routes.id','=','bus_route.route_id')
-            ->join('merchants','merchants.id','=','buses.merchant_id')
-            ->where(['ticketprices.ticket_type'=>'Adult'])
-            ->where(['operation_days.date'=>$travelDate,'routes.start_location'=>$startLocation])
-            ->where(['timetables.location_id'=>$destination,'routes.start_location'=>$startLocation])
-            ->where('buses.operation_start','<=',$travelDate)
-            ->where('buses.operation_end','>=',$travelDate)
-            ->get();
+    /**
+     * Scope a query to only include active users.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('active', 1);
     }
 }

@@ -18,26 +18,3 @@
         {{Form::select('merchant_id',$merchants,isset($bus)?$bus[\App\Models\Bus::COLUMN_MERCHANT_ID]:null,['class'=>'form-control select2',isset($bus)?'disabled':''])}}
     </div>
 </div>
-
-<div class="form-group">
-    {!! Form::label('operation_start', __('merchant_pages.page_bus_edit_field_label_operation_period'), ['class'=>'col-sm-5 control-label', 'for'=>'operation_start']) !!}
-    <div class="col-sm-7">
-        <div class="form-group">
-            <div class="col-sm-10">
-                <div class="form-group">
-                    <div class="control-label col-sm-4">{{__('merchant_pages.page_bus_edit_field_label_from')}}</div>
-                    <div class="col-sm-8">
-                        <input class="form-control" value="{{isset($bus)?$bus[\App\Models\Bus::COLUMN_OPERATION_START]:''}}" type="date" id="operation_start" name="operation_start" {{Auth::guard('merchant')->check()?'disabled':''}}>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="control-label col-sm-4">{{__('merchant_pages.page_bus_edit_field_label_to')}}</div>
-                    <div class="col-sm-8">
-                        <input class="form-control" value="{{isset($bus)?$bus[\App\Models\Bus::COLUMN_OPERATION_END]:''}}" type="date" id="operation_end" name="operation_end" {{Auth::guard('merchant')->check()?'disabled':''}}>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-</div>

@@ -141,9 +141,19 @@ trait TripManager
      */
     protected function getConvertedTime($tripArray)
     {
-        $tripArray['depart_time'] = date("H:i", strtotime($tripArray['depart_time']));
-        $tripArray['arrival_time'] = date("H:i", strtotime($tripArray['arrival_time']));
+        $tripArray['depart_time'] = $this->convertTime($tripArray['depart_time']);
+        $tripArray['arrival_time'] = $this->convertTime($tripArray['arrival_time']);
         return $tripArray;
+    }
+
+    /**
+     * @param $time
+     * @param string $format
+     * @return false|string
+     */
+    public function convertTime($time, $format='H:i')
+    {
+        return date($format, strtotime($time));
     }
 
 }

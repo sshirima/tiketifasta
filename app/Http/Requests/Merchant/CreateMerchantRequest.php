@@ -37,7 +37,9 @@ class CreateMerchantRequest extends FormRequest
             'lastname' => 'required|max:255',
             'phonenumber' => 'required|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed'
+            'password' => 'required|string|min:6|confirmed',
+            'account_number'=>'required|integer',
+            'payment_mode'=>'required|in:mpesa,tigopesa,airtelmoney',
         ];
     }
 

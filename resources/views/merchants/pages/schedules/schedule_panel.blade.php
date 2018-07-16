@@ -1,1 +1,0 @@
-<li class="{{Request::is('merchant/schedule*') ? 'active' : ''}}"><a href="{{route('merchant.schedules.index')}}" >{{__('merchant_pages.page_schedules_panel_option_daily_schedules')}}</a></li>

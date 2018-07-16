@@ -12,7 +12,7 @@
         </h1>
         <ol class="breadcrumb">
             <li>
-                <a href="{{route('admin.bus-routes.index')}}"> {{__('admin_page_routes.navigation_link_index')}}</a>
+                <a href="{{route('admin.routes.index')}}"> {{__('admin_page_routes.navigation_link_index')}}</a>
             </li>
             <li class="active">{{__('admin_page_routes.navigation_link_view')}}</li>
         </ol>

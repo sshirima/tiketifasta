@@ -13,6 +13,7 @@ use App\Models\Bus;
 use App\Models\Merchant;
 use App\Models\Staff;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class CreateBusRequest extends FormRequest
 {
@@ -26,7 +27,7 @@ class CreateBusRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return Auth::guard('admin')->check();
     }
 
     /**
@@ -40,8 +41,6 @@ class CreateBusRequest extends FormRequest
             Bus::COLUMN_REG_NUMBER => 'required|max:255|unique:buses',
             Bus::COLUMN_BUSTYPE_ID => 'required|numeric|min:1',
             Bus::COLUMN_MERCHANT_ID => 'required|numeric|min:1',
-            Bus::COLUMN_OPERATION_START => 'required|date',
-            Bus::COLUMN_OPERATION_END => 'required|date',
         ];
     }
 

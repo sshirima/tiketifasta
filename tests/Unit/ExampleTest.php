@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Jobs\Schedules\AssignSchedule;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -12,8 +13,8 @@ class ExampleTest extends TestCase
      *
      * @return void
      */
-    public function testBasicTest()
+    public function testingAssignScheduleRoute()
     {
-        $this->assertTrue(true);
+        $response = $this->call('GET', 'merchant/bus/1/schedules/assign',['user' => 1]);
     }
 }

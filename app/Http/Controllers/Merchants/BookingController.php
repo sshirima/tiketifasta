@@ -8,76 +8,79 @@
 
 namespace App\Http\Controllers\Merchants;
 
-
 use App\Models\Booking;
-use App\Models\Day;
-use App\Models\Merchant;
-use App\Repositories\Admin\BookingRepository;
+use App\Services\Bookings\BookingManager;
 use Illuminate\Http\Request;
+use Okipa\LaravelBootstrapTableList\TableList;
 
 class BookingController extends BaseController
 {
 
-    private $bookingRepository;
+    private $bookingManager;
 
-    public function __construct(BookingRepository $bookingRepository)
+    public function __construct(BookingManager $bookingManager)
     {
-        $this->middleware('auth:merchant');
-        $this->bookingRepository = $bookingRepository;
+        parent::__construct();
+        $this->bookingManager = $bookingManager;
     }
 
     public function index(Request $request){
-        $staff = auth()->user();
-        $buses = Merchant::merchantBusesArray($staff);
 
-        $request->flash();
+        $this->merchantId = auth()->user()->merchant_id;
 
-        $table = $this->dailyBookings($request);
+        $table = $this->createBookingTable();
 
-        return view('merchants.pages.bookings.index')->with(['merchant'=>$staff,
-            'table'=>$table,'buses'=>$buses]);
-
-        //return $buses;
+        return view('merchants.pages.bookings.index')->with(['bookingTable'=>$table]);
     }
 
     /**
-     * @param Request $request
      * @return mixed
      */
-    public function dailyBookings(Request $request)
+    protected function createBookingTable()
     {
-        $table = $this->bookingRepository->dailyBookings($request);
+        $table = app(TableList::class)
+            ->setModel(Booking::class)
+            ->setRowsNumber(10)
+            ->enableRowsNumberSelector()
+            ->setRoutes([
+                'index' => ['alias' => 'merchant.bookings.index', 'parameters' => []],
+            ])->addQueryInstructions(function ($query) {
+                $query->select('bookings.id as id','days.date as date', 'bookings.firstname as firstname',
+                    'bookings.lastname as lastname','bookings.email as email','source.name as source','destination.name as destination',
+                'buses.reg_number as reg_number','trips.price as price','bookings.status as status','bookings.payment_ref as payment_ref')
+                    ->join('schedules', 'schedules.id', '=', 'bookings.schedule_id')
+                    ->join('days', 'days.id', '=', 'schedules.day_id')
+                    ->join('trips', 'trips.id', '=', 'bookings.trip_id')
+                    ->join('locations as source', 'source.id', '=', 'trips.source')
+                    ->join('locations as destination', 'destination.id', '=', 'trips.destination')
+                    ->join('buses', 'buses.id', '=', 'schedules.bus_id')
+                    ->join('merchants', 'merchants.id', '=', 'buses.merchant_id')
+                    ->where('merchants.id', $this->merchantId);
+            });
 
-        $this->setBookingTable($table);
+        $table = $this->setTableColumns($table);
 
         return $table;
     }
 
-    public function setBookingTable($table){
-
-        $table->addColumn('reg_number')->setTitle('Bus#')->isSortable()->sortByDefault()->isSearchable()->setCustomTable('buses');
-
-        $table->addColumn('date')->setTitle('Client')->isSortable()->setCustomTable(Day::TABLE)
-            ->isCustomHtmlElement(function ($entity, $column) {
-                return $entity->firstname.' '.$entity->lastname.'</br>'.'('.$entity->email.')';
-            });
-        $table->addColumn('email')->setTitle('Date/Time')->isSortable()
-            ->isCustomHtmlElement(function ($entity, $column) {
-                return $entity->date.'</br>'.'('.$entity->start_time.'-'.$entity->arrival_time.')';
-            });
-        $table->addColumn()->setTitle('Route')->isSortable()
-            ->isCustomHtmlElement(function ($entity, $column) {
-                return $entity->route_name.'</br>'.'('.$entity->location_start.' to '.$entity->location_end.')';
-            });
-        $table->addColumn('status')->setTitle('Status')
-            ->isCustomHtmlElement(function ($entity, $column) {
-                if ($entity->status == Booking::$STATUS_PENDING){
-                    return "<span style='color: orange'>Pending <i class='fas fa-spinner'></i></span> ";
-                } else if ($entity->status == Booking::$STATUS_CONFIRMED){
-                    return "<span style='color: green;'>Confirmed <i class='fas fa-check-circle'></i></span>";
-                } else{
-                    return "<span style='color: red;'>Cancelled <i class='fas fa-times-circle'></i></span>";
-                }
-            });
+    /**
+     * @param $table
+     * @return mixed
+     */
+    private function setTableColumns($table)
+    {
+        $table->addColumn('date')->setTitle('Date')->isSearchable()->sortByDefault()->setCustomTable('days');
+        $table->addColumn('payment_ref')->setTitle('Reference #')->isSearchable()->isSortable();
+        $table->addColumn('firstname')->setTitle('First name')->isSearchable()->isSortable();
+        $table->addColumn('lastname')->setTitle('Last name')->isSearchable()->isSortable();
+        $table->addColumn('email')->setTitle('Email')->isSearchable()->isSortable();
+        $table->addColumn('source')->setTitle('From')->isSearchable()->isSortable()->setCustomTable('trips');
+        $table->addColumn('destination')->setTitle('To')->isSearchable()->isSortable()->setCustomTable('trips');
+        $table->addColumn('price')->setTitle('Price')->isSearchable()->isSortable()->setCustomTable('trips');
+        $table->addColumn('status')->setTitle('Status')->isCustomHtmlElement(function($entity, $column){
+            return $entity['status']== Booking::$STATUS_CONFIRMED?
+                '<div class="label label-success">'.'Paid'.'</div>':'<div class="label label-success">'.$column['status'].'</div>';
+        });
+        return $table;
     }
 }

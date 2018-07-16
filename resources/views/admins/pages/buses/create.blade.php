@@ -31,16 +31,16 @@
 
 @section('content-body')
     <section class="content container-fluid">
-        <div class="box box-primary">
-            <div class="box-header">
+        <div class="nav-tabs-custom">
+            <div class="nav nav-tabs">
                 @if(isset($bus))
-                    <h4>{{__('admin_page_buses.form_title_edit')}}</h4>
+                    @include('admins.pages.buses.buses_edit_panel')
                 @else
-                    <h4>{{__('admin_page_buses.form_title_create')}}</h4>
+                   {{-- <h4>{{__('admin_page_buses.form_title_create')}}</h4>--}}
                 @endif
 
             </div>
-            <div class="box-body">
+            <div class="tab-content">
                 <form class="form-horizontal" role="form" method="post"
                       action="{{isset($bus)?route('admin.buses.update', $bus->id):route('admin.buses.store')}}"
                       accept-charset="UTF-8" style="padding: 20px">

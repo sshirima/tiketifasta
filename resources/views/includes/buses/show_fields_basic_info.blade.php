@@ -20,24 +20,8 @@
 </div>
 
 <div class="form-group">
-    {!! Form::label('operation_start', __('merchant_pages.page_bus_edit_field_label_operation_period'), ['class'=>'col-sm-5 control-label', 'for'=>'operation_start']) !!}
+    {!! Form::label('class', __('admin_pages.page_bus_show_fields_label_class'), ['class'=>'col-sm-5 control-label', 'for'=>'class']) !!}
     <div class="col-sm-7">
-        <div class="form-group">
-            <div class="col-sm-10">
-                <div class="form-group">
-                    <div class="control-label col-sm-4">{{__('merchant_pages.page_bus_edit_field_label_from')}}</div>
-                    <div class="col-sm-8">
-                        <input class="form-control" value="{{isset($bus)?$bus[\App\Models\Bus::COLUMN_OPERATION_START]:''}}" type="date" id="operation_start" name="operation_start" disabled>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="control-label col-sm-4">{{__('merchant_pages.page_bus_edit_field_label_to')}}</div>
-                    <div class="col-sm-8">
-                        <input class="form-control" value="{{isset($bus)?$bus[\App\Models\Bus::COLUMN_OPERATION_END]:''}}" type="date" id="operation_end" name="operation_end" disabled>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        <h4 ><span class="label label-default">{{$bus->class}}</span></h4>
     </div>
 </div>

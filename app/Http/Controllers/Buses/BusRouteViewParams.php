@@ -20,17 +20,24 @@ trait BusRouteViewParams
     protected $routes = 'routes';
     protected $bus = 'bus';
     protected $tripsTable = 'tripTable';
-    protected $tripDays = 'dates';
+    protected $travellingDays = 'dates';
 
     protected function getAssignRouteParams($bus, $table = null):array
     {
-        $param = array($this->routes=>$this->getRoutesSelectArray(), $this->bus=>$bus,
-            $this->tripDays=>$this->getSchedulingDates());
+        $param = array($this->routes=>$this->getRoutesSelectArray(), $this->bus=>$bus);
 
         if (!$table == null){
             $param[$this->tripsTable] = $table;
         }
         return $param;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRoutes(): string
+    {
+        return $this->routes;
     }
 
     private function getRoutesSelectArray(){

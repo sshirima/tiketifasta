@@ -2,8 +2,8 @@
 /**
  * Created by PhpStorm.
  * User: samson
- * Date: 3/11/2018
- * Time: 8:48 PM
+ * Date: 3/12/2018
+ * Time: 5:51 PM
  */
 
 namespace App\Http\Requests\Merchant;
@@ -11,10 +11,15 @@ namespace App\Http\Requests\Merchant;
 
 use App\Models\Bus;
 use App\Models\Merchant;
+use App\Models\Staff;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateBusRequest extends FormRequest
 {
+
+    const REG_NUMBER = Bus::COLUMN_REG_NUMBER;
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -22,7 +27,7 @@ class UpdateBusRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return Auth::guard('merchant')->check();
     }
 
     /**
@@ -32,14 +37,10 @@ class UpdateBusRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'route_id' => 'required|numeric|min:1',
-            'source.*' => 'required|min:1',
-            'trip_dates' => 'required',
-            'destination.*' => 'required|min:1',
-            'travelling_days.*' => 'required|min:1',
-            'depart_time.*' => 'required_with:arrival_time.*|date_format:"H:i"',
-            'arrival_time.*' => 'required_with:depart_time.*|date_format:"H:i"',
+        return[
+            Bus::COLUMN_CONDUCTOR_NAME => 'required',
+            Bus::COLUMN_DRIVER_NAME => 'required',
+            Bus::COLUMN_BUS_CONDITION => 'required',
         ];
     }
 

@@ -33,6 +33,7 @@ class BusTypeController extends BaseController
         ])->setRowsNumber(10)->enableRowsNumberSelector();
 
         $busType_table->addColumn('name')->setTitle(__('admin_pages.page_bustype_index_table_head_route_name'))->isSortable()->sortByDefault()->isSearchable()->useForDestroyConfirmation();
+
         $busType_table->addColumn('seats')->setTitle(__('admin_pages.page_bustype_index_table_head_number_of_seats'))->isSearchable()->isSortable();
 
         return view('admins.pages.bus_types.index')->with(['admin'=>auth()->user(),'table'=>$busType_table]);

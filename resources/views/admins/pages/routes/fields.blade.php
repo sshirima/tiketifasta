@@ -39,6 +39,6 @@
 <div class="form-group">
     <div class="col-sm-7 col-md-offset-5">
         {!! Form::submit(__('admin_pages.page_routes_fields_button_submit'), ['class' => 'btn btn-primary']) !!}
-        <a href="{!! route('admin.route.index') !!}" class="btn btn-default">{{__('admin_pages.page_routes_fields_button_cancel')}}</a>
+        <a href="{!! route('admin.routes.index') !!}" class="btn btn-default">{{__('admin_pages.page_routes_fields_button_cancel')}}</a>
     </div>
 </div>

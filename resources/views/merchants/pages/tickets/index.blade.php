@@ -1,37 +1,35 @@
 @extends('merchants.layouts.master')
 
 @section('title')
-    {{ __('merchant_pages.page_title_bus_seats') }}
+    {{ __('merchant_page_tickets.page_bus_index_title') }}
 @endsection
 
-@section('panel_heading')
-    @include('merchants.pages.buses.buses_edit_panel')
-@endsection
 
-@section('panel_body')
-    @include('flash::message')
+@section('content-head')
     <section class="content-header">
-        <h2 class="pull-left">{{$bus->reg_number}} seats</h2>
-        @if($bus->seats()->count() == 0)
-            <h2 class="pull-right">
-                <a class="btn btn-primary pull-right"
-                   href="{{route('merchant.bus.seats.create',$bus->id)}}">Generate seats</a>
-            </h2>
-        @endif
+        <h1>
+            {{__('merchant_page_tickets.content_header_title')}}
+            <small>{{__('merchant_page_tickets.content_header_sub_title')}}</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <a href="{{route('merchant.tickets.index')}}"> {{__('merchant_page_tickets.navigation_link_index')}}</a>
+            </li>
+            <li class="active">{{__('merchant_page_tickets.navigation_link_view')}}</li>
+        </ol>
     </section>
-    <div class="content">
-        <div class="clearfix"></div>
-        @include('flash::message')
-        <div class="clearfix"></div>
-        <div class="box box-primary">
-            <div class="box-body">
-                @if($bus->seats()->count() == 0)
-                    Currently no seats exists for this bus, please click on generate button to generate the seats
-                @else
-                    {!! $table->render() !!}
-                @endif
+@endsection
+
+@section('content-body')
+    @include('flash::message')
+    <section class="content container-fluid">
+        <div class="nav-tabs-custom">
+            <div class="nav nav-tabs">
+                @include('merchants.pages.tickets.tickets_panel')
+            </div>
+            <div class="tab-content">
+                {!! $ticketsTable->render() !!}
             </div>
         </div>
-    </div>
-
+    </section>
 @endsection

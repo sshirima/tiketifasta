@@ -23,6 +23,11 @@ Route::get('logout', 'Users\Auth\LoginController@logout')->name('logout');
 Route::get('register', 'Users\Auth\RegisterController@showRegistrationForm')->name('register');
 Route::post('register', 'Users\Auth\RegisterController@register')->name('register.submit');
 
+Route::get('search/bus', 'Users\Bookings\SelectBusController@search')->name('booking.buses.search');
+Route::get('bus/{b_id}/schedule/{s_id}/trip/{t_id}/select/seat', 'Users\Bookings\SelectBusController@selectBus')->name('booking.buses.select');
+Route::get('bus/{b_id}/schedule/{s_id}/trip/{t_id}/booking-info', 'Users\Bookings\SelectBusController@selectSeat')->name('booking.seat.select');
+Route::get('bus/{b_id}/schedule/{s_id}/trip/{t_id}/booking/store', 'Users\Bookings\SelectBusController@bookingStore')->name('booking.store');
+
 // Password Reset Routes...
 Route::get('password/change', 'Users\Auth\ChangePasswordController@showForm')->name('password.change');
 Route::post('password/change', 'Users\Auth\ChangePasswordController@changePassword')->name('password.update');
@@ -30,12 +35,6 @@ Route::get('password/reset', 'Users\Auth\ForgotPasswordController@showLinkReques
 Route::post('password/email', 'Users\Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
 Route::get('password/reset/{token}', 'Users\Auth\ResetPasswordController@showResetForm')->name('password.reset');
 Route::post('password/reset', 'Users\Auth\ResetPasswordController@reset')->name('password.reset');
-
-Route::get('booking/select/trip', 'Users\BookingController@selectTimetable')->name('booking.select.timetable');
-Route::get('booking/select/bus', 'Users\BookingController@selectBus')->name('booking.select.bus');
-Route::get('booking/schedules/{id}/sub-route/{s_id}', 'Users\BookingController@selectSeat')->name('booking.select.seats');
-Route::get('booking/schedules/{id}/sub-route/{s_id}/user-info', 'Users\BookingController@prepareBooking')->name('booking.details.prepare');
-Route::post('booking/details/{id}/sub-route/{s_id}/store', 'Users\BookingController@storeBookingDetails')->name('booking.details.store');
 
 Route::prefix('user')->group(function () {
     Route::get('profile/view', 'User\ProfileController@show')->name('user.profile.show');
@@ -72,8 +71,14 @@ Route::prefix('admin')->group(function () {
     Route::get('merchants/create', 'Admins\MerchantController@create')->name('admin.merchant.create');
     Route::post('merchants/store', 'Admins\MerchantController@store')->name('admin.merchant.store');
     Route::get('merchants/{id}/show', 'Admins\MerchantController@show')->name('admin.merchant.show');
+    Route::get('merchants/{id}/edit', 'Admins\MerchantController@edit')->name('admin.merchant.edit');
+    Route::put('merchants/{id}/update', 'Admins\MerchantController@update')->name('admin.merchant.update');
     Route::get('merchants/{id}/delete', 'Admins\MerchantController@delete')->name('admin.merchant.delete');
     Route::delete('merchants/{id}', 'Admins\MerchantController@remove')->name('admin.merchant.remove');
+    Route::get('merchants/{id}/authorize', 'Admins\MerchantController@authorizeMerchant')->name('admin.merchant.authorize');
+    Route::post('merchants/{id}/enable', 'Admins\MerchantController@enableMerchant')->name('admin.merchant.enable');
+    Route::post('merchants/{id}/disable', 'Admins\MerchantController@disableMerchant')->name('admin.merchant.disable');
+
     //Location CRUD route
     Route::get('locations', 'Admins\LocationController@index')->name('admin.location.index');
     Route::get('locations/create', 'Admins\LocationController@create')->name('admin.location.create');
@@ -81,15 +86,16 @@ Route::prefix('admin')->group(function () {
     Route::get('locations/{id}/show', 'Admins\LocationController@show')->name('admin.location.show');
     Route::get('locations/{id}/delete', 'Admins\LocationController@delete')->name('admin.location.delete');
     Route::delete('locations/{id}', 'Admins\LocationController@remove')->name('admin.location.remove');
+
     //Bus routes routes CRUD
-    Route::get('routes', 'Admins\RouteController@index')->name('admin.route.index');
-    Route::get('routes/create', 'Admins\RouteController@create')->name('admin.route.create');
-    Route::post('routes/store', 'Admins\RouteController@store')->name('admin.route.store');
-    Route::get('routes/{id}/show', 'Admins\RouteController@show')->name('admin.route.show');
-    Route::get('routes/{id}/edit', 'Admins\RouteController@edit')->name('admin.route.edit');
-    Route::put('routes/{id}', 'Admins\RouteController@edit')->name('admin.route.update');
-    Route::get('routes/{id}/delete', 'Admins\RouteController@delete')->name('admin.route.delete');
-    Route::delete('routes/{id}', 'Admins\RouteController@remove')->name('admin.route.remove');
+    Route::get('routes', 'Admins\RouteController@index')->name('admin.routes.index');
+    Route::get('routes/create', 'Admins\RouteController@create')->name('admin.routes.create');
+    Route::post('routes/store', 'Admins\RouteController@store')->name('admin.routes.store');
+    Route::get('routes/{id}/show', 'Admins\RouteController@show')->name('admin.routes.show');
+    Route::get('routes/{id}/edit', 'Admins\RouteController@edit')->name('admin.routes.edit');
+    Route::put('routes/{id}', 'Admins\RouteController@edit')->name('admin.routes.update');
+    Route::get('routes/{id}/delete', 'Admins\RouteController@delete')->name('admin.routes.delete');
+    Route::delete('routes/{id}remove', 'Admins\RouteController@remove')->name('admin.routes.remove');
     //Bus type management routes
     Route::get('bustype', 'Admins\BusTypeController@index')->name('admin.bustype.index');
     Route::get('bustype/create', 'Admins\BusTypeController@create')->name('admin.bustype.create');
@@ -98,43 +104,29 @@ Route::prefix('admin')->group(function () {
     Route::get('bustype/{id}/delete', 'Admins\BusTypeController@delete')->name('admin.bustype.delete');
     Route::delete('bustype/{id}', 'Admins\BusTypeController@remove')->name('admin.bustype.remove');
     //Buses management routes
-    Route::get('buses', 'Admins\Buses\BusController@index')->name('admin.buses.index');
-    Route::get('buses/create', 'Admins\Buses\BusController@create')->name('admin.buses.create');
-    Route::post('buses/store', 'Admins\Buses\BusController@store')->name('admin.buses.store');
-    Route::get('buses/{id}/edit', 'Admins\Buses\BusController@edit')->name('admin.buses.edit');
-    Route::put('buses/{id}/update', 'Admins\Buses\BusController@update')->name('admin.buses.update');
-
+    Route::get('buses', 'Admins\BusController@index')->name('admin.buses.index');
+    Route::get('buses/create', 'Admins\BusController@create')->name('admin.buses.create');
+    Route::post('buses/store', 'Admins\BusController@store')->name('admin.buses.store');
+    Route::get('buses/{id}/edit', 'Admins\BusController@edit')->name('admin.buses.edit');
+    Route::put('buses/{id}/update', 'Admins\BusController@update')->name('admin.buses.update');
     Route::get('buses/{id}/show', 'Admins\BusController@show')->name('admin.buses.show');
-    Route::get('buses/{id}/delete', 'Admins\BusController@delete')->name('admin.buses.delete');
-    Route::delete('buses/{id}', 'Admins\BusController@remove')->name('admin.buses.remove');
-    //Merchant schedule routes
-    Route::get('schedules', 'Admins\ScheduleController@index')->name('admin.schedules.index');
-    Route::get('operation-day', 'Admins\ScheduleController@index')->name('admin.bus-route.approve');
-    //Bookings
+    Route::delete('buses/{id}/destroy', 'Admins\BusController@destroy')->name('admin.buses.destroy');
+    Route::get('buses/{id}/authorize', 'Admins\BusController@authorizeBus')->name('admin.buses.authorizes');
+    Route::post('buses/{id}/enable', 'Admins\BusController@enableBus')->name('admin.buses.enable');
+    Route::post('buses/{id}/disable', 'Admins\BusController@disableBus')->name('admin.buses.disable');
+
+    Route::get('buses/{id}/routes', 'Admins\Buses\BusRouteController@showRoute')->name('admin.buses.route.show');
+    Route::get('buses/{id}/schedules', 'Admins\Buses\BusScheduleController@index')->name('admin.buses.schedules');
+    Route::get('buses/{id}/schedules/events', 'Merchants\Buses\BusSchedulingController@busSchedules');
+
     Route::get('bookings', 'Admins\BookingController@index')->name('admin.bookings.index');
-    //Inactive routes
-    Route::get('inactive/bus-route', 'Admins\ApproveRouteController@showBusRoutes')->name('admin.bus-route.inactive.show');
-    Route::get('bus-route', 'Admins\BusRouteController@index')->name('admin.bus-routes.index');
-    Route::get('approvals/inactive/bus-route/{id}/approve', 'Admins\ApproveRouteController@approveBusRoute')->name('admin.bus-route.approve');
-    Route::get('approvals/inactive/bus-route/{id}/confirm', 'Admins\ApproveRouteController@approveConfirm')->name('admin.bus-route.approve.confirm');
-    Route::post('approvals/inactive/bus-route/{id}/authorize', 'Admins\ApproveRouteController@authorizeBusRoute')->name('admin.bus-route.authorize');
-    //Admin approvals
-    Route::get('approvals', 'Admins\ApprovalsController@index')->name('admin.approvals.index');
-    Route::get('approvals/bus-routes', 'Admins\ApprovalsController@busRoutes')->name('admin.approvals.bus-routes');
-    Route::get('approvals/reassign-schedule', 'Admins\ApprovalsController@reassignedSchedules')->name('admin.approvals.reassigned-schedules');
-    Route::get('approvals/reassign-schedule/{id}/show', 'Admins\ApprovalsController@showReassignedSchedule')->name('admin.approvals.reassigned-schedules.show');
-    Route::get('approvals/reassign-schedule/{id}/bookings', 'Admins\ApprovalsController@showBookings')->name('admin.approvals.reassigned-schedules.bookings');
-    Route::post('approvals/reassign-schedule/{id}/confirm', 'Admins\ApprovalsController@confirm')->name('admin.approvals.reassigned-schedules.confirm');
 
-    Route::get('ticket_prices', 'Admins\TicketPriceController@index')->name('admin.ticket_prices.index');
-    Route::get('ticket_prices/create', 'Admins\TicketPriceController@create')->name('admin.ticket_prices.create');
-    Route::get('ticket_prices/{id}/edit', 'Admins\TicketPriceController@edit')->name('admin.ticket_prices.edit');
-    Route::post('ticket_prices/{id}/edit', 'Admins\TicketPriceController@update')->name('admin.ticket_prices.update');
-    Route::post('ticket_prices/create', 'Admins\TicketPriceController@store')->name('admin.ticket_prices.store');
-    Route::get('ticket_prices/{id)/delete', 'Admins\TicketPriceController@remove')->name('admin.ticket_prices.delete');
-    Route::delete('ticket_prices/{id)/remove', 'Admins\TicketPriceController@remove')->name('admin.ticket_prices.remove');
-    Route::get('trips', 'Admins\SubRouteController@index')->name('admin.sub_routes.index');
+    Route::get('schedules', 'Admins\ScheduleController@index')->name('admin.schedules.index');
 
+    Route::get('payment-accounts', 'Admins\SystemPaymentController@index')->name('admin.payments-accounts.index');
+    Route::get('payment-accounts/create', 'Admins\SystemPaymentController@create')->name('admin.payments-accounts.create');
+    Route::post('payment-accounts/store', 'Admins\SystemPaymentController@store')->name('admin.payments-accounts.store');
+    Route::get('payment-accounts/{id}/destroy', 'Admins\ScheduleController@destroy')->name('admin.payments-accounts.destroy');
 
     //Admin account CRUD routes (V2.0)
     Route::get('accounts/admins', 'Admins\AdminAccountsController@index')->name('admin.admin_accounts.index');
@@ -160,9 +152,6 @@ Route::prefix('merchant')->group(function () {
     Route::get('password/reset/{token}', 'Merchants\Auth\ResetPasswordController@showResetForm')->name('merchant.password.reset');
     Route::post('password/reset', 'Merchants\Auth\ResetPasswordController@reset')->name('merchant.password.reset');
 //Profile management routes
-    Route::get('profile/view', 'Merchants\ProfileController@show')->name('merchant.profile.show');
-    Route::get('profile/edit', 'Merchants\ProfileController@edit')->name('merchant.profile.edit');
-    Route::put('profile/update/{id}', 'Merchants\ProfileController@update')->name('merchant.profile.update');
 
 //Staff management routes
     Route::get('staff', 'Merchants\StaffController@index')->name('merchant.staff.index');
@@ -173,43 +162,36 @@ Route::prefix('merchant')->group(function () {
     Route::delete('staff/{id}', 'Merchants\StaffController@remove')->name('merchant.staff.remove');
 
     //Buses CRUD
-    Route::get('buses', 'Merchants\Buses\BusController@index')->name('merchant.buses.index');
-    Route::get('buses/{id}/edit', 'Merchants\Buses\BusController@edit')->name('merchant.buses.edit');
-    Route::put('buses/{id}/edit', 'Merchants\Buses\BusController@update')->name('merchant.buses.update');
-    Route::get('buses/{id}/show', 'Merchants\Buses\BusController@show')->name('merchant.buses.show');
+    Route::get('buses', 'Merchants\BusController@index')->name('merchant.buses.index');
+    Route::get('buses/{id}/edit', 'Merchants\BusController@edit')->name('merchant.buses.edit');
+    Route::put('buses/{id}/edit', 'Merchants\BusController@update')->name('merchant.buses.update');
+    Route::get('buses/{id}/show', 'Merchants\BusController@show')->name('merchant.buses.show');
 
     Route::get('buses/{id}/routes/assign', 'Merchants\Buses\BusRoutesController@assignRoute')->name('merchant.buses.assign_routes');
     Route::post('buses/{id}/routes/assign', 'Merchants\Buses\BusRoutesController@saveBusRoute')->name('merchant.buses.assign_routes');
 
+    Route::post('buses/{id}/routes/trip/{t_id}/update/time', 'Merchants\Buses\BusRoutesController@updateTripTime');
+
+    Route::get('buses/{id}/price/assign', 'Merchants\Buses\TripPriceController@assignPrice')->name('merchant.buses.assign_price');
+    Route::post('buses/{id}/price/trip/{t_id}/save', 'Merchants\Buses\TripPriceController@saveTripPrice')->name('merchant.buses.save_price');
+
     Route::get('buses/{id}/routes/assign/{r_id}/locations', 'Merchants\Buses\BusRoutesController@getRouteLocations')->name('merchant.buses.routes.locations');
 
-    Route::delete('buses/{id}', 'Merchants\Buses\BusRoutesController@assignRoute')->name('merchant.buses.remove');
-    //Out of service routes
-    Route::get('buses/{id}/out-of-service', 'Merchants\OutOfServiceController@index')->name('merchant.buses.oos.index');
-    Route::get('buses/{id}/out-of-service/confirm', 'Merchants\OutOfServiceController@confirm')->name('merchant.buses.oos.confirm');
-    Route::post('buses/{id}/out-of-service/change', 'Merchants\OutOfServiceController@change')->name('merchant.buses.oos.change');
-    Route::get('buses/{id}/out-of-service/{scheduleId}/reassign', 'Merchants\ReassignBusController@showReplacement')->name('merchant.buses.oos.reassign');
-    Route::get('buses/{id}/out-of-service/{scheduleId}/reassign/select', 'Merchants\ReassignBusController@confirmReassign')->name('merchant.buses.oos.reassign.select');
-    Route::post('buses/{id}/out-of-service/{scheduleId}/reassign/confirm', 'Merchants\ReassignBusController@reassign')->name('merchant.buses.oos.reassign.confirm');
+    Route::get('buses/{id}/schedules', 'Merchants\Buses\BusSchedulingController@create')->name('merchant.buses.schedules');
+    Route::get('buses/{id}/schedules/create', 'Merchants\Buses\BusSchedulingController@create')->name('merchant.buses.schedules.create');
+    Route::post('buses/{id}/schedules/create', 'Merchants\Buses\BusSchedulingController@store')->name('merchant.buses.schedules.store');
+    Route::get('buses/{id}/schedules/events', 'Merchants\Buses\BusSchedulingController@busSchedules');
 
-    //Seats routes
-    Route::get('buses/{id}/seats', 'Merchants\SeatController@index')->name('merchant.bus.seats');
-    Route::get('buses/{id}/seats/create', 'Merchants\SeatController@create')->name('merchant.bus.seats.create');
+    Route::get('buses/{id}/schedule/assign', 'Merchants\ScheduleController@assignSchedule');
 
-    //Timetables route
-    Route::get('timetables', 'Merchants\TimetableController@index')->name('merchant.timetable.index');
-    Route::get('seats', 'Merchants\TimetableController@seatView');
-    //Ticket prices routes
-    Route::get('buses/{id}/ticket-prices', 'Merchants\TicketPriceController@index')->name('merchant.ticket_price.index');
-    Route::get('ticket-prices/{id}/create', 'Merchants\TicketPriceController@create')->name('merchant.ticket_price.create');
-    Route::post('ticket-prices/{id}/create', 'Merchants\TicketPriceController@store')->name('merchant.ticket_price.store');
-    Route::get('ticket-prices/{id}/edit', 'Merchants\TicketPriceController@edit')->name('merchant.ticket_price.edit');
-    Route::post('ticket-prices/{id}/edit', 'Merchants\TicketPriceController@update')->name('merchant.ticket_price.update');
-    Route::delete('buses/{bus_id}/ticket-prices/{id}/delete', 'Merchants\TicketPriceController@delete')->name('merchant.ticket_price.delete');
-
-    //Merchant schedule routes
+    //Schedules
     Route::get('schedules', 'Merchants\ScheduleController@index')->name('merchant.schedules.index');
-    Route::get('buses/{id}/schedules', 'Merchants\ScheduleController@busSchedules')->name('merchant.bus.schedules');
+    Route::get('schedules/{id}/remove', 'Merchants\ScheduleController@index')->name('merchant.schedules.remove');
+    Route::get('schedules/create', 'Merchants\ScheduleController@create')->name('merchant.schedules.create');
+
     //Bookings
     Route::get('bookings', 'Merchants\BookingController@index')->name('merchant.bookings.index');
+
+    //Tickets
+    Route::get('tickets', 'Merchants\TicketController@index')->name('merchant.tickets.index');
 });

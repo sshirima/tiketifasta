@@ -23,9 +23,9 @@
     <section class="content container-fluid">
         <div class="box box-danger">
             <div class="box-header">
-                <h2>
+                <h5>
                     Confirm account deletion
-                </h2>
+                </h5>
             </div>
             <div class="box-body">
                 <div class="form-horizontal">

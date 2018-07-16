@@ -1,171 +1,47 @@
-@extends('users.layouts.master')
+@extends('users.layouts.master_v2')
 
 @section('title')
     {{ __('user_pages.page_title_booking_details') }}
 @endsection
 
-@section('contents')
-    <section class="content-header ">
-        <h2 >{{__('user_pages.page_booking_details_form_title')}}</h2>
 
-    </section>
-    <div class="content">
-        <div class="clearfix"></div>
+@section('content')
+    <section class="showcase">
         @include('flash::message')
         @include('includes.errors.message')
-        <div class="clearfix"></div>
-        <div class="box box-primary">
-            <div class="box-body">
-                <div class="row">
-                    <div class="container col-md-6 col-md-offset-1">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h4>
-                                    Journey
-                                </h4>
-                            </div>
-                            <div class="panel-body">
-                                <div class="row">
-                                    <div class="container">
-                                        <div >Date: </div>
-                                        <div >
-                                            <strong>{{$schedule->day->date}}}</strong>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="container">
-                                    <div > Depart from: </div>
-                                    <div >
-                                        <strong>{{$schedule->busRoute->subRoutes[0]->sourceLocation->name}}}</strong> on <strong> {{$schedule->busRoute->subRoutes[0]->depart_time}} </strong>
-                                    </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="container">
-                                    <div > Arrive  at: </div>
-                                    <div >
-                                        <strong>{{$schedule->busRoute->subRoutes[0]->destinationLocation->name}}}</strong> on <strong> {{$schedule->busRoute->subRoutes[0]->arrival_time}}} </strong>
-                                    </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="container">
-                                    <div > Bus info: </div>
-                                    <div >
-                                        <strong>{{$schedule->busRoute->bus->merchant->name}}}</strong>  <strong> {{' ('.$schedule->busRoute->bus->reg_number.') '}} </strong>
-                                    </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
+        <div class="container-fluid p-0">
+            <div class="row no-gutters">
+                <div class="col-lg-6 order-lg-1 my-auto showcase-text">
+                    <div class="text-center">
+                        @include('users.pages.bookings.booking_details_fields')
                     </div>
-                    <div class="container col-md-4">
-
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h4>
-                                    Tickets
-                                </h4>
-                            </div>
-                            <div class="panel-body">
-                                <div class="row">
-                                    <div class="container">
-                                    <div > Ticket type: </div>
-                                    <div >
-                                        <strong>{{$schedule->busRoute->subRoutes[0]->ticketPrice->ticket_type}}</strong>
-                                    </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="container">
-                                    <div > Seat name: </div>
-                                    <div >
-                                        <strong>{{$schedule->seat}}</strong>
-                                    </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="container">
-                                    <div > Ticket price: </div>
-                                    <div >
-                                        <strong>{{$schedule->busRoute->subRoutes[0]->ticketPrice->price}}</strong>  <strong> {{' (Tshs) '}} </strong>
-                                    </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
                 </div>
-                <div class="row">
-                    {!! Form::open(['route' => ['booking.details.store',$schedule->id, $schedule->busRoute->subRoutes[0]->id], 'method' => 'post']) !!}
-                    <div class="container col-md-6 col-md-offset-1">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h4>
-                                    Personal information
-                                </h4>
-                            </div>
-                            <div class="panel-body">
-                                    @include('users.pages.bookings.booking_details_fields')
-                            </div>
-
+                <div class="col-lg-6 order-lg-1 my-auto showcase-text">
+                    <div>
+                        <h3 class="mb-5">Trip information</h3>
+                        <div>
+                            <span>Date: </span><span><strong>{{$trip->date}}</strong></span>
+                        </div>
+                        <div>
+                            <span>Depart time: </span><span><strong>{{$trip->depart_time}}</strong></span>
+                        </div>
+                        <div>
+                            <span>Arrival time: </span><span><strong>{{$trip->arrival_time}}</strong></span>
+                        </div>
+                        <div>
+                            <span>Bus info: </span><span><strong>{{$trip->bus->merchant->name}}</strong>  <strong> {{' ('.$trip->bus->reg_number.') '}} </strong></span>
                         </div>
                     </div>
-                    <div class="container col-md-4">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h4>
-                                    Payments
-                                </h4>
-                            </div>
-                            <div class="panel-body">
-                                <div class="row">
-                                    <div class="container">
-                                        <div > Ticket price: </div>
-                                        <div >
-                                            <strong>1 ticket</strong><strong>{{$schedule->busRoute->subRoutes[0]->ticketPrice->price}}</strong>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="container">
-                                        <div > Tax: </div>
-                                        <div >
-                                            <strong>0 (Tsh)</strong>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="container">
-                                        <div > Total: </div>
-                                        <div >
-                                            <strong>{{$schedule->busRoute->subRoutes[0]->ticketPrice->price+0 .' (Tshs)'}}</strong>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-
+                    <div>
+                        <div>
+                            <span>Seat name: </span><span><strong>{{$trip->bus->seat_name}}</strong></span>
                         </div>
-                        <div class="row">
-                            <div class="container">
-                                <div class="checkbox">
-                                    <label>
-                                        <input name="agree_terms" type="checkbox">
-                                        <a href="#">{{__('page_auth_register.label_terms_conditions')}}</a>
-                                    </label>
-                                </div>
-                            </div>
+                        <div>
+                            <span>Ticket price: </span><span><strong>{{$trip->price}}</strong>  <strong> {{' (Tshs) '}} </strong></span>
                         </div>
-                        <button type="submit" class="btn btn-primary">Submit information</button>
                     </div>
-                    {!! Form::close() !!}
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 @endsection

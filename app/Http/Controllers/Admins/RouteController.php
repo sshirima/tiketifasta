@@ -20,10 +20,10 @@ class RouteController extends BaseController
     const VIEW_INDEX = 'admins.pages.routes.index';
     const VIEW_CREATE = 'admins.pages.routes.create';
 
-    const ROUTE_INDEX = 'admin.route.index';
-    const ROUTE_CREATE = 'admin.route.create';
-    const ROUTE_STORE = 'admin.route.store';
-    const ROUTE_REMOVE = 'admin.route.remove';
+    const ROUTE_INDEX = 'admin.routes.index';
+    const ROUTE_CREATE = 'admin.routes.create';
+    const ROUTE_STORE = 'admin.routes.store';
+    const ROUTE_REMOVE = 'admin.routes.remove';
 
     const PARAM_TABLE = 'table';
     const PARAM_LOCATIONS = 'locations';

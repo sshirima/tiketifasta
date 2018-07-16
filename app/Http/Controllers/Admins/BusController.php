@@ -1,148 +1,237 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: samson
- * Date: 3/13/2018
- * Time: 7:53 PM
+ * User: sshirima
+ * Date: 6/1/2018
+ * Time: 12:49 PM
  */
 
 namespace App\Http\Controllers\Admins;
 
-
+use App\Http\Controllers\Buses\BusBaseController;
+use App\Http\Requests\Admin\Buses\UpdateBusRequest;
 use App\Http\Requests\Admin\CreateBusRequest;
 use App\Models\Bus;
-use App\Models\Merchant;
-use App\Models\Seat;
-use App\Repositories\Admin\BusRepository;
-use App\Repositories\Admin\BusTypeRepository;
-use App\Repositories\Admin\MerchantRepository;
-use App\Repositories\Merchant\SeatRepository;
+use App\Repositories\Admin\Buses\BusRepository;
+use App\Repositories\Admin\Buses\BusSeatRepository;
+use App\Services\Buses\AuthorizeBuses;
+use App\Services\Merchants\CheckMerchantContractStatus;
 use Illuminate\Http\Request;
-use Laracasts\Flash\Flash;
+use Okipa\LaravelBootstrapTableList\TableList;
 
 class BusController extends BaseController
 {
-    const PARAM_TABLE = 'table';
-    const PARAM_BUS_TYPES = 'busTypes';
-    const PARAM_MERCHANTS = 'merchants';
+    use BusBaseController, CheckMerchantContractStatus, AuthorizeBuses;
 
-    const VIEW_INDEX = 'admins.pages.buses.index';
-    const VIEW_CREATE = 'admins.pages.buses.create';
+    protected $seatRepository;
 
-    const ROUTE_INDEX = 'admin.buses.index';
-    const ROUTE_CREATE = 'admin.buses.create';
-    const ROUTE_REMOVE = 'admin.buses.remove';
-    const ROUTE_STORE = 'admin.buses.store';
-
-    const MERCHANT_NAME = 'merchant_name';
-    const BUS_STATE = 'bus_state';
-
-    private $entityColumns = array(Bus::ID.' as '.Bus::COLUMN_ID,Bus::REG_NUMBER.' as '.Bus::COLUMN_REG_NUMBER,
-        Merchant::NAME.' as '.self::MERCHANT_NAME,Bus::STATE. ' as '.self::BUS_STATE,Bus::COLUMN_OPERATION_START,Bus::COLUMN_OPERATION_END);
-
-
-    private $busRepository;
-    private $seatRepo;
-    private $busTypeRepo;
-    private $merchantRepo;
-
-    public function __construct(BusRepository $busRepository, SeatRepository $seatRepository,MerchantRepository $merchantRepository,BusTypeRepository $busTypeRepository)
+    /**
+     * BusController constructor.
+     * @param BusRepository $busRepository
+     * @param BusSeatRepository $seatRepository
+     */
+    public function __construct(BusRepository $busRepository, BusSeatRepository $seatRepository)
     {
         parent::__construct();
-        $this->merchantRepo = $merchantRepository;
-        $this->busTypeRepo = $busTypeRepository;
         $this->busRepository = $busRepository;
-        $this->seatRepo = $seatRepository;
+        $this->seatRepository = $seatRepository;
+        $this->indexPage = 'admins.pages.buses.index';
     }
 
-    public function index(Request $request)
-    {
-        $this->getDefaultViewData();
-
-        $this->viewData[self::PARAM_TABLE]= $this->getBusesTable($request);
-
-        return view(self::VIEW_INDEX)->with($this->viewData);
+    /**
+     * @param Request $request
+     * @return $this
+     */
+    public function index(Request $request){
+        return view('admins.pages.buses.index')->with(['table'=>$this->createBusesTable()]);
     }
 
-    public function create()
-    {
-        $this->getDefaultViewData();
-
-        $this->viewData[self::PARAM_BUS_TYPES]= $this->busTypeRepo->getSelectBusTypeData(array(__('admin_pages.page_routes_create_fields_select_route_default')));
-
-        $this->viewData[self::PARAM_MERCHANTS]= $this->merchantRepo->getSelectMerchantData(array(__('admin_pages.page_routes_create_fields_select_merchant_default')));
-
-        return view(self::VIEW_CREATE)->with($this->viewData);
+    public function create(){
+        return view('admins.pages.buses.create')->with($this->getCreateParams());
     }
+
 
     public function store(CreateBusRequest $request)
     {
         $bus = $this->busRepository->create($request->all());
 
-        if ($bus->seats()->count() == 0){
-            Seat::createBusSeats($bus->id,$bus->bustype_id, $this->seatRepo);
-        }
+        $this->busRepository->createBusSeats($bus,$this->seatRepository);
 
-        return redirect(route(self::ROUTE_INDEX));
+        $this->createFlashResponse($bus,__('admin_page_buses.create_success'),__('admin_page_buses.create_fail'));
+
+        return redirect(route('admin.buses.index'));
     }
 
-    public function remove($id)
-    {
+    public function edit($id){
         $bus = $this->busRepository->findWithoutFail($id);
 
-        if (empty($bus)) {
-            $this->getDefaultViewErrorData(__('merchant_pages.bus_retrieve_error'));
-            return redirect()->back()->withErrors($this->viewErrorData);
-        }
-
-        //Check if all the conditions for deletion meet
-
-        Flash::success(__('merchant_pages.bus_delete_success'));
-
-        return redirect(route(self::ROUTE_INDEX));
+        return view('admins.pages.buses.create')->with($this->getEditParams($bus));
     }
 
     /**
-     * @param Request $request
+     * @param UpdateBusRequest $request
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function update(UpdateBusRequest $request, $id){
+
+        $this->busRepository->update($request->all(),$id);
+
+        return redirect(route('admin.buses.index'));
+    }
+
+    /**
+     * @param $id
      * @return mixed
      */
-    private function getBusesTable(Request $request){
+    public function show($id){
 
-        $this->busRepository->setReturnColumn($this->entityColumns);
-
-        $this->busRepository->setConditions($request);
-
-        $routeTable = $this->busRepository->instantiateBusTable();
-
-        $this->setBusTableColumns($routeTable);
-
-        return $routeTable;
+        return view('admins.pages.buses.show')->with([
+            $this->bus =>$this->busRepository->getBusInformation($id),
+            $this->busTypes=>$this->getBusTypeSelectArray(),
+            $this->merchants=>$this->getMerchantSelectArray(),
+            $this->conditions=>$this->getBusConditionArray()
+        ]);
     }
+
+    public function destroy($id){
+        return 'buses';
+    }
+    /**
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function authorizeBus(Request $request, $id){
+
+        $bus = $this->busRepository->with(['merchant','route','trips'])->findWithoutFail($id);
+
+        if(isset($bus)){
+            $bus->merchant = $this->getMerchantContractStatus($bus->merchant);
+
+            $bus = $this->checkTripPrices($bus);
+        }
+
+        return view('admins.pages.buses.authorize')->with(['bus'=>$bus]);
+    }
+
+
+    public function enableBus(Request $request, $id){
+
+        $bus = $this->busRepository->findWithoutFail($id);
+
+        $this->busEnable($bus);
+
+        return redirect(route('admin.buses.index'));
+    }
+
+    public function disableBus(Request $request, $id){
+
+        $bus = $this->busRepository->findWithoutFail($id);
+
+        $this->busDisable($bus);
+
+        return redirect(route('admin.buses.index'));
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function createBusesTable()
+    {
+        $table = app(TableList::class)
+            ->setModel(Bus::class)
+            ->setRowsNumber(10)
+            ->enableRowsNumberSelector()
+            ->setRoutes([
+                'index' => ['alias' => 'admin.buses.index', 'parameters' => []],
+                'create' => ['alias' => 'admin.buses.create', 'parameters' => []],
+                'edit' => ['alias' => 'admin.buses.edit', 'parameters' => ['id']],
+                'destroy' => ['alias' => 'admin.buses.destroy', 'parameters' => ['id']],
+            ])->addQueryInstructions(function ($query) {
+                $query->select('buses.id as id','buses.reg_number as reg_number','buses.state as state',
+                    'buses.condition as condition','buses.class as class','bustypes.name as model','bustypes.seats as seats',
+                    'merchants.name as merchant_name')
+                    ->join('bustypes', 'bustypes.id', '=', 'buses.bustype_id')
+                    ->join('merchants', 'merchants.id', '=', 'buses.merchant_id');
+            });
+
+        $table = $this->setTableColumns($table);
+
+        return $table;
+    }
+
+    /**
+     * @param $table
+     * @return mixed
+     */
+    private function setTableColumns($table)
+    {
+        $table->addColumn('reg_number')->setTitle('Bus number')->useForDestroyConfirmation()->sortByDefault()->isSortable()->isSearchable();
+
+        $table->addColumn('name')->setTitle('Company')->isSortable()->isSearchable()->setCustomTable('merchants')->isCustomHtmlElement(function ($entity, $column) {
+            return $entity['merchant_name'];
+        });
+
+        $table->addColumn()->setTitle('Model')->isCustomHtmlElement(function ($entity, $column) {
+            return $entity['model'];
+        });
+
+        $table->addColumn('class')->setTitle('Class')->isSortable()->isSearchable();
+
+        $table->addColumn('condition')->setTitle('Condition')->isCustomHtmlElement(function ($entity, $column) {
+            return $this->getBusConditionStatus($entity['condition']);
+        });
+
+        $this->addBusStateColumn($table);
+
+        $table->addColumn('seats')->setTitle('No of Seats')->isSortable()->isSearchable()->setCustomTable('bustypes');
+
+        return $table;
+    }
+
     /**
      * @param $table
      */
-    public function setBusTableColumns($table): void
+    protected function addBusStateColumn($table): void
     {
-        $table->addColumn(Bus::COLUMN_REG_NUMBER)->setTitle(__('admin_pages.page_bus_index_table_head_reg_number'))->isSortable()->isSearchable()->sortByDefault()->useForDestroyConfirmation()
-            ->isCustomHtmlElement(function ($entity, $column) {
-                return $entity[Bus::COLUMN_REG_NUMBER];
+        $table->addColumn('state')->setTitle('Bus state')
+            ->isSortable()->isCustomHtmlElement(function ($entity, $column) {
+                return $this->getBusStateStatus($entity['state']);
             });
-        $table->addColumn(Merchant::COLUMN_NAME)->setTitle(__('admin_pages.page_bus_index_table_head_merchant'))->isSortable()->isSearchable()->setCustomTable(Merchant::TABLE)
-            ->isCustomHtmlElement(function ($entity, $column) {
-                return $entity[self::MERCHANT_NAME];
-            });
-        $table->addColumn(Bus::COLUMN_STATE)->setTitle(__('admin_pages.page_bus_index_table_head_state'))->isSortable()->isSearchable()
-            ->isCustomHtmlElement(function ($entity, $column) {
-                return $entity[self::BUS_STATE];
-            });
-        $table->addColumn(Bus::COLUMN_OPERATION_START)->setTitle(__('admin_pages.page_bus_index_table_head_operation_start'))
-            ->isCustomHtmlElement(function ($entity, $column) {
-                return $entity[Bus::COLUMN_OPERATION_START];
-            });
-        $table->addColumn(Bus::COLUMN_OPERATION_END)->setTitle(__('admin_pages.page_bus_index_table_head_operation_end'))
-            ->isCustomHtmlElement(function ($entity, $column) {
-                return $entity[Bus::COLUMN_OPERATION_END];
-            });
-
     }
+    /**
+     * @param $state
+     * @return string
+     */
+    protected function getBusStateStatus($state){
+        $status= '<span class="label label-default">Unknowing</span>';
+        if($state == Bus::STATE_DEFAULT_ENABLED){
+            $status = '<span class="label label-success">Enabled</span>';
+        } else if($state  == Bus::STATE_DEFAULT_DISABLED){
+            $status = '<span class="label label-danger">Disabled</span>';
+        } else if ($state  == Bus::STATE_DEFAULT_SUSPENDED){
+            $status = '<span class="label label-warning">Suspended</span>';
+        }
+
+        return $status;
+    }
+
+    /**
+     * @param $condition
+     * @return string
+     */
+    protected function getBusConditionStatus($condition){
+        $view= '<span class="label label-default">Unknown</span>';
+        if($condition == Bus::CONDITION_DEFAULT_OPERATIONAL){
+            $view = '<span class="label label-success">Operational</span>';
+        } else if($condition  == Bus::CONDITION_DEFAULT_MAINTANANCE){
+            $view = '<span class="label label-warning">In maintanance</span>';
+        } else if ($condition  == Bus::CONDITION_DEFAULT_ACCIDENT){
+            $view = '<span class="label label-danger">In accident</span>';
+        }
+
+        return $view;
+    }
+
 }

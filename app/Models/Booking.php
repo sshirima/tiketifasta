@@ -20,11 +20,14 @@ class Booking extends Model
     const COLUMN_PAYMENT = 'payment';
     const COLUMN_EMAIL = 'email';
     const COLUMN_STATUS = 'status';
+    const COLUMN_TRIP_ID = 'trip_id';
     const COLUMN_SCHEDULE_ID = 'schedule_id';
     const COLUMN_SEAT_ID = 'seat_id';
+    const COLUMN_PRICE = 'price';
     const COLUMN_SUB_ROUTE_ID = 'sub_route_id';
     const COLUMN_CREATED_AT = 'created_at';
     const COLUMN_UPDATED_AT = 'updated_at';
+    const COLUMN_PAYMENT_REF = 'payment_ref';
 
     const ID = self::TABLE.'.'.'id';
     const TITLE = self::TABLE.'.'.'title';
@@ -34,6 +37,7 @@ class Booking extends Model
     const PAYMENT = self::TABLE.'.'.'payment';
     const EMAIL = self::TABLE.'.'.'email';
     const STATUS = self::TABLE.'.'.self::COLUMN_STATUS;
+    const PAYMENT_REF = self::TABLE.'.'.self::COLUMN_PAYMENT_REF;
     const SCHEDULE_ID = self::TABLE.'.'.'schedule_id';
     const SEAT_ID = self::TABLE.'.'.'seat_id';
     const SUB_ROUTE_ID = self::TABLE.'.'.'sub_route_id';
@@ -45,8 +49,9 @@ class Booking extends Model
     public $conditions = array();
 
     protected $fillable = [
-        self::COLUMN_TITLE,self::COLUMN_FIRST_NAME,self::COLUMN_LAST_NAME,self::COLUMN_PHONE_NUMBER
-        ,self::COLUMN_PAYMENT,self::COLUMN_EMAIL,self::COLUMN_SCHEDULE_ID,self::COLUMN_SEAT_ID,self::COLUMN_SUB_ROUTE_ID
+        self::COLUMN_TITLE,self::COLUMN_FIRST_NAME,self::COLUMN_LAST_NAME,self::COLUMN_PHONE_NUMBER,self::COLUMN_PAYMENT_REF
+        ,self::COLUMN_PAYMENT,self::COLUMN_EMAIL,self::COLUMN_SCHEDULE_ID,self::COLUMN_SEAT_ID,self::COLUMN_TRIP_ID,
+        self::COLUMN_PRICE
     ];
 
     protected $table= self::TABLE;
@@ -58,8 +63,18 @@ class Booking extends Model
         return $this->belongsTo(Schedule::class,self::COLUMN_SCHEDULE_ID,Schedule::COLUMN_ID);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function seat(){
         return $this->belongsTo(Seat::class,self::COLUMN_SEAT_ID,Seat::COLUMN_ID);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function trip(){
+        return $this->belongsTo(Trip::class,self::COLUMN_TRIP_ID,Trip::COLUMN_ID);
     }
 
 

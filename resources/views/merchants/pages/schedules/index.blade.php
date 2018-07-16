@@ -1,47 +1,43 @@
 @extends('merchants.layouts.master')
 
 @section('title')
-    {{ __('merchant_pages.page_schedules_index_title') }}
+    {{ __('merchant_page_buses.page_title_bus_schedules') }}
 @endsection
 
-@section('panel_heading')
-    @include('merchants.pages.schedules.schedule_panel')
-@endsection
-
-@section('panel_body')
-    @include('flash::message')
-    @component('includes.components.info-box',['info'=> 'Here can stay some info'])@endcomponent
+@section('content-head')
     <section class="content-header">
-        <h3 >{{__('merchant_pages.page_schedules_index_form_title')}} </h3>
+        <h1>
+            {{__('merchant_page_buses.content_header_title_bus_schedules')}}
+            <small>{{__('merchant_page_buses.content_header_sub_title_bus_schedules')}}</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <a href="{{route('merchant.schedules.index')}}"> {{__('merchant_page_buses.navigation_link_index')}}</a>
+            </li>
+            <li class="active">{{__('merchant_page_buses.navigation_link_bus_schedules')}}</li>
+        </ol>
     </section>
-    <br>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <form class="navbar-form" >
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <input class="form-control" placeholder="Search" name="date" id="date" type="date" value="{{old('date')}}">
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            {{Form::select('route_id',$routes,old('route_id'),['class'=>'form-control'])}}
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        {{--<div class="form-group">
-                            {{Form::select('merchant_id',$merchants,old('merchant_id'),['class'=>'form-control'])}}
-                        </div>--}}
-                    </div>
-                    <div class="col-md-1">
-                        <button class="btn btn-primary pull-right" type="submit"><i class="glyphicon glyphicon-refresh"></i></button>
-                    </div>
-                </div>
-            </form>
+@endsection
+
+@section('content-body')
+    <section class="content container-fluid">
+        <div class="box box-success">
+            <div class="box-header">
+                Bus schedules
+            </div>
+            <div class="box-body">
+                {!! $schedulesTable->render() !!}
+            </div>
+            @csrf
         </div>
-        <div class="panel-body">
-            {!! $table->render() !!}
-        </div>
-    </div>
+    </section>
+
+@endsection
+
+@section('import_css')
+
+@endsection
+
+@section('import_js')
+
 @endsection

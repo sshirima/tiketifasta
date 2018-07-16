@@ -24,11 +24,11 @@
             <div class="box box-primary">
                 <div class="box-header">
                     <section class="content-header">
-                        <h3 class="pull-left">Merchants</h3>
-                        <h3 class="pull-right">
+                        <h5 class="pull-left">Merchants</h5>
+                        <h5 class="pull-right">
                             <a class="btn btn-primary pull-right"
                                href="{{route('admin.merchant.create')}}">Add merchant</a>
-                        </h3>
+                        </h5>
                     </section>
                 </div>
                 <div class="box-body">

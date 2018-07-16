@@ -5,7 +5,7 @@
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
 
         <div class="container">
-            <a class="navbar-brand" href="{{route('user.home')}}"><b>Admin</b>LTE</a>
+            <a class="navbar-brand" href="{{route('user.home')}}"><b>ticket</b>FASTER</a>
             <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>

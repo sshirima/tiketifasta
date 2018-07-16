@@ -45,24 +45,6 @@ trait BusBaseController
 
         return $table;
     }
-
-    /**
-     * @param $state
-     * @return string
-     */
-    protected function getBusStateStatus($state){
-        $status= '<span class="label label-default">Unknowing</span>';
-        if($state == Bus::STATE_DEFAULT_ENABLED){
-            $status = '<span class="label label-success">Operational</span>';
-        } else if($state  == Bus::STATE_DEFAULT_DISABLED){
-            $status = '<span class="label label-danger">Non operational</span>';
-        } else if ($state  == Bus::STATE_DEFAULT_SUSPENDED){
-            $status = '<span class="label label-warning">Suspended</span>';
-        }
-
-        return $status;
-    }
-
     /**
      * @param $table
      */
@@ -135,4 +117,23 @@ trait BusBaseController
                 return $this->getBusStateStatus($entity[Bus::COLUMN_STATE]);
             });
     }
+
+    /**
+     * @param $state
+     * @return string
+     */
+    protected function getBusStateStatus($state){
+        $status= '<span class="label label-default">Unknowing</span>';
+        if($state == Bus::STATE_DEFAULT_ENABLED){
+            $status = '<span class="label label-success">Operational</span>';
+        } else if($state  == Bus::STATE_DEFAULT_DISABLED){
+            $status = '<span class="label label-danger">Non operational</span>';
+        } else if ($state  == Bus::STATE_DEFAULT_SUSPENDED){
+            $status = '<span class="label label-warning">Suspended</span>';
+        }
+
+        return $status;
+    }
+
+
 }

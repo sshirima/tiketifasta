@@ -14,7 +14,7 @@ $(document).ready(function() {
                     category: 'First Class'
                 },
                 e: {
-                    price   : ticketPrices['price'],
+                    price   : ticketPrices,
                     classes : 'economy-class', //your custom CSS class
                     category: 'Economy Class'
                 }
@@ -93,12 +93,13 @@ $(document).ready(function() {
 
     /*sc.status('1_2', 'unvailable');
     //let's pretend some seats have already been booked*/
+    //sc.get(['3_1']).status('unavailable');
     $.each(seats, function( index, value ) {
-        if (value.status === 'Unavailable'){
+        if (value.status === 'Unavailable'||value.status === 'unavailable'){
             sc.get([value.row+'_'+value.column]).status('unavailable');
         }
     });
-    //sc.get(['1_2']).status('unavailable');
+
 });
 
 function recalculateTotal(sc) {

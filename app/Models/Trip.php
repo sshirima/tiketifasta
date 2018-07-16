@@ -14,6 +14,7 @@ class Trip extends Model
     const COLUMN_TRAVELLING_DAYS = 'travelling_days';
     const COLUMN_BUS_ID = 'bus_id';
     const COLUMN_STATUS = 'status';
+    const COLUMN_PRICE = 'price';
     const COLUMN_DIRECTION = 'direction';
     const COLUMN_CREATED_AT = 'created_at';
     const COLUMN_UPDATED_AT = 'updated_at';
@@ -30,6 +31,7 @@ class Trip extends Model
     const TRAVELLING_DAYS = self::TABLE.'.'.self::COLUMN_TRAVELLING_DAYS;
     const BUS_ID = self::TABLE.'.'.self::COLUMN_BUS_ID;
     const STATUS = self::TABLE.'.'.self::COLUMN_STATUS;
+    const PRICE = self::TABLE.'.'.self::COLUMN_PRICE;
     const DIRECTION = self::TABLE.'.'.self::COLUMN_DIRECTION;
 
     const REL_BUS_ROUTE = 'busRoute';
@@ -69,5 +71,42 @@ class Trip extends Model
 
     public function to(){
         return $this->belongsTo(Location::class, self::COLUMN_DESTINATION,Location::COLUMN_ID);
+    }
+
+    public function bus(){
+        return $this->belongsTo(Bus::class,self::COLUMN_BUS_ID,Bus::COLUMN_ID);
+    }
+
+    /**
+     * Scope a query to only include popular users.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeGoing($query)
+    {
+        return $query->where(self::COLUMN_DIRECTION, '=', 'GO');
+    }
+
+    /**
+     * Scope a query to only include popular users.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeReturning($query)
+    {
+        return $query->where(self::COLUMN_DIRECTION, '=', 'RETURN');
+    }
+
+    /**
+     * Scope a query to only include active users.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('active', 1);
     }
 }

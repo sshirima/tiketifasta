@@ -36,7 +36,10 @@ trait BusViewParams
     }
     private function getCreateParams():array
     {
-        return array($this->busTypes=>$this->getBusTypeSelectArray(),$this->merchants=>$this->getMerchantSelectArray());
+        return array($this->busTypes=>$this->getBusTypeSelectArray(),
+            $this->merchants=>$this->getMerchantSelectArray(),
+            $this->conditions =>$this->getBusConditionArray()
+        );
     }
 
     private function getMerchantSelectArray(){

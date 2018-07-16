@@ -13,8 +13,8 @@
                         <div class="features-icons-icon d-flex">
                             <i class="icon-screen-desktop m-auto text-primary"></i>
                         </div>
-                        <h3>Fully Responsive</h3>
-                        <p class="lead mb-0">This theme will look great on any device, no matter the size!</p>
+                        <h3>Who are we?</h3>
+                        <p class="lead mb-0"> We are  </p>
                     </div>
                 </div>
                 <div class="col-lg-4">
@@ -22,8 +22,8 @@
                         <div class="features-icons-icon d-flex">
                             <i class="icon-layers m-auto text-primary"></i>
                         </div>
-                        <h3>Bootstrap 4 Ready</h3>
-                        <p class="lead mb-0">Featuring the latest build of the new Bootstrap 4 framework!</p>
+                        <h3>What we do?</h3>
+                        <p class="lead mb-0">We make it extremely easy for the customers to book tickets online, pay for the tickets online!</p>
                     </div>
                 </div>
                 <div class="col-lg-4">
@@ -31,17 +31,16 @@
                         <div class="features-icons-icon d-flex">
                             <i class="icon-check m-auto text-primary"></i>
                         </div>
-                        <h3>Easy to Use</h3>
-                        <p class="lead mb-0">Ready to use with your own content, or customize the source files!</p>
+                        <h3>Our vision</h3>
+                        <p class="lead mb-0">Ready</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    <section class="showcase">
+    {{--<section class="showcase">
         <div class="container-fluid p-0">
             <div class="row no-gutters">
-
                 <div class="col-lg-6 order-lg-2 text-white showcase-img" style="background-image: url({{asset('landing_page/img/bg-showcase-1.jpg')}});"></div>
                 <div class="col-lg-6 order-lg-1 my-auto showcase-text">
                     <h2>Fully Responsive Design</h2>
@@ -63,5 +62,5 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section>--}}
 @endsection

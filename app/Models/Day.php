@@ -46,6 +46,21 @@ class Day extends Model
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function buses(){
+        return $this->belongsToMany(Bus::class,Schedule::TABLE, Schedule::COLUMN_DAY_ID, Schedule::COLUMN_BUS_ID);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function bookings(){
+        return $this->hasManyThrough(Booking::class,Schedule::class,
+            Schedule::COLUMN_DAY_ID, Booking::COLUMN_SCHEDULE_ID,Day::COLUMN_ID,Schedule::COLUMN_ID);
+    }
+
+    /**
      * @param int $interval
      * @return array
      */

@@ -29,6 +29,11 @@ class MerchantComposerSP extends ServiceProvider
                 'merchants.pages.buses.edit',
                 'merchants.pages.buses.show',
                 'merchants.pages.bus_routes.assign',
+                'merchants.pages.bus_route_price.assign',
+                'merchants.pages.schedules.index',
+                'merchants.pages.schedules.create',
+                'merchants.pages.bookings.index',
+                'merchants.pages.tickets.index',
             ],
             MerchantComposer::class
         );

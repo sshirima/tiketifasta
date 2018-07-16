@@ -1,39 +1,59 @@
-<div class="form-group col-sm-12">
-    {!! Form::label('title', 'Title: ', ['class'=>'control-label col-sm-5', 'for'=>'title']) !!}
-    <div class="col-sm-7">
-        {!! Form::select('title',['mr'=>'Mr.','mrs'=>'Mrs.','miss'=>'Miss.','rev'=>'Rev.','dr'=>'Dr.'] ,null, ['class' => 'form-control']) !!}
-    </div>
-</div>
-
-<div class="form-group  col-sm-12">
-    {!! Form::label('firstname', 'First name: ', ['class'=>'col-sm-5 control-label', 'for'=>'firstname']) !!}
-    <div class="col-sm-7">
-        {!! Form::text('firstname',null, ['class' => 'form-control', 'placeholder'=>'Type first name...']) !!}
-    </div>
-</div>
-
-<div class="form-group  col-sm-12">
-    {!! Form::label('lastname', 'Last name: ', ['class'=>'col-sm-5 control-label', 'for'=>'lastname']) !!}
-    <div class="col-sm-7">
-        {!! Form::text('lastname',null, ['class' => 'form-control', 'placeholder'=>'Type last name...']) !!}
-    </div>
-</div>
-<div class="form-group  col-sm-12">
-    {!! Form::label('phonenumber', 'Phone number: ', ['class'=>'col-sm-5 control-label', 'for'=>'phonenumber']) !!}
-    <div class="col-sm-7">
-        {!! Form::text('phonenumber',null, ['class' => 'form-control', 'placeholder'=>'Type phone number...']) !!}
-    </div>
-</div>
-<div class="form-group  col-sm-12">
-    {!! Form::label('email', 'Email: ', ['class'=>'col-sm-5 control-label', 'for'=>'email']) !!}
-    <div class="col-sm-7">
-        {!! Form::text('email',null, ['class' => 'form-control', 'placeholder'=>'Type email...']) !!}
-    </div>
-</div>
-<input hidden name="seat" value="{{$schedule->seat}}">
-<div class="form-group  col-sm-12">
-    {!! Form::label('payment', 'Email: ', ['class'=>'col-sm-5 control-label', 'for'=>'payment']) !!}
-    <div class="col-sm-7">
-        {!! Form::select('payment',['mpesa'=>'M-pesa','tigo'=>'Tigo-Pesa'],null, ['class' => 'form-control']) !!}
-    </div>
-</div>
+<h3 class="mb-5">Customer information</h3>
+<form role="form" method="get"
+      action="{{route('booking.store', [$trip->bus->id,$trip->schedule_id,$trip->trip_id])}}"
+      accept-charset="UTF-8">
+    <div class="row">
+        <strong class="col-sm-3 control-label">Title </strong>
+        <div class="col-sm-8">
+            {!! Form::select('title',['mr'=>'Mr.','mrs'=>'Mrs.','miss'=>'Miss.','rev'=>'Rev.','dr'=>'Dr.'] ,null, ['class' => 'form-control']) !!}
+        </div>
+    </div><br>
+    <div class="row">
+        <strong class="col-sm-3 control-label">First name: </strong>
+        <div class="col-sm-8">
+            {!! Form::text('firstname',old('firstname'), ['class' => 'form-control', 'required', 'placeholder'=>'Type first name...']) !!}
+        </div>
+    </div><br>
+    <div class="row">
+        <strong class="col-sm-3">Last name: </strong>
+        <div class="col-sm-8">
+            {!! Form::text('lastname',old('lastname'), ['class' => 'form-control', 'required', 'placeholder'=>'Type last name...']) !!}
+        </div>
+    </div><br>
+    <div class="row">
+        <strong class="col-sm-3">Phone number: </strong>
+        <div class="col-sm-8">
+            {!! Form::text('phonenumber',old('phonenumber'), ['class' => 'form-control', 'required', 'placeholder'=>'Type phone number...']) !!}
+        </div>
+    </div><br>
+    <div class="row">
+        <strong class="col-sm-3">Email: </strong>
+        <div class="col-sm-8">
+            {!! Form::email('email',old('email'), ['class' => 'form-control', 'required','placeholder'=>'Type email...']) !!}
+        </div>
+    </div><br>
+    <div class="row">
+        <strong class="col-sm-3">Payment via: </strong>
+        <div class="col-sm-8">
+            {!! Form::select('payment',[null=>'Payment','mpesa'=>'M-pesa','tigo'=>'Tigo-Pesa'],null, ['class' => 'form-control']) !!}
+        </div>
+    </div><br>
+    <div class="row">
+        <strong class="col-sm-3"></strong>
+        <div class="col-sm-8">
+            <div class="checkbox">
+                <label class="icheckbox_square-blue" >
+                    <input name="agree_terms" type="checkbox" value="remember">
+                    {{ __('merchant_page_auth_login.label_agree_terms_conditions') }}
+                </label>
+            </div>
+        </div>
+    </div><br>
+    <div class="row">
+        <strong class="col-sm-3"> </strong>
+        <div class="col-sm-8">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </div><br>
+    <input hidden name="seat" value="{{$trip->bus->seat_name}}">
+{!! Form::close() !!}

@@ -9,22 +9,27 @@
 namespace App\Http\Controllers\Admins;
 
 
-use App\Admin\MerchantAccountManager;
+use App\Http\Requests\Admin\UpdateMerchantRequest;
 use App\Http\Requests\Merchant\CreateMerchantRequest;
 use App\Repositories\Merchant\MerchantRepository;
 use App\Repositories\Merchant\StaffRepository;
+use App\Services\Merchants\AuthorizeMerchantAccount;
+use App\Services\Merchants\CheckMerchantContractStatus;
+use App\Services\Merchants\MerchantManager;
 use Illuminate\Http\Request;
 use Laracasts\Flash\Flash;
 use Prettus\Repository\Criteria\RequestCriteria;
 
 class MerchantController extends BaseController
 {
+    use CheckMerchantContractStatus, AuthorizeMerchantAccount;
+
     private $merchantRepository;
     private $staffRepository;
 
     public function __construct(MerchantRepository $merchantRepo, StaffRepository $staffRepository)
     {
-        $this->middleware('auth:admin');
+        parent::__construct();
         $this->merchantRepository = $merchantRepo;
         $this->staffRepository = $staffRepository;
     }
@@ -40,7 +45,29 @@ class MerchantController extends BaseController
         return view('admins.pages.merchants.create')->with(['admin'=>\auth()->user()]);
     }
 
+    public function edit($merchantId){
+        return view('admins.pages.merchants.edit')->with(['admin'=>\auth()->user(),'merchant'=>$this->merchantRepository->findWithoutFail($merchantId)]);
+    }
+
+    public function update(UpdateMerchantRequest $request, $merchantId){
+
+        $merchant = $this->merchantRepository->findWithoutFail($merchantId);
+
+        if (empty($merchant)) {
+            Flash::error(__('page_merchant.error_not_found'));
+
+            return redirect(route('admin.merchant.index'));
+        }
+
+        $this->merchantRepository->update($request->all(), $merchantId);
+
+        Flash::success('Merchants account has been updated');
+
+        return redirect(route('admin.merchant.index'));
+    }
+
     public function show($id){
+
         $merchant = $this->merchantRepository->findWithoutFail($id);
 
         if (empty($merchant)) {
@@ -54,10 +81,14 @@ class MerchantController extends BaseController
 
     public function store(CreateMerchantRequest $request){
 
-        $merchantManager = new MerchantAccountManager($this->merchantRepository, $this->staffRepository);
+        $input =  $request->all();
 
-        if (!$merchantManager->createNewAccount( $request->all())){
-            Flash::error(__('page_merchant.error_not_savedr'));
+        $merchantManager = new MerchantManager();
+
+        $merchant = $merchantManager->addMerchant( $input);
+
+        if (!isset($merchant)){
+            Flash::error(__('page_merchant.error_not_saved'));
         }
 
         Flash::success(__('page_merchant.success_saved'));
@@ -87,5 +118,21 @@ class MerchantController extends BaseController
         return redirect(route('admin.merchant.index'));
     }
 
+    public function authorizeMerchant(Request $request, $id){
+        $merchant= $this->merchantRepository->findWithoutFail($id);
+        $merchant = $this->getMerchantContractStatus($merchant);
+        return view('admins.pages.merchants.authorize')->with(['merchant'=>$merchant]);
+    }
 
+    public function enableMerchant(Request $request, $id){
+        $merchant= $this->merchantRepository->findWithoutFail($id);
+        $this->enableMerchantAccount($merchant);
+        return redirect(route('admin.merchant.index'));
+    }
+
+    public function disableMerchant(Request $request, $id){
+        $merchant= $this->merchantRepository->findWithoutFail($id);
+        $this->disableMerchantAccount($merchant);
+        return redirect(route('admin.merchant.index'));
+    }
 }

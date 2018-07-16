@@ -17,7 +17,7 @@
         </h1>
         <ol class="breadcrumb">
             <li>
-                <a href="{{route('admin.route.index')}}"> {{__('admin_page_routes.navigation_link_index')}}</a>
+                <a href="{{route('admin.routes.index')}}"> {{__('admin_page_routes.navigation_link_index')}}</a>
             </li>
             <li class="active">{{__('admin_page_routes.navigation_link_create')}}</li>
         </ol>
@@ -31,7 +31,7 @@
             <div class="box-body">
                 <div class="col-md-6">
                     <form class="form-horizontal" role="form" method="post"
-                          action="{{route('admin.route.store')}}" accept-charset="UTF-8" style="padding: 20px">
+                          action="{{route('admin.routes.store')}}" accept-charset="UTF-8" style="padding: 20px">
                         @include('admins.pages.routes.fields')
                     </form>
                 </div>

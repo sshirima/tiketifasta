@@ -42,6 +42,8 @@ class Location extends Model
         }
     }
 
+
+
     public static function getLocationById($id){
         return Location::find($id);
     }

@@ -8,23 +8,26 @@
 
 namespace App\Http\Controllers\Merchants\Buses;
 
-
-use App\Http\Controllers\Buses\BusBaseController;
 use App\Http\Controllers\Buses\BusRouteBaseController;
 use App\Http\Controllers\Merchants\BaseController;
 use App\Http\Requests\Merchant\Buses\AssignRoutesBusRequest;
-use App\Http\Requests\Merchant\Buses\UpdateBusRequest;
-use App\Models\Bus;
 use App\Models\Trip;
 use App\Repositories\Merchant\Buses\BusRepository;
 use App\Repositories\Merchant\Buses\TripRepository;
-use App\Services\BusesRoutes\BusRouteManager;
-use App\Services\BusesRoutes\TripManager;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Input;
+use Validator;
+use Response;
 
 class BusRoutesController extends BaseController
 {
     use BusRouteBaseController;
+
+    protected $rule_update_time =
+        [
+            Trip::COLUMN_ARRIVAL_TIME => 'required|date_format:"h:i A"',
+            Trip::COLUMN_DEPART_TIME => 'required|date_format:"h:i A"',
+        ];
 
     protected $busRepository;
     protected $tripRepository;
@@ -53,7 +56,7 @@ class BusRoutesController extends BaseController
             $bus->tripCount = $tripCount;
         }
 
-        return view('merchants.pages.bus_routes.assign')->with($this->getAssignRouteParams($bus,$this->getBusTripTable($request)));
+        return view('merchants.pages.bus_routes.assign')->with($this->getAssignRouteParams($bus));
     }
 
     /**
@@ -72,66 +75,21 @@ class BusRoutesController extends BaseController
         return redirect(route('merchant.buses.assign_routes',$id));
     }
 
+
     /**
      * @param Request $request
-     * @return mixed
+     * @param $tripId
+     * @return \Illuminate\Http\JsonResponse
      */
-    protected function getBusTripTable(Request $request){
+    public function updateTripTime(Request $request, $busId, $tripId){
+        $validator = Validator::make(Input::all(), $this->rule_update_time);
 
-        $this->tripRepository->initializeTable($request, $this->getColumnsToReturn());
-
-        $this->tripRepository->setConditions($request);
-
-        $table = $this->tripRepository->instantiateTableList();
-
-        $this->setTripTableColumns($table);
-
-        $table = $this->tripRepository->setCustomTable($table);
-
-        return $table;
-    }
-
-    /**
-     * @param $table
-     */
-    protected function setTripTableColumns($table){
-
-        $table->addColumn(Trip::COLUMN_SOURCE)->setTitle(__('admin_page_buses.table_head_trips_from'))
-            ->isCustomHtmlElement(function ($entity, $column) {
-                return $entity[Trip::COLUMN_SOURCE];
-            });
-        $table->addColumn(Trip::COLUMN_DESTINATION)->setTitle(__('admin_page_buses.table_head_trips_to'))
-        ->isCustomHtmlElement(function ($entity, $column) {
-            return $entity[Trip::COLUMN_DESTINATION];
-        });
-        $table->addColumn(Trip::COLUMN_DEPART_TIME)->setTitle(__('admin_page_buses.table_head_trips_depart_time'))
-            ->sortByDefault()->isCustomHtmlElement(function ($entity, $column) {
-                return $entity[Trip::COLUMN_DEPART_TIME];
-            });
-        $table->addColumn(Trip::COLUMN_ARRIVAL_TIME)->setTitle(__('admin_page_buses.table_head_trips_arrival_time'))
-            ->isCustomHtmlElement(function ($entity, $column) {
-                return $entity[Trip::COLUMN_ARRIVAL_TIME];
-            });
-        $table->addColumn(Trip::COLUMN_TRAVELLING_DAYS)->setTitle(__('admin_page_buses.table_head_trips_travelling_days'))
-            ->isCustomHtmlElement(function ($entity, $column) {
-                return $entity[Trip::COLUMN_TRAVELLING_DAYS];
-            });
-        $table->addColumn(Trip::COLUMN_STATUS)->setTitle(__('admin_page_buses.table_head_trips_status'))
-            ->isCustomHtmlElement(function ($entity, $column) {
-                return $entity[Trip::COLUMN_STATUS]?'<span class="label label-success">Active</span>':'<span class="label label-danger">Inactive</span>';
-            });
-    }
-
-    protected function getColumnsToReturn(){
-        return [
-            Trip::ID.' as '.'id',
-            'A.name as '.Trip::COLUMN_SOURCE,
-            'B.name as '.Trip::COLUMN_DESTINATION,
-            Trip::COLUMN_DEPART_TIME,
-            Trip::COLUMN_ARRIVAL_TIME,
-            Trip::COLUMN_TRAVELLING_DAYS,
-            Trip::STATUS.' as '.Trip::COLUMN_STATUS
-        ];
+        if ($validator->fails()){
+            return Response::json(array('errors' => $validator->getMessageBag()->toArray()));
+        }else{
+            $trip = $this->tripRepository->updateTripTime($request, $tripId);
+            return response()->json($trip);
+        }
     }
 
 }

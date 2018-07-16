@@ -22,6 +22,12 @@ class ScheduleSeat extends Model
     const SCHEDULE_ID = self::TABLE.'.'.self::COLUMN_SCHEDULE_ID;
     const STATUS = self::TABLE.'.'.self::COLUMN_STATUS;
 
+    const STATUES = ['available'=>'Available',
+        'unavailable'=>'Unavailable',
+        'booked'=>'Booked',
+        'suspended'=>'Booked',
+    ];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -32,4 +38,11 @@ class ScheduleSeat extends Model
     ];
 
     public $timestamps = false;
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function seat(){
+        return $this->belongsTo(Seat::class,self::COLUMN_SEAT_ID,Seat::COLUMN_ID);
+    }
 }

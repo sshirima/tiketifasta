@@ -11,6 +11,9 @@ class Merchant extends Model
 
     const COLUMN_ID = 'id';
     const COLUMN_NAME= 'name';
+    const COLUMN_CONTRACT_START= 'contract_start';
+    const COLUMN_CONTRACT_END= 'contract_end';
+    const COLUMN_STATUS= 'status';
     const TABLE = 'merchants';
 
     const ID = self::TABLE.'.'.self::COLUMN_ID;
@@ -21,11 +24,13 @@ class Merchant extends Model
      * @var array
      */
     protected $fillable = [
-        self::COLUMN_NAME
+        self::COLUMN_NAME, self::COLUMN_CONTRACT_START, self::COLUMN_CONTRACT_END,self::COLUMN_STATUS
     ];
 
     public static $rules = [
-        self::COLUMN_NAME => 'required|max:255'
+        self::COLUMN_NAME => 'required|max:255',
+        self::COLUMN_CONTRACT_START => 'required|date',
+        self::COLUMN_CONTRACT_END => 'required|date'
     ];
 
     /**
@@ -35,12 +40,18 @@ class Merchant extends Model
         return $this->hasMany(Staff::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function buses(){
         return $this->hasMany(Bus::class,Bus::COLUMN_MERCHANT_ID,self::COLUMN_ID);
     }
 
-    public function busRoutes(){
-        return $this->hasManyThrough(BusRoute::class,Bus::class,Bus::COLUMN_MERCHANT_ID,BusRoute::COLUMN_BUS_ID,self::COLUMN_ID,Bus::COLUMN_ID);
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function schedules(){
+        return $this->hasManyThrough(Schedule::class,Bus::class, Bus::COLUMN_MERCHANT_ID, Schedule::COLUMN_BUS_ID,Merchant::COLUMN_ID,Bus::COLUMN_ID);
     }
 
     /**

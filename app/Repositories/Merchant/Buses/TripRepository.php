@@ -63,6 +63,25 @@ class TripRepository extends BaseRepository
     }
 
     /**
+     * @param Request $request
+     * @param $tripId
+     * @return bool
+     */
+    public function updateTripTime(Request $request, $tripId){
+
+        $trip = $this->findWithoutFail($tripId);
+
+        if (!empty($trip)){
+            $trip->arrival_time = $this->convertTime($request->all()['arrival_time']);
+            $trip->depart_time = $this->convertTime($request->all()['depart_time']);
+            $trip->update();
+            return $trip;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * @param $table
      * @return mixed
      */

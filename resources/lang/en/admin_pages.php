@@ -6,7 +6,7 @@ return [
     'page_navigation_list_routes'=>'Routes',
     'page_navigation_option_booking'=>'Bookings',
     'page_navigation_option_approvals'=>'Approvals',
-    'page_navigation_option_schedules'=>'Schedules',
+    'page_navigation_option_schedules'=>'ScheduleController',
     'page_navigation_list_buses'=>'Buses',
     'page_navigation_sub_list_buses'=>'View buses',
     'page_navigation_sub_list_bus_types'=>'Bus types',
@@ -26,6 +26,11 @@ return [
     'page_locations_fields_button_save'=>'Save location',
     'page_locations_fields_label_name'=>'Location name:',
     'page_locations_fields_input_name_placeholder'=>'Enter location name...',
+
+    'page_payment_method_fields_label_name'=>'Paying via:',
+    'page_payment_account_fields_label_name'=>'Account number:',
+    'page_payment_account_fields_input_name_placeholder'=>'Enter account name...',
+    'page_payment_account_fields_button_save'=>'Save information',
 
     'page_locations_table_head_location_name'=>'Location name',
 
@@ -116,6 +121,8 @@ return [
     'page_bustype_fields_button_cancel'=>'Cancel',
     //Bus pages
     'page_bus_index_title'=>'Buses',
+    'page_payment_account_index_title'=>'Payment accounts',
+    'page_payment_account_create_title'=>'Create account',
     'page_bus_index_form_title'=>'Existing buses',
     'page_bus_create_title'=>'Create bus',
     'page_bus_create_form_title'=>'New bus information',
@@ -147,6 +154,8 @@ return [
     'page_bus_edit_sub_route_table_head_arrival'=>'Arrive at',
     'page_bus_edit_sub_route_table_head_time_difference'=>'Time(h)',
     'page_bus_edit_sub_route_table_head_time_diff'=>'Travelling time(h)',
+
+    'page_bus_show_fields_label_class'=>'Class:',
 
     'page_schedules_index_title'=>'Bus schedules',
     'page_schedules_index_form_title'=>'Buses schedules',

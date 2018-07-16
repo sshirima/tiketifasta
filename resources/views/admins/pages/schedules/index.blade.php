@@ -23,32 +23,10 @@
     <section class="content container-fluid">
         <div class="box box-primary">
             <div class="box-header">
-                <form class="navbar-form">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <input class="form-control" placeholder="Search" name="date" id="date" type="date" value="{{old('date')}}">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                {{Form::select('route_id',$routes,old('route_id'),['class'=>'form-control'])}}
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                {{Form::select('merchant_id',$merchants,old('merchant_id'),['class'=>'form-control'])}}
-                            </div>
-                        </div>
-                        <div class="col-md-1">
-                            <button class="btn btn-primary pull-right" type="submit"><i class="glyphicon glyphicon-refresh"></i></button>
-                        </div>
-                    </div>
-
-                </form>
+                Buses schedules
             </div>
             <div class="box-body">
-                {!! $table->render() !!}
+                {!! $schedulesTable->render() !!}
             </div>
         </div>
     </section>

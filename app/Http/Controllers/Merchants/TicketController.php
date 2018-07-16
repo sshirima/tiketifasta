@@ -1,37 +1,90 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: samson
- * Date: 3/24/2018
- * Time: 9:41 PM
+ * User: sshirima
+ * Date: 7/11/2018
+ * Time: 10:42 AM
  */
 
 namespace App\Http\Controllers\Merchants;
 
 
+use App\Models\Ticket;
+use Illuminate\Http\Request;
+use Okipa\LaravelBootstrapTableList\TableList;
+
 class TicketController extends BaseController
 {
-    public function __construct(SeatRepository $seatRepository, BusRepository $busRepository)
+
+    public function __construct()
     {
-        $this->middleware('auth:merchant');
-        $this->seatRepository = $seatRepository;
-        $this->busRepo = $busRepository;
+        parent::__construct();
     }
 
-    public function index($bus_id){
+    public function index(Request $request)
+    {
+
+        $this->setMerchantId();
+
+        $table = $this->createTicketsTable();
+
+        return view('merchants.pages.tickets.index')->with(['ticketsTable' => $table]);
 
     }
 
-    public function create($bus_id){
+    /**
+     * @return mixed
+     */
+    protected function createTicketsTable()
+    {
+        $table = app(TableList::class)
+            ->setModel(Ticket::class)
+            ->setRowsNumber(10)
+            ->enableRowsNumberSelector()
+            ->setRoutes([
+                'index' => ['alias' => 'merchant.tickets.index', 'parameters' => []],
+            ])->addQueryInstructions(function ($query) {
+                $query->select('tickets.id as id', 'tickets.ticket_ref as ticket_ref','trips.price as price',
+                    'bookings.firstname as firstname','buses.reg_number as reg_number','source.name as source','destination.name as destination',
+                    'days.date as date','trips.depart_time as depart_time','trips.arrival_time as arrival_time','tickets.created_at as created_at',
+                    'tickets.status as status')
+                    ->join('bookings', 'bookings.id', '=', 'tickets.booking_id')
+                    ->join('schedules', 'schedules.id', '=', 'bookings.schedule_id')
+                    ->join('days', 'days.id', '=', 'schedules.day_id')
+                    ->join('trips', 'trips.id', '=', 'bookings.trip_id')
+                    ->join('locations as source', 'source.id', '=', 'trips.source')
+                    ->join('locations as destination', 'destination.id', '=', 'trips.destination')
+                    ->join('buses', 'buses.id', '=', 'trips.bus_id')
+                    ->join('merchants', 'merchants.id', '=', 'buses.merchant_id')
+                    ->where('merchants.id', $this->merchantId);
+            });
 
+        $table = $this->setTableColumns($table);
+
+        return $table;
     }
 
-    public function edit($bus_id, $ticket_id){}
-
-    public function update(){}
-
-    public function delete($bus_id, $ticket_id){}
-
-    public function remove($bus_id, $ticket_id){}
-
+    /**
+     * @param $table
+     * @return mixed
+     */
+    private function setTableColumns($table)
+    {
+        $table->addColumn('ticket_ref')->isSearchable()->sortByDefault()->setTitle('Ticket Ref#')->useForDestroyConfirmation();
+        $table->addColumn('price')->setTitle('Price')->isSearchable()->isSortable()->setCustomTable('trips');
+        $table->addColumn('firstname')->setTitle('First name')->isSearchable()->isSortable()->setCustomTable('bookings')
+            ->isCustomHtmlElement(function($entity, $column){
+            return $entity['firstname'].' '.$entity['lastname'];
+        });
+        $table->addColumn('reg_number')->setTitle('Bus')->isSearchable()->isSortable()->setCustomTable('buses');
+        $table->addColumn('source')->setTitle('From')->isSearchable()->isSortable()->setCustomTable('trips');
+        $table->addColumn('destination')->setTitle('To')->isSearchable()->isSortable()->setCustomTable('trips');
+        $table->addColumn('date')->setTitle('Travelling date')->isSearchable()->isSortable()->setCustomTable('days')
+            ->isCustomHtmlElement(function($entity, $column){
+            return $entity['date'].'<br>'.'('.$entity['depart_time'].' - '.$entity['arrival_time'].')';
+        });
+        $table->addColumn('created_at')->setTitle('Issued date')->isSearchable()->isSortable()->setColumnDateFormat('Y-m-d H:i:s');
+        $table->addColumn('status')->setTitle('Status')->isSearchable()->isSortable();
+        return $table;
+    }
 }

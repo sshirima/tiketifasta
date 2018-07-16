@@ -68,6 +68,6 @@
 <script src="{{asset('landing_page/vendor/jquery/jquery.min.js')}}"></script>
 <!-- Bootstrap 3.3.7 -->
 <script src="{{asset('landing_page/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
-
+@yield('import_js')
 </body>
 </html>

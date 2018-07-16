@@ -1,1 +1,0 @@
-<li class="{{Request::is('merchant/timetable*') ? 'active' : ''}}"><a href="#" data-toggle="tab">Buses timetables</a></li>

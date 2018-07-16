@@ -15,6 +15,7 @@ return [
     'option_routes' => 'Routes',
     'option_locations' => 'Locations',
     'option_accounts_admin' => 'Admin accounts',
+    'option_payment_accounts' => 'Payment accounts',
     'option_logout' => 'Logout',
 
     'field_input_placeholder_search' => 'Search...',

@@ -7,6 +7,7 @@ return [
     'form_title_merchant' => 'Merchant sign in',
     'button_sign_in' => 'Sign in',
     'label_remember_me' => 'Remember me',
+    'label_agree_terms_conditions' => 'Agree terms and conditions',
     'placeholder_email' => 'Email',
     'placeholder_password' => 'Password',
     'link_register' => 'Register',
