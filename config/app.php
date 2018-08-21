@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'Tiketifasta'),
 
     /*
     |--------------------------------------------------------------------------
@@ -163,6 +163,8 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        Nathanmac\Utilities\Parser\ParserServiceProvider::class,
+        Nathanmac\Utilities\Responder\ResponderServiceProvider::class,
 
         //Composer Service provider
         App\Providers\Composers\AdminComposerSP::class,
@@ -219,6 +221,7 @@ return [
 
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
+        'Parser' => Nathanmac\Utilities\Parser\Facades\Parser::class,
 
     ],
 

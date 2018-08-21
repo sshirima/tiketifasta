@@ -13,10 +13,10 @@
                 <div class="col-lg-12 my-auto showcase-text text-center">
                     @if(isset($trips))
                         @if(count($trips) > 0 )
-
                             <table class="table table-hover">
                                 <thead>
                                 <tr>
+                                    <th>Date</th>
                                     <th>Bus name/Company</th>
                                     <th>Reg number</th>
                                     <th>From</th>
@@ -30,6 +30,7 @@
                                 <tbody>
                                 @foreach($trips as $trip)
                                     <tr>
+                                        <td>{{$trip->date}}</td>
                                         <td>{{$trip->bus->merchant->name}}</td>
                                         <td>{{$trip->bus->reg_number}}</td>
                                         <td>{{$trip->from}}</td>
@@ -37,7 +38,8 @@
                                         <td>{{$trip->price}}</td>
                                         <td>{{$trip->depart_time}}</td>
                                         <td>{{$trip->arrival_time}}</td>
-                                        <td><form role="form" method="get"
+                                        <td>
+                                            <form role="form" method="get"
                                                    action="{{route('booking.buses.select', [$trip->bus->id,$trip->schedule_id,$trip->trip_id])}}"
                                                    accept-charset="UTF-8">
                                                 @csrf
@@ -54,7 +56,9 @@
                             <div class="alert alert-warning"> No routes has being found</div>
                         @endif
                     @else
-                        <div class="alert alert-warning"> No schedules</div>
+                        @if(isset($date_error))
+                            <div class="alert alert-danger"> Error: Date submitted was invalid, date can not be less than today</div>
+                        @endif
                     @endif
                 </div>
             </div>

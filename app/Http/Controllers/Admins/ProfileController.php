@@ -15,37 +15,44 @@ use Laracasts\Flash\Flash;
 
 class ProfileController extends BaseController
 {
-    private $adminRepo;
 
-    public function __construct(AdminRepository $repository)
+    public function __construct()
     {
-        $this->middleware('auth:admin');
-        $this->adminRepo = $repository;
+        parent::__construct();
     }
 
     public function show(){
-        return view('admins.pages.profile.show')->with($this->defaultParameters());
+        return view('admins.pages.profile.show');
     }
 
 
     public function edit(){
-        return view('admins.pages.profile.edit')->with($this->defaultParameters());
+        return view('admins.pages.profile.edit');
     }
 
-    public function update($id, UpdateProfileRequest $request){
-        $admin = $this->adminRepo->findWithoutFail($id);
+    public function update(UpdateProfileRequest $request){
+        $input = $request->all();
 
-        if (empty($admin)){
-            Flash::error(__('page_profile_show.account_not_found'));
+        $staff = auth()->user();
+
+        if($request->has('firstname')){
+            $staff->firstname = $input['firstname'];
         }
 
-        $admin = $this->adminRepo->update($request->all(), $id);
+        if($request->has('lastname')){
+            $staff->lastname = $input['lastname'];
+        }
 
-        Flash::success(__('page_profile_show.account_updated'));
+        if($request->has('phonenumber')){
+            $staff->phonenumber = $input['phonenumber'];
+        }
 
-        Auth::setUser($admin);
+        $staff->update();
 
-        return view('admins.pages.profile.show')->with($this->defaultParameters());
+        Auth::user()->fresh();
+
+        //return $request->all();
+        return redirect(route('admin.profile.show'));
     }
 
 }

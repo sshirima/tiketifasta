@@ -158,6 +158,7 @@ return [
     'page_bus_show_fields_label_class'=>'Class:',
 
     'page_schedules_index_title'=>'Bus schedules',
+    'page_trips_index_title'=>'Scheduled trips',
     'page_schedules_index_form_title'=>'Buses schedules',
     'page_schedules_panel_option_daily_schedules'=>'Daily schedules',
     'page_schedules_'=>'Company buses',

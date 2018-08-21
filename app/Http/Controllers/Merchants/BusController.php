@@ -13,6 +13,7 @@ use App\Http\Controllers\Buses\BusBaseController;
 use App\Http\Requests\Merchant\UpdateBusRequest;
 use App\Models\Bus;
 use App\Repositories\BusRepository;
+use App\Services\Trips\TripsAnalyser;
 use Illuminate\Http\Request;
 use Okipa\LaravelBootstrapTableList\TableList;
 
@@ -42,6 +43,7 @@ class BusController extends BaseController
     public function edit($id){
         $bus = $this->busRepository->findWithoutFail($id);
 
+
         return view('merchants.pages.buses.edit')->with($this->getEditParams($bus));
     }
 
@@ -64,6 +66,10 @@ class BusController extends BaseController
     public function show($id){
 
         return view('merchants.pages.buses.show')->with([$this->bus =>$this->busRepository->getBusInformation($id)]);
+    }
+
+    public function showSchedules(Request $request, $busId){
+
     }
 
     /**

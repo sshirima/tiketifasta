@@ -49,7 +49,7 @@ return [
     'form_field_label_class'=>'Class',
     'form_field_label_select_route'=>'Select route:',
     'form_field_label_route_name'=>'Route name:',
-    'form_field_label_select_dates'=>'Select dates',
+    'form_field_label_select_dates'=>'Add date of travel',
     'form_field_label_model'=>'Model',
     'form_field_label_bus_condition'=>'Bus condition',
     'form_field_button_cancel'=>'Cancel',

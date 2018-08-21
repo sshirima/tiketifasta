@@ -1,6 +1,6 @@
 <?php
 return [
 
-    'first_word' => 'Company',
-    'second_word' => 'NAME',
+    'first_word' => 'tiketi',
+    'second_word' => 'FASTA',
 ];

@@ -33,6 +33,14 @@ class ConfirmBookingPayment implements ShouldQueue
     {
         if($this->booking->status == 'PENDING'){
             $this->scheduleSeat->delete();
+            $bookingPay = $this->booking->bookingPayment()->first();
+
+            if($bookingPay->method == 'mpesa'){
+                $bookingPay->mpesaC2B->delete();
+            }
+
+            $bookingPay->delete();
+
             $this->booking->delete();
         }
     }

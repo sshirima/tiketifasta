@@ -18,11 +18,12 @@ class ChangePasswordController extends BaseController
 {
     public function __construct()
     {
-        $this->middleware('auth:admin');
+        parent::__construct();
+
     }
 
     public function showForm(){
-        return view('admins.pages.auth.changepass')->with($this->defaultParameters());
+        return view('admins.pages.auth.changepass');
     }
 
     public function changePassword(Request $request){
@@ -46,10 +47,11 @@ class ChangePasswordController extends BaseController
         $admin->password = bcrypt($request->get('new-password'));
         $admin->save();
 
-        Flash::success('User password changes successfully!');
+        Flash::success('Your account password changes successfully!');
 
-        return view('admins.pages.profile.show')->with($this->defaultParameters());
+        //return view('admins.pages.profile.show')->with($this->defaultParameters());
         //return redirect()->back()->with("success","Password changed successfully !");
+        return redirect(route('admin.home'))->with("success","Password changed successfully !");
     }
 
 }

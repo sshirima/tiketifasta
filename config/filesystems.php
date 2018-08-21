@@ -47,6 +47,10 @@ return [
             'driver' => 'local',
             'root' => storage_path('app'),
         ],
+        'mpesa' => [
+            'driver' => 'local',
+            'root' => storage_path('mpesa'),
+        ],
 
         'public' => [
             'driver' => 'local',

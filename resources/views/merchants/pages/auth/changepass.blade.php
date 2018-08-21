@@ -4,7 +4,7 @@
     {{ __('page_auth_changepass.page_title') }}
 @endsection
 
-@section('contents')
+@section('content-body')
     @include('includes.errors.message')
     <div class="row">
         <div class="col-sm-4 col-md-7 col-md-offset-2">

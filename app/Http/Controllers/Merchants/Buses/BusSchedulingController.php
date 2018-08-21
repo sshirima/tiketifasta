@@ -15,6 +15,7 @@ use App\Jobs\Schedules\AssignSchedule;
 use App\Repositories\Merchant\Buses\BusRepository;
 use App\Repositories\Merchant\Buses\BusSchedulingRepository;
 use App\Services\BusesRoutes\BusRouteManager;
+use App\Services\Schedules\ScheduleManager;
 use Illuminate\Http\Request;
 
 class BusSchedulingController extends BaseController
@@ -23,18 +24,14 @@ class BusSchedulingController extends BaseController
     use BusSchedulingViewParams;
 
     protected $busRepository;
-    protected $schedulingRepository;
+    protected $scheduleManager;
 
-    /**
-     * BusSchedulingController constructor.
-     * @param BusRepository $busRepository
-     * @param BusSchedulingRepository $schedulingRepository
-     */
-    public function __construct(BusRepository $busRepository, BusSchedulingRepository $schedulingRepository)
+
+    public function __construct(BusRepository $busRepository, ScheduleManager $scheduleManager)
     {
         parent::__construct();
         $this->busRepository = $busRepository;
-        $this->schedulingRepository = $schedulingRepository;
+        $this->scheduleManager = $scheduleManager;
     }
 
     /**
@@ -54,11 +51,19 @@ class BusSchedulingController extends BaseController
         //$this->schedulingRepository->createSchedules($request,$busId);
         $input = $request->all();
 
+        if ($request->has('direction')){
+            $input['direction'] = 'GO';
+        } else {
+            $input['direction'] = 'RETURN';
+        }
+        $report = array();
         foreach ($input[ 'trip_dates'] as $key=>$date){
-            $this->dispatch(new AssignSchedule(['date'=>$date,'direction'=> $input['direction']], $busId));
+            $report[$date] = $this->scheduleManager->assignSchedule($this->busRepository->findWithoutFail($busId),$date,$input['direction']);
+            //$this->dispatch(new AssignSchedule(['date'=>$date,'direction'=> $input['direction']], $busId));
         }
 
-        return redirect(route('merchant.buses.schedules.create', $busId));
+        return json_encode($report);
+        //return redirect(route('merchant.buses.schedules.create', $busId));
     }
 
     /**

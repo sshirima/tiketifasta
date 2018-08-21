@@ -11,7 +11,7 @@ namespace App\Http\Controllers\Merchants\Buses;
 
 use App\Http\Controllers\Buses\BusBaseController;
 use App\Http\Controllers\Merchants\BaseController;
-use App\Http\Requests\Merchant\Buses\UpdateBusRequest;
+use App\Http\Requests\Merchant\UpdateBusRequest;
 use App\Models\Bus;
 use App\Repositories\Merchant\Buses\BusRepository;
 
@@ -35,11 +35,7 @@ class BusController extends BaseController
         return view('merchants.pages.buses.edit')->with($this->getEditParams($bus));
     }
 
-    /**
-     * @param UpdateBusRequest $request
-     * @param $id
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     */
+
     public function update(UpdateBusRequest $request, $id){
 
         $this->busRepository->update($request->all(),$id);

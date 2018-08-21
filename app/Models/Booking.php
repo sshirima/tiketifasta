@@ -8,9 +8,9 @@ use Okipa\LaravelBootstrapTableList\TableList;
 
 class Booking extends Model
 {
-    public static $STATUS_PENDING = 'PENDING';
-    public static $STATUS_CANCELLED = 'CANCELLED';
-    public static $STATUS_CONFIRMED = 'CONFIRMED';
+    const STATUS_PENDING = 'PENDING';
+    const STATUS_CANCELLED = 'CANCELLED';
+    const STATUS_CONFIRMED = 'CONFIRMED';
 
     const COLUMN_ID = 'id';
     const COLUMN_TITLE = 'title';
@@ -51,7 +51,7 @@ class Booking extends Model
     protected $fillable = [
         self::COLUMN_TITLE,self::COLUMN_FIRST_NAME,self::COLUMN_LAST_NAME,self::COLUMN_PHONE_NUMBER,self::COLUMN_PAYMENT_REF
         ,self::COLUMN_PAYMENT,self::COLUMN_EMAIL,self::COLUMN_SCHEDULE_ID,self::COLUMN_SEAT_ID,self::COLUMN_TRIP_ID,
-        self::COLUMN_PRICE
+        self::COLUMN_PRICE,self::COLUMN_STATUS
     ];
 
     protected $table= self::TABLE;
@@ -68,6 +68,14 @@ class Booking extends Model
      */
     public function seat(){
         return $this->belongsTo(Seat::class,self::COLUMN_SEAT_ID,Seat::COLUMN_ID);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     *
+     */
+    public function bookingPayment(){
+        return $this->hasOne(BookingPayment::class,BookingPayment::COLUMN_BOOKING_ID,self::COLUMN_ID);
     }
 
     /**

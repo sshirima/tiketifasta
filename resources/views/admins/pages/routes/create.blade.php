@@ -39,7 +39,16 @@
         </div>
     </section>
 @endsection
-
+@section('import_css')
+    <!-- Select 2 from CDN -->
+    <link rel="stylesheet" href="{{asset('adminlte/bower_components/select2/dist/css/select2.min.css')}}">
+@endsection
 @section('import_js')
+    <script src="{{ URL::asset('adminlte/bower_components/select2/dist/js/select2.full.min.js') }}"></script>
     <script src="{{ URL::asset('js/admin/routes_create.js') }}"></script>
+
+    <script type="text/javascript">
+        //Select2
+
+    </script>
 @endsection

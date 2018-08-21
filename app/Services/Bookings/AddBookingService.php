@@ -11,6 +11,7 @@ namespace App\Services\Bookings;
 
 use App\Jobs\ConfirmBookingPayment;
 use App\Models\Booking;
+use App\Models\BookingPayment;
 use App\Models\ScheduleSeat;
 use App\Models\Seat;
 use App\Models\Trip;
@@ -28,6 +29,7 @@ trait AddBookingService
     public function bookTicket(array $bookingDetails, $busId, $scheduleId, $tripId){
         $isBooked = false;
         $isInitialized = false;
+        $booking = null;
 
         //Check payment method to be used
         $seat = Seat::select(['*'])->where([Seat::COLUMN_BUS_ID => $busId, Seat::COLUMN_SEAT_NAME => $bookingDetails['seat']])->first();
@@ -37,29 +39,44 @@ trait AddBookingService
 
         //Initiate payment gateway if the seat is not booked
         $paymentReference = null;
+        $scheduleSeat = null;
+
         $payment = $bookingDetails['payment'];
         if (!$isBooked) {
+            //Create booking
+
+            list($booking, $scheduleSeat) = $this->storeBookingInfo($bookingDetails, $scheduleId, $tripId, $seat);
+
+            //Create bookingPayment
+            $bookingPayment = BookingPayment::create([
+                'payment_ref'=>strtoupper(PaymentManager::random_code(8)),
+                'amount'=>$booking->price,
+                'booking_id'=>$booking->id,
+                'method'=>$payment,
+                'phone_number'=>$payment,
+            ]);
+
             if ($payment == 'mpesa') {
-                $isInitialized = $this->paymentManager->initialiazeMPESAPayment(array());
+
+                $mpesaC2B = $this->paymentManager->initialiazeMPESAPaymentC2B([
+                    'msisdn'=>$bookingDetails['phonenumber'],
+                    'amount'=>$booking->price,
+                    'account_reference'=>$bookingPayment->payment_ref,
+                    'booking_payment_id'=>$bookingPayment->id,
+                ]);
+
+                $isInitialized  = isset($mpesaC2B)?true:false;
+
             } else
                 if ($payment == 'tigopesa') {
                     $isInitialized = $this->paymentManager->initializeTIGOPESAPayment(array());
                 }
         }
 
-        if ($isInitialized) {
-            $paymentReference = 'QUUR1245579';
-        }
-
-        $booking = null;
-
         //Save the booking records
-        if ($isInitialized && isset($paymentReference)) {
-
-            list($booking, $scheduleSeat) = $this->storeBookingInfo($bookingDetails, $scheduleId, $tripId, $seat, $paymentReference);
-
+        if ($isInitialized) {
             //Initialize payment timer
-            ConfirmBookingPayment::dispatch($booking, $scheduleSeat)->delay(now()->addMinutes(1));
+            ConfirmBookingPayment::dispatch($booking, $scheduleSeat)->delay(now()->addMinutes(5));
         }
 
         return $booking;
@@ -94,7 +111,7 @@ trait AddBookingService
      * @param $paymentReference
      * @return array
      */
-    protected function storeBookingInfo(array $bookingDetails, $scheduleId, $tripId, $seat, $paymentReference): array
+    protected function storeBookingInfo(array $bookingDetails, $scheduleId, $tripId, $seat): array
     {
         $trip = Trip::find($tripId);
 
@@ -108,8 +125,8 @@ trait AddBookingService
             Booking::COLUMN_SEAT_ID => $seat->id,
             Booking::COLUMN_PRICE => $trip->price,
             Booking::COLUMN_TRIP_ID => $tripId,
+            Booking::COLUMN_STATUS => Booking::STATUS_PENDING,
             Booking::COLUMN_SCHEDULE_ID => $scheduleId,
-            Booking::COLUMN_PAYMENT_REF => $paymentReference,
         ]);
 
         //Mark the seat as booked

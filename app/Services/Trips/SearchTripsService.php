@@ -9,6 +9,7 @@
 namespace App\Services\Trips;
 
 
+
 use App\Models\Trip;
 
 trait SearchTripsService
@@ -24,19 +25,31 @@ trait SearchTripsService
      */
     public function findTripForBookings($date, $from, $to)
     {
+        $conditions = array();
+
+        if (isset($from)){
+            $conditions[] = ['A.name', 'like', '%' . $from . '%'];
+        }
+
+        if (isset($to)){
+            $conditions[] = ['B.name', 'like', '%' . $to . '%'];
+        }
+
+        if (isset($date)){
+            $conditions[] = ['days.date', 'like', $date];
+        }
+
+        $conditions[] = ['schedules.status', '=', 1];
+        //$conditions[] = ['trips.status', '=', 0];
+
         return Trip::with([
             'bus', 'bus.merchant'
         ])->select(['trips.id as trip_id', 'A.name as from', 'trips.price', 'B.name as to', 'trips.bus_id', 'days.date', 'trips.arrival_time', 'trips.depart_time', 'schedules.id as schedule_id'])
             ->join('locations as A', 'A.id', '=', 'source')
             ->join('locations as B', 'B.id', '=', 'destination')
-            ->join('schedules', 'schedules.bus_id', '=', 'trips.bus_id')
+            ->join('schedules', 'schedules.direction', '=', 'trips.direction')
             ->join('days', 'schedules.day_id', '=', 'days.id')
-            ->where([
-                    ['A.name', 'like', '%' . $from . '%'],
-                    ['B.name', 'like', '%' . $to . '%'],
-                    ['days.date', 'like', $date],
-                ]
-            )->get();
+            ->where($conditions)->get();
     }
 
     /**
@@ -54,7 +67,7 @@ trait SearchTripsService
         return $trip;
     }
 
-    public function getSelectedTripDetails($tripId, $seatName){
+    public function getSelectedTripDetails($scheduleId, $tripId, $seatName){
         $this->tripId = $tripId;
 
         $trip =   Trip::with([
@@ -66,6 +79,7 @@ trait SearchTripsService
             ->join('days','schedules.day_id','=','days.id')
             ->where([
                     ['trips.id','like', $this->tripId],
+                    ['schedules.id','=', $scheduleId],
                 ]
             )->first();
 

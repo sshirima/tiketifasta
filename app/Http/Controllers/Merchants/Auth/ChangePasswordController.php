@@ -8,7 +8,7 @@
 
 namespace App\Http\Controllers\Merchants\Auth;
 
-use App\Http\Controllers\Admins\BaseController;
+use App\Http\Controllers\Merchants\BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -18,17 +18,30 @@ class ChangePasswordController extends BaseController
 {
     public function __construct()
     {
-        $this->middleware('auth:merchant');
+        parent::__construct();
     }
 
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function showForm(){
-        return view('merchants.pages.auth.changepass')->with($this->defaultParameters());
+        return view('merchants.pages.auth.changepass');
     }
 
+    /**
+     * @param Request $request
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
     public function changePassword(Request $request){
+
+        $this->validate($request, [
+            'current-password' => 'required',
+            'new-password' => 'required|string|min:6|confirmed',
+        ]);
+
         if (!(Hash::check($request->get('current-password'), Auth::user()->password))) {
             // The passwords matches
-            return redirect()->back()->with("error","Your current password does not matches with the password you provided. Please try again.");
+            return redirect()->back()->with("error","Your current password does not matches with the password you provided. Please try again. ");
         }
 
         if(strcmp($request->get('current-password'), $request->get('new-password')) == 0){
@@ -36,20 +49,14 @@ class ChangePasswordController extends BaseController
             return redirect()->back()->with("error","New Password cannot be same as your current password. Please choose a different password.");
         }
 
-        $this->validate($request, [
-            'current-password' => 'required',
-            'new-password' => 'required|string|min:6|confirmed',
-        ]);
-
         //Change Password
         $merchant = Auth::user();
         $merchant->password = bcrypt($request->get('new-password'));
         $merchant->save();
 
-        Flash::success('User password changes successfully!');
+        Flash::success('Your password changes successfully!');
 
-        return view('merchants.pages.profile.show')->with($this->defaultParameters());
-        //return redirect()->back()->with("success","Password changed successfully !");
+        //return view('merchants.pages.profile.show')->with($this->defaultParameters());
+        return redirect(route('merchant.home'))->with("success","Password changed successfully !");
     }
-
 }

@@ -1,32 +1,44 @@
 @extends('admins.layouts.master')
 
 @section('title')
-    {{ __('page_profile_show.page_title_admin') }}
+    Admin profile
 @endsection
 
-@section('contents')
-    <div class="container">
+@section('content-body')
+    <section class="content container-fluid">
         <div class="row">
-            <div class="col-md-3"></div>
-            <div class="col-md-6">
-                <div>@include('flash::message')</div>
-                <h3 >{{__('page_profile_edit.form_title')}}</h3>
-                <table class="table">
-                    <tbody>
-                    <tr><th>{{__('page_profile_show.label_first_name')}}</th><td>{{$admin->firstname}}</td></tr>
-                    <tr><th>{{__('page_profile_show.label_last_name')}}</th><td>{{$admin->lastname}}</td></tr>
-                    <tr><th>{{__('page_profile_show.label_email')}}</th><td>{{$admin->email}}</td></tr>
-                    <tr><th>{{__('page_profile_show.label_date_created')}}</th>
-                        <td>@if(empty($admin->created_at)) {{__('page_profile_show.label_system_created')}} @else {{$admin->created_at}} @endif</td>
-                    </tr>
-                    <tr><th>{{__('page_profile_edit.label_date_updated')}}</th><td>@if(empty($admin->updated_at)) {{__('page_profile_show.label_never')}} @else {{$admin->updated_at}} @endif</td></tr>
-                    </tbody>
-                </table>
-                <a href="{{route('admin.home')}}"><button class="btn btn-primary"> <i class="fa fa-arrow-left" aria-hidden="true"></i>{{__('page_profile_show.button_back_home')}}</button></a>
-                <a href="{{route('admin.profile.edit')}}"><button class="btn btn-default">{{__('page_profile_show.button_edit_profile')}}</button></a>
-                <a href="{{route('admin.password.change')}}"><button class="btn btn-default">{{__('page_profile_show.button_change_pass')}}</button></a>
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+                <div class="box box-primary">
+                    <div class="box-body box-profile">
+                        <img class="profile-user-img img-responsive img-circle" src="{{asset('adminlte/dist/img/boxed-bg.png')}}" alt="User profile picture">
+
+                        <h3 class="profile-username text-center">{{$admin->firstname.' '.$admin->lastname}}</h3>
+
+                        <p class="text-muted text-center">Merchant administrator</p>
+
+                        <ul class="list-group list-group-unbordered">
+                            <li class="list-group-item">
+                                <b>First name</b> <a class="pull-right">{{$admin->firstname}}</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Last name</b> <a class="pull-right">{{$admin->lastname}}</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Phone number</b> <a class="pull-right">{{$admin->phonenumber}}</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Email address</b> <a class="pull-right">{{$admin->email}}</a>
+                            </li>
+
+                        </ul>
+                        <a href="{{route('admin.profile.edit')}}" class="btn btn-primary btn-block"><b>Edit profile</b></a>
+                        <a href="{{route('admin.password.change')}}" class="btn btn-danger btn-block"><b>Change password</b></a>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
             </div>
-            <div class="col-md-3"></div>
+            <div class="col-sm-4"></div>
         </div>
-    </div>
+    </section>
 @endsection

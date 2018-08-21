@@ -33,8 +33,7 @@
             </div>
             <div class="tab-content">
                 <div class="form-horizontal" style="padding: 20px">
-                    @if($bus->merchant->status && isset($bus->route) &&
-                    isset($bus->merchant->contract_start) && isset($bus->merchant->contract_end) && (new DateTime($bus->merchant->contract_end) > new DateTime('now')))
+                    @if($bus->merchant->status && isset($bus->merchant->contract_start) && isset($bus->merchant->contract_end) && (new DateTime($bus->merchant->contract_end) > new DateTime('now')))
                         <div class="form-group">
                             <label class="col-sm-3 control-label">Merchant status</label>
                             <div class="col-sm-3">
@@ -58,16 +57,22 @@
                         <div class="form-group">
                             <label class="col-sm-3 control-label">Bus route</label>
                             <div class="col-sm-3">
-                                <h5><span class="label label-success"> Route is set</span></h5>
+                                @if(isset($bus->route))
+                                    <h5><span class="label label-success"> Route is set</span></h5>
+                                @else
+                                    <h5><span class="label label-warning"> Bus not assigned to any route</span></h5>
+                                @endif
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-3 control-label">Trips</label>
-                            <div class="col-sm-3">
-                                @if(count($bus->trips) > 0)
+                            <div class="col-sm-9">
+                                @if(count($bus->trips) > 0 && isset($bus->go_trip) && isset($bus->return_trip))
                                     <h5><span class="label label-success"> Trips has been set</span></h5>
                                 @else
-                                    <h5><span class="label label-warning"> No trip assigned</span></h5>
+                                    <h5><span class="label label-warning"> There are some issues on bus trips</span></h5>
+                                    <h5> There is inconsistency in bus trips, please confirm going and return trips, and the depart and arrival time for each </h5>
+                                    <h5>{{$bus->go_trip}}</h5>
                                 @endif
                             </div>
                         </div>
@@ -96,16 +101,21 @@
                         <div class="form-group">
                             <label class="col-sm-3 control-label"></label>
                             <div class="col-sm-3">
-                                @if($bus->state == 'DISABLED' && $bus->condition == 'OPERATIONAL')
+                                @if($bus->state == 'DISABLED' && $bus->condition == 'OPERATIONAL' && count($bus->trips) > 0 && isset($bus->route) && $bus->trip_price_status &&
+                                isset($bus->go_trip) && isset($bus->return_trip) )
                                     {!! Form::open(['route' => ['admin.buses.enable', $bus->id], 'method' => 'post','class'=>'form-horizontal']) !!}
                                     <button class="btn btn-primary" type="submit"> Enable bus</button>
                                     {!! Form::close() !!}
+                                    @else
+                                    @if($bus->state == 'ENABLED')
+                                        {!! Form::open(['route' => ['admin.buses.disable', $bus->id], 'method' => 'post','class'=>'form-horizontal']) !!}
+                                        <button class="btn btn-danger" type="submit"> Disable bus</button>
+                                        {!! Form::close() !!}
+                                        @else
+                                        <h5><span class="label label-danger"> Please confirm all of the bus details before authorizing</span></h5>
+                                    @endif
                                 @endif
-                                @if($bus->state == 'ENABLED')
-                                    {!! Form::open(['route' => ['admin.buses.disable', $bus->id], 'method' => 'post','class'=>'form-horizontal']) !!}
-                                    <button class="btn btn-danger" type="submit"> Disable bus</button>
-                                    {!! Form::close() !!}
-                                @endif
+
                             </div>
                         </div>
                     @else

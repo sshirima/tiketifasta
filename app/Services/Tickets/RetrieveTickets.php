@@ -12,7 +12,4 @@ namespace App\Services\Tickets;
 trait RetrieveTickets
 {
 
-    public function getAllTickets(){}
-
-    public function getMerchantTickets(){}
 }

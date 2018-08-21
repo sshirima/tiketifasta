@@ -3,9 +3,9 @@
     <!-- Logo -->
     <a href="{{route('user.home')}}" class="logo">
         <!-- mini logo for sidebar mini 50x50 pixels -->
-        <span class="logo-mini"><b>C</b>NAME</span>
+        <span class="logo-mini"><b>t</b>FASTA</span>
         <!-- logo for regular state and mobile devices -->
-        <span class="logo-lg"><b>Company</b>NAME</span>
+        <span class="logo-lg"><b>tiketi</b>FASTA</span>
     </a>
 
     <!-- Header Navbar -->
@@ -14,6 +14,7 @@
         <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
             <span class="sr-only">Toggle navigation</span>
         </a>
+        <div  class="pull-left text-center"><h4 style="color:white; padding-top: 5px;padding-left: 20px">{{$merchant->merchant->name}}</h4></div>
         <!-- Navbar Right Menu -->
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
@@ -32,12 +33,12 @@
                             <img src="{{asset('adminlte/dist/img/boxed-bg.png')}}" class="img-circle" alt="User Image">
 
                             <p>
-                                {{$merchant[\App\Models\Staff::COLUMN_FIRST_NAME].' '.$merchant[\App\Models\Staff::COLUMN_LAST_NAME]}} - Role
-                                <small>Member since Nov. 2012</small>
+                                {{$merchant[\App\Models\Staff::COLUMN_FIRST_NAME].' '.$merchant[\App\Models\Staff::COLUMN_LAST_NAME]}}
+                                <small>Created at {{date_format(date_create($merchant->created_at), "M, Y")}}</small>
                             </p>
                         </li>
                         <!-- Menu Body -->
-                        <li class="user-body">
+                        {{--<li class="user-body">
                             <div class="row">
                                 <div class="col-xs-4 text-center">
                                     <a href="#">Followers</a>
@@ -50,11 +51,11 @@
                                 </div>
                             </div>
                             <!-- /.row -->
-                        </li>
+                        </li>--}}
                         <!-- Menu Footer-->
                         <li class="user-footer">
                             <div class="pull-left">
-                                <a href="#" class="btn btn-default btn-flat">{{__('merchant_header.profile')}}</a>
+                                <a href="{{route('merchant.profile.show')}}" class="btn btn-default btn-flat">{{__('merchant_header.profile')}}</a>
                             </div>
                             <div class="pull-right">
                                 <a href="{{route('merchant.logout')}}" class="btn btn-default btn-flat">{{__('merchant_header.option_sign_out')}}</a>

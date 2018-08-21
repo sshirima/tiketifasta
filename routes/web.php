@@ -62,9 +62,9 @@ Route::prefix('admin')->group(function () {
     Route::get('password/reset/{token}', 'Admins\Auth\ResetPasswordController@showResetForm')->name('admin.password.reset');
     Route::post('password/reset', 'Admins\Auth\ResetPasswordController@reset')->name('admin.password.reset');
 //Profile management routes
-    Route::get('profile/view', 'Admins\ProfileController@show')->name('admin.profile.show');
+    Route::get('profile/show', 'Admins\ProfileController@show')->name('admin.profile.show');
     Route::get('profile/edit', 'Admins\ProfileController@edit')->name('admin.profile.edit');
-    Route::put('profile/update/{id}', 'Admins\ProfileController@update')->name('admin.profile.update');
+    Route::put('profile/update', 'Admins\ProfileController@update')->name('admin.profile.update');
 
     //Merchant management routes
     Route::get('merchants', 'Admins\MerchantController@index')->name('admin.merchant.index');
@@ -96,6 +96,7 @@ Route::prefix('admin')->group(function () {
     Route::put('routes/{id}', 'Admins\RouteController@edit')->name('admin.routes.update');
     Route::get('routes/{id}/delete', 'Admins\RouteController@delete')->name('admin.routes.delete');
     Route::delete('routes/{id}remove', 'Admins\RouteController@remove')->name('admin.routes.remove');
+
     //Bus type management routes
     Route::get('bustype', 'Admins\BusTypeController@index')->name('admin.bustype.index');
     Route::get('bustype/create', 'Admins\BusTypeController@create')->name('admin.bustype.create');
@@ -103,6 +104,7 @@ Route::prefix('admin')->group(function () {
     Route::get('bustype/{id}/show', 'Admins\BusTypeController@show')->name('admin.bustype.show');
     Route::get('bustype/{id}/delete', 'Admins\BusTypeController@delete')->name('admin.bustype.delete');
     Route::delete('bustype/{id}', 'Admins\BusTypeController@remove')->name('admin.bustype.remove');
+
     //Buses management routes
     Route::get('buses', 'Admins\BusController@index')->name('admin.buses.index');
     Route::get('buses/create', 'Admins\BusController@create')->name('admin.buses.create');
@@ -118,15 +120,15 @@ Route::prefix('admin')->group(function () {
     Route::get('buses/{id}/routes', 'Admins\Buses\BusRouteController@showRoute')->name('admin.buses.route.show');
     Route::get('buses/{id}/schedules', 'Admins\Buses\BusScheduleController@index')->name('admin.buses.schedules');
     Route::get('buses/{id}/schedules/events', 'Merchants\Buses\BusSchedulingController@busSchedules');
-
     Route::get('bookings', 'Admins\BookingController@index')->name('admin.bookings.index');
-
     Route::get('schedules', 'Admins\ScheduleController@index')->name('admin.schedules.index');
-
     Route::get('payment-accounts', 'Admins\SystemPaymentController@index')->name('admin.payments-accounts.index');
     Route::get('payment-accounts/create', 'Admins\SystemPaymentController@create')->name('admin.payments-accounts.create');
     Route::post('payment-accounts/store', 'Admins\SystemPaymentController@store')->name('admin.payments-accounts.store');
     Route::get('payment-accounts/{id}/destroy', 'Admins\ScheduleController@destroy')->name('admin.payments-accounts.destroy');
+
+    //Trips
+    Route::get('trips', 'Admins\TripsController@index')->name('admin.trips.index');
 
     //Admin account CRUD routes (V2.0)
     Route::get('accounts/admins', 'Admins\AdminAccountsController@index')->name('admin.admin_accounts.index');
@@ -144,16 +146,20 @@ Route::prefix('merchant')->group(function () {
     Route::post('login', 'Merchants\Auth\LoginController@login')->name('merchant.login');
     Route::get('logout', 'Merchants\Auth\LoginController@logout')->name('merchant.logout');
 
-// Password Reset Routes...
+    // Password Reset Routes...
     Route::get('password/change', 'Merchants\Auth\ChangePasswordController@showForm')->name('merchant.password.change');
     Route::post('password/change', 'Merchants\Auth\ChangePasswordController@changePassword')->name('merchant.password.update');
     Route::get('password/reset', 'Merchants\Auth\ForgotPasswordController@showLinkRequestForm')->name('merchant.password.request');
     Route::post('password/email', 'Merchants\Auth\ForgotPasswordController@sendResetLinkEmail')->name('merchant.password.email');
     Route::get('password/reset/{token}', 'Merchants\Auth\ResetPasswordController@showResetForm')->name('merchant.password.reset');
     Route::post('password/reset', 'Merchants\Auth\ResetPasswordController@reset')->name('merchant.password.reset');
-//Profile management routes
 
-//Staff management routes
+    //Profile management routes
+    Route::get('profile/show', 'Merchants\ProfileController@show')->name('merchant.profile.show');
+    Route::get('profile/edit', 'Merchants\ProfileController@edit')->name('merchant.profile.edit');
+    Route::put('profile/update', 'Merchants\ProfileController@update')->name('merchant.profile.update');
+
+    //Staff management routes
     Route::get('staff', 'Merchants\StaffController@index')->name('merchant.staff.index');
     Route::get('staff/create', 'Merchants\StaffController@create')->name('merchant.staff.create');
     Route::post('staff/store', 'Merchants\StaffController@store')->name('merchant.staff.store');
@@ -166,22 +172,16 @@ Route::prefix('merchant')->group(function () {
     Route::get('buses/{id}/edit', 'Merchants\BusController@edit')->name('merchant.buses.edit');
     Route::put('buses/{id}/edit', 'Merchants\BusController@update')->name('merchant.buses.update');
     Route::get('buses/{id}/show', 'Merchants\BusController@show')->name('merchant.buses.show');
-
     Route::get('buses/{id}/routes/assign', 'Merchants\Buses\BusRoutesController@assignRoute')->name('merchant.buses.assign_routes');
     Route::post('buses/{id}/routes/assign', 'Merchants\Buses\BusRoutesController@saveBusRoute')->name('merchant.buses.assign_routes');
-
     Route::post('buses/{id}/routes/trip/{t_id}/update/time', 'Merchants\Buses\BusRoutesController@updateTripTime');
-
     Route::get('buses/{id}/price/assign', 'Merchants\Buses\TripPriceController@assignPrice')->name('merchant.buses.assign_price');
     Route::post('buses/{id}/price/trip/{t_id}/save', 'Merchants\Buses\TripPriceController@saveTripPrice')->name('merchant.buses.save_price');
-
     Route::get('buses/{id}/routes/assign/{r_id}/locations', 'Merchants\Buses\BusRoutesController@getRouteLocations')->name('merchant.buses.routes.locations');
-
     Route::get('buses/{id}/schedules', 'Merchants\Buses\BusSchedulingController@create')->name('merchant.buses.schedules');
     Route::get('buses/{id}/schedules/create', 'Merchants\Buses\BusSchedulingController@create')->name('merchant.buses.schedules.create');
     Route::post('buses/{id}/schedules/create', 'Merchants\Buses\BusSchedulingController@store')->name('merchant.buses.schedules.store');
     Route::get('buses/{id}/schedules/events', 'Merchants\Buses\BusSchedulingController@busSchedules');
-
     Route::get('buses/{id}/schedule/assign', 'Merchants\ScheduleController@assignSchedule');
 
     //Schedules
@@ -191,6 +191,9 @@ Route::prefix('merchant')->group(function () {
 
     //Bookings
     Route::get('bookings', 'Merchants\BookingController@index')->name('merchant.bookings.index');
+
+    //Trips
+    //Route::get('trips', 'Merchants\TripController@index')->name('merchant.trips.index');
 
     //Tickets
     Route::get('tickets', 'Merchants\TicketController@index')->name('merchant.tickets.index');

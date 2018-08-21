@@ -36,7 +36,6 @@ class BusSchedulingRequest extends FormRequest
     {
         return[
             'trip_dates' => 'required',
-            'direction' => 'required|in:GO,RETURN',
         ];
     }
 

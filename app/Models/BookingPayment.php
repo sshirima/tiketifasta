@@ -42,4 +42,11 @@ class BookingPayment extends Model
     public function ticket(){
         return $this->hasOne(Ticket::class,Ticket::COLUMN_PAYMENT_ID,self::COLUMN_ID);
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function mpesaC2B(){
+        return $this->hasOne(MpesaC2B::class,MpesaC2B::COLUMN_BOOKING_PAYMENT_ID,self::COLUMN_ID);
+    }
 }

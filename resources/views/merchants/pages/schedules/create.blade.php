@@ -48,103 +48,96 @@
                                 </div>
                             </div>
                         </div>
-                        <form class="form-horizontal" role="form" method="post"
-                              action="{{route('merchant.buses.schedules.store',$bus->id)}}"
-                              accept-charset="UTF-8" style="padding: 20px">
-                            <div class="box box-success">
-                                <div class="box-header">
-                                    <h5> Bus schedules</h5>
-                                </div>
-                                <div class="box-body">
-                                    {{--<div class="datepicker"></div>--}}
-                                    <div class="form-group">
-                                        <div class="col-sm-12">
-                                            <table class="table table-bordered table-hover">
-                                                <thead>
-                                                <tr>
-                                                    <th>From</th>
-                                                    <th>To</th>
-                                                    <th>Depart</th>
-                                                    <th>Arrival</th>
-                                                    <th>Travelling days</th>
-                                                    <th>Price</th>
-                                                    <th>
-                                                        <input id="direction" name="direction" type="checkbox" data-toggle="toggle"
-                                                               checked data-on="Going" data-off="Return"
-                                                               data-size="mini" data-onstyle="success"
-                                                               data-offstyle="info">
-                                                    </th>
-                                                </tr>
-                                                </thead>
-                                                <tbody id="trips">
-                                                @foreach($bus->trips as $key=>$trip)
-                                                    @if($trip->direction == 'GO')
-                                                        <tr class="route-trips">
-                                                            <td>{{$trip->from->name}}</td>
-                                                            <td>{{$trip->to->name}}</td>
-                                                            <td>{{$trip->depart_time}}</td>
-                                                            <td>{{$trip->arrival_time}}</td>
-                                                            <td>{{$trip->travelling_days}}</td>
-                                                            <td>
-                                                                <div id="{{'prices-'.$trip->id}}">
-                                                                    @if($trip->price == null)
-                                                                        <div class="label label-warning {{'trip-prices-'.$trip->id}}">
-                                                                            Not set
+                        @if($bus->state == 'ENABLED')
+                            <form role="form" method="post"
+                                  action="{{route('merchant.buses.schedules.store',$bus->id)}}"
+                                  accept-charset="UTF-8">
+                                <div class="box box-success">
+                                    <div class="box-header">
+                                        <h5> Bus schedules</h5>
+                                    </div>
+                                    <div class="box-body">
+                                        {{--<div class="datepicker"></div>--}}
+                                        <div class="form-group">
+                                            <div class="col-sm-12">
+                                                <table class="table table-bordered table-hover">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>From</th>
+                                                        <th>To</th>
+                                                        <th>Depart</th>
+                                                        <th>Arrival</th>
+                                                        <th>Travelling days</th>
+                                                        <th>Price</th>
+                                                        <th>
+                                                            <input id="direction" name="direction" type="checkbox" data-toggle="toggle"
+                                                                   checked data-on="Going" data-off="Return"
+                                                                   data-size="mini" data-onstyle="success"
+                                                                   data-offstyle="info">
+                                                        </th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody id="trips">
+                                                    @foreach($bus->trips as $key=>$trip)
+                                                        @if($trip->direction == 'GO')
+                                                            <tr class="route-trips">
+                                                                <td>{{$trip->from->name}}</td>
+                                                                <td>{{$trip->to->name}}</td>
+                                                                <td>{{$trip->depart_time}}</td>
+                                                                <td>{{$trip->arrival_time}}</td>
+                                                                <td>{{$trip->travelling_days}}</td>
+                                                                <td>
+                                                                    <div id="{{'prices-'.$trip->id}}">
+                                                                        @if($trip->price == null)
+                                                                            <div class="label label-warning {{'trip-prices-'.$trip->id}}">
+                                                                                Not set
+                                                                            </div>
+                                                                        @else
+                                                                            {{$trip->price}}
+                                                                        @endif
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    @if($trip->direction == 'GO')
+                                                                        <div class="label label-success"><i
+                                                                                    class="fas fa-arrow-circle-right"></i>
+                                                                            Going
                                                                         </div>
                                                                     @else
-                                                                        {{$trip->price}}
+                                                                        <div class="label label-info"><i
+                                                                                    class="fas fa-arrow-circle-left"></i>
+                                                                            Return
+                                                                        </div>
                                                                     @endif
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                @if($trip->direction == 'GO')
-                                                                    <div class="label label-success"><i
-                                                                                class="fas fa-arrow-circle-right"></i>
-                                                                        Going
-                                                                    </div>
-                                                                @else
-                                                                    <div class="label label-info"><i
-                                                                                class="fas fa-arrow-circle-left"></i>
-                                                                        Return
-                                                                    </div>
-                                                                @endif
-                                                            </td>
-                                                        </tr>
-                                                    @endif
-                                                @endforeach
-                                                </tbody>
-                                            </table>
+                                                                </td>
+                                                            </tr>
+                                                        @endif
+                                                    @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
+                                        <div class="form-group">
+                                            {!! Form::label('trip_dates', __('merchant_page_buses.form_field_label_select_dates'), ['class'=>'col-sm-2 control-label', 'for'=>'trip_dates']) !!}
+                                            <div class="col-sm-8">
+                                                {{Form::select('trip_dates[]',$dates,null,['class'=>'form-control select2','multiple'=>'multiple'])}}
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-5 col-md-offset-5">
+                                                {!! Form::submit(__('merchant_page_buses.form_field_button_save_schedule'), ['class' => 'btn btn-success']) !!}
+                                                <a href="{!! route('merchant.buses.index') !!}"
+                                                   class="btn btn-default">{{__('merchant_page_buses.form_field_button_cancel')}}</a>
+                                            </div>
+                                        </div>
+                                        @csrf
                                     </div>
-                                    <div id="calendar"></div>
                                 </div>
-                            </div>
-                            <div class="box box-success">
-                                <div class="box-header">
-                                    <h5> Add travelling days</h5>
-                                </div>
-                                <div class="box-body">
-
-                                    <div class="form-group">
-                                        {!! Form::label('trip_dates', __('merchant_page_buses.form_field_label_select_dates'), ['class'=>'col-sm-2 control-label', 'for'=>'trip_dates']) !!}
-                                        <div class="col-sm-2">
-                                            {{Form::select('direction',[0=>'Direction','GO'=>'GO','RETURN'=>'RETURN'],null,['class'=>'form-control select2'])}}
-                                        </div>
-                                        <div class="col-sm-8">
-                                            {{Form::select('trip_dates[]',$dates,null,['class'=>'form-control select2','multiple'=>'multiple'])}}
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="col-sm-5 col-md-offset-5">
-                                            {!! Form::submit(__('merchant_page_buses.form_field_button_save_schedule'), ['class' => 'btn btn-success']) !!}
-                                            <a href="{!! route('merchant.buses.index') !!}"
-                                               class="btn btn-default">{{__('merchant_page_buses.form_field_button_cancel')}}</a>
-                                        </div>
-                                    </div>
-                                    @csrf
-                                </div>
-                            </div>
-                        </form>
+                            </form>
+                            <div id="calendar"></div>
+                        @else
+                            <h5><span class="label label-warning"> Bus is in disabled state, you can not add schedule to it</span></h5>
+                        @endif
                     </div>
                 @else
                     <div class="form-horizontal">

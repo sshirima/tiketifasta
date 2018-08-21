@@ -62,8 +62,9 @@ class ScheduleController extends BaseController
                 'create' => ['alias' => 'merchant.schedules.create', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {
                 $query->select('schedules.id as id','buses.reg_number as reg_number','schedules.status as status',
-                    'days.date as date')
+                    'days.date as date','routes.route_name as route_name','schedules.direction as direction')
                     ->join('buses', 'buses.id', '=', 'schedules.bus_id')
+                    ->join('routes', 'routes.id', '=', 'buses.route_id')
                     ->join('days', 'days.id', '=', 'schedules.day_id')
                     ->join('merchants', 'merchants.id', '=', 'buses.merchant_id')
                     ->where('merchants.id', $this->merchantId);
@@ -80,9 +81,15 @@ class ScheduleController extends BaseController
      */
     private function setTableColumns($table)
     {
-        $table->addColumn('date')->setTitle('Date')->isSearchable()->sortByDefault()->setCustomTable('days');
+        $table->addColumn('date')->setTitle('Date')->isSearchable()->sortByDefault()->useForDestroyConfirmation()->setCustomTable('days');
 
-        $table->addColumn('reg_number')->setTitle('Bus number')->isSortable()->isSearchable()->useForDestroyConfirmation()->setCustomTable('buses');
+        $table->addColumn('reg_number')->setTitle('Bus number')->isSortable()->isSearchable()->setCustomTable('buses');
+
+        $table->addColumn('route_name')->setTitle('Route name')->isSortable()->isSearchable()->setCustomTable('routes');
+
+        $table->addColumn('direction')->setTitle('Direction')->isCustomHtmlElement(function ($entity, $column) {
+            return $entity['direction'] == 'GO'?'<div class="label label-success"> Going </div>':'<div class="label label-info"> Return </div>';
+        });
 
         $table->addColumn('status')->setTitle('Status')->isCustomHtmlElement(function ($entity, $column) {
             return $entity['status']?'<div class="label label-success"> Active </div>':'<div class="label label-danger"> Inactive </div>';

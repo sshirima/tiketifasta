@@ -64,8 +64,12 @@
                 </div>
                 <div class="col-lg-4">
                     <h4 class="mb-5">Payment information</h4>
-                    <div class="text-info">1. Dial *150*00#</div>
-                    <div class="text-info">2. Select pay with mpesa</div>
+                    <div class="text-info">1. Dial <b>*150*00#</b></div>
+                    <div class="text-info">2. Go to pay with mpesa</div>
+                    <div class="text-info">3. Enter company number: <b>{{ env('MPESA_SPID') }}</b> </div>
+                    <div class="text-info">4. Enter payment number: <b>{{$bookingPayment->payment_ref}}</b> </div>
+                    <div class="text-info">5. Enter amount: <b>{{$bookingPayment->amount}}</b></div>
+                    <div class="text-info">6. Then submit: </div>
                 </div>
             </div>
             <br>
@@ -75,7 +79,13 @@
                 </div>
             </div>
             @else
-                <div class="alert alert-warning">This seat has been booked, please try another seat</div>
+                @if(isset($error))
+                    <div class="alert alert-danger">Something went wrong, please try again</div>
+
+                    <div class="alert alert-danger">{{$error}}</div>
+                    @else
+                    <div class="alert alert-warning">This seat has been booked, please try another seat</div>
+                @endif
             @endif
         </div>
     </section>

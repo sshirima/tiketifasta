@@ -15,7 +15,7 @@
 <div class="form-group">
     {!! Form::label('start_location', __('admin_pages.page_routes_fields_label_start_location'), ['class'=>'col-sm-5 control-label', 'for'=>'start_location']) !!}
     <div class="col-sm-6">
-        {{Form::select(\App\Models\Route::COLUMN_START_LOCATION,$locations,old(\App\Models\Route::COLUMN_START_LOCATION),['class'=>'form-control'])}}
+        {{Form::select(\App\Models\Route::COLUMN_START_LOCATION,$locations,old(\App\Models\Route::COLUMN_START_LOCATION),['class'=>'form-control   select2'])}}
     </div>
 </div>
 
@@ -24,7 +24,7 @@
         <div class="entry form-group">
             {!! Form::label('destinations', __('admin_pages.page_routes_fields_label_destination'), ['class'=>'col-sm-5 control-label', 'for'=>'destinations']) !!}
             <div class="col-sm-6">
-                {{Form::select('destinations[]',$locations,null,['class'=>'form-control'])}}
+                {{Form::select('destinations[]',$locations,null,['class'=>'form-control   select2'])}}
             </div>
             <div class="col-sm-1">
                 <span class="input-group-btn ">

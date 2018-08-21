@@ -1,34 +1,61 @@
 @extends('admins.layouts.master')
 
 @section('title')
-    {{ __('page_profile_show.page_title') }}
+    Edit profile
 @endsection
 
-@section('contents')
-    <div class="container">
+@section('content-body')
+    <section class="content container-fluid">
         <div class="row">
-            <div class="col-md-3"></div>
-            <div class="col-md-6">
-                @include('includes.errors.message')
-                <h3 ></h3>
-                {!! Form::open(['route' => ['admin.profile.update', $admin->id], 'method' => 'put']) !!}
-                <table class="table">
-                    <tbody>
-                    <tr><th>{{__('page_profile_edit.label_last_name')}}</th><td>{{ Form::input('text', 'firstname', $admin->firstname, ['class' => 'form-control']) }}</td></tr>
-                    <tr><th>{{__('page_profile_edit.label_first_name')}}</th><td>{{ Form::input('text', 'lastname', $admin->lastname, ['class' => 'form-control']) }}</td></tr>
-                    <tr><th>{{__('page_profile_edit.label_email')}}</th><td>{{$admin->email}}</td></tr>
-                    <tr><th>{{__('page_profile_edit.label_date_created')}}</th>
-                        <td>@if(empty($admin->created_at)) {{__('page_profile_edit.label_system_created')}} @else {{$admin->created_at}} @endif</td>
-                    </tr>
-                    <tr><th>{{__('page_profile_edit.label_date_updated')}}</th><td>@if(empty($admin->updated_at)) Never @else {{$admin->updated_at}} @endif</td></tr>
-                    </tbody>
-                </table>
-                <button type="submit" class="btn btn-success">{{__('page_profile_edit.button_save')}}</button>
-                {{Form::close()}}
-                <br>
-                <a href="{{route('user.profile.show')}}"><button class="btn btn-danger">{{__('page_profile_edit.button_cancel')}}</button></a>
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+                <div class="box box-primary">
+                    <form class="form-horizontal" role="form" method="post"
+                          action="{{route('admin.profile.update')}}" accept-charset="UTF-8" style="padding: 10px">
+                        @csrf
+                        <input type="hidden" name="_method" value="PUT">
+                        <div class="box-body box-profile">
+                            <img class="profile-user-img img-responsive img-circle" src="{{asset('adminlte/dist/img/boxed-bg.png')}}" alt="User profile picture">
+
+                            <h3 class="profile-username text-center">{{$admin->firstname.' '.$admin->lastname}}</h3>
+
+                            <p class="text-muted text-center">Administrator account</p>
+
+                            <ul class="list-group list-group-unbordered">
+
+                                <div class="form-group list-group-item">
+                                    <label class="control-label col-sm-5" > First name</label>
+                                    <div class="col-sm-7">
+                                        <input class="form-control" name="firstname" value="{{$admin->firstname}}">
+                                    </div>
+                                </div>
+                                <div class="form-group list-group-item">
+                                    <label class="control-label col-sm-5" > Last name</label>
+                                    <div class="col-sm-7">
+                                        <input class="form-control" name="lastname" value="{{$admin->lastname}}">
+                                    </div>
+                                </div>
+                                <div class="form-group list-group-item">
+                                    <label class="control-label col-sm-5" > Phone number</label>
+                                    <div class="col-sm-7">
+                                        <input class="form-control" name="phonenumber" value="{{$admin->phonenumber}}">
+                                    </div>
+                                </div>
+                                <div class="form-group list-group-item">
+                                    <label class="control-label col-sm-5" > Email</label>
+                                    <div class="col-sm-7">
+                                        <input class="form-control" name="email" value="{{$admin->email}}" disabled>
+                                    </div>
+                                </div>
+
+                            </ul>
+                            <button type="submit" class="btn btn-primary btn-block"><b>Update profile</b></button>
+                        </div>
+                    </form>
+                    <!-- /.box-body -->
+                </div>
             </div>
-            <div class="col-md-3"></div>
+            <div class="col-sm-4"></div>
         </div>
-    </div>
+    </section>
 @endsection

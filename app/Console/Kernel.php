@@ -2,6 +2,8 @@
 
 namespace App\Console;
 
+use App\Console\Commands\DisableExpiredMerchants;
+use App\Console\Commands\DisableExpiredSchedules;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -13,7 +15,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        DisableExpiredMerchants::class,
+        DisableExpiredSchedules::class
     ];
 
     /**
@@ -24,8 +27,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+         $schedule->command('merchants:disable')->dailyAt('00:00');
+         $schedule->command('bus_schedules:disable')->dailyAt('00:00');
+         $schedule->command('bus_schedules:disable')->dailyAt('00:00');
     }
 
     /**

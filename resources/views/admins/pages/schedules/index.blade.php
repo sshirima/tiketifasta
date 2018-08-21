@@ -21,11 +21,11 @@
 
 @section('content-body')
     <section class="content container-fluid">
-        <div class="box box-primary">
-            <div class="box-header">
-                Buses schedules
+        <div class="nav-tabs-custom">
+            <div class="nav nav-tabs">
+                 @include('admins.pages.schedules.schedule_panel')
             </div>
-            <div class="box-body">
+            <div class="tab-content">
                 {!! $schedulesTable->render() !!}
             </div>
         </div>

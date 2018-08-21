@@ -110,4 +110,27 @@ class Merchant extends Model
         }
         return $busArray;
     }
+
+    /**
+     * Scope a query to get expired models.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeContractExpired($query)
+    {
+        return $query->whereDate(self::COLUMN_CONTRACT_END, '<', date('Y-m-d'));
+    }
+
+    /**
+     * Scope a query to get expired models.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeContractActive($query)
+    {
+        return $query->whereDate(self::COLUMN_CONTRACT_END, '>=', date('Y-m-d'));
+    }
+
 }

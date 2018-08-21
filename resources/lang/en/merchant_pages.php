@@ -79,6 +79,9 @@ return [
     'page_bus_edit_panel_general_settings'=>'Edit information',
     'page_bus_edit_panel_show_information'=>'Bus details',
 
+    'page_schedules_panel_schedules_index'=>'Buses schedules',
+    'page_schedules_panel_trips_index'=>'Scheduled trips',
+
     'page_bus_edit_panel_schedules'=>'Bus schedules',
     'page_bus_edit_panel_routes'=>'Routes',
     'page_bus_edit_panel_price'=>'Prices',

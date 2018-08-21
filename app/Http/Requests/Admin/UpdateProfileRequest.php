@@ -31,7 +31,9 @@ class UpdateProfileRequest extends FormRequest
      */
     public function rules()
     {
-        return Admin::$rules;
+        return [
+            Admin::COLUMN_FIRST_NAME => 'required|max:255',
+        ];
     }
 
 }

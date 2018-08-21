@@ -10,7 +10,7 @@
             </div>
             <div class="collapse navbar-collapse pull-right" id="navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li><a href="#">Login</a></li>
+                    <li><a href="{{route('merchant.login')}}">Login</a></li>
                 </ul>
             </div>
         </div>

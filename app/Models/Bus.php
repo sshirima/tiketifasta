@@ -110,7 +110,7 @@ class Bus extends Model
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function scheduledDays(){
-        return $this->belongsToMany(Day::class,Schedule::TABLE, Schedule::COLUMN_BUS_ID, Schedule::COLUMN_DAY_ID);
+        return $this->belongsToMany(Day::class,Schedule::TABLE, Schedule::COLUMN_BUS_ID, Schedule::COLUMN_DAY_ID)->withPivot(Schedule::COLUMN_DIRECTION);
     }
 
     /**
@@ -138,13 +138,6 @@ class Bus extends Model
      */
     public function seats(){
         return $this->hasMany(Seat::class,Seat::COLUMN_BUS_ID,self::COLUMN_ID);
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function reassignedSchedule(){
-        return $this->belongsTo(ReassignBus::class,self::COLUMN_ID,ReassignBus::COLUMN_REASSIGNED_BUS_ID);
     }
 
     /**

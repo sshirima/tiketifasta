@@ -1,5 +1,9 @@
 <?php
 
+/*define('RDS_HOSTNAME', $_SERVER['RDS_HOSTNAME']);
+define('RDS_USERNAME', $_SERVER['RDS_USERNAME']);
+define('RDS_PASSWORD', $_SERVER['RDS_PASSWORD']);
+define('RDS_DB_NAME', $_SERVER['RDS_DB_NAME']);*/
 return [
 
     /*
@@ -41,6 +45,11 @@ return [
 
         'mysql' => [
             'driver' => 'mysql',
+            /*'host' => env('DB_HOST_PROD', '127.0.0.1'),
+            'port' => env('DB_PORT_PROD', '3306'),
+            'database' => env('DB_DATABASE_PROD', 'forge'),
+            'username' => env('DB_USERNAME_PROD', 'forge'),
+            'password' => env('DB_PASSWORD_PROD', ''),*/
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),
             'database' => env('DB_DATABASE', 'forge'),

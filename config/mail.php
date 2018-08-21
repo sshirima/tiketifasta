@@ -36,7 +36,7 @@ return [
     | SMTP Host Port
     |--------------------------------------------------------------------------
     |
-    | This is the SMTP port used by your application to deliver e-mails to
+    | This is the SMTP port used by your application to deliver e-emails to
     | users of the application. Like the host we have set this value to
     | stay compatible with the Mailgun e-mail application by default.
     |
@@ -49,15 +49,15 @@ return [
     | Global "From" Address
     |--------------------------------------------------------------------------
     |
-    | You may wish for all e-mails sent by your application to be sent from
+    | You may wish for all e-emails sent by your application to be sent from
     | the same address. Here, you may specify a name and address that is
-    | used globally for all e-mails that are sent by your application.
+    | used globally for all e-emails that are sent by your application.
     |
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Example'),
+        'address' => env('MAIL_FROM_ADDRESS', 'no-reply@tiketifasta.com'),
+        'name' => env('MAIL_FROM_NAME', 'Tiketifasta'),
     ],
 
     /*
@@ -93,7 +93,7 @@ return [
     | Sendmail System Path
     |--------------------------------------------------------------------------
     |
-    | When using the "sendmail" driver to send e-mails, we will need to know
+    | When using the "sendmail" driver to send e-emails, we will need to know
     | the path to where Sendmail lives on this server. A default path has
     | been provided here, which will work well on most of your systems.
     |

@@ -21,17 +21,20 @@ class StaffController extends BaseController
 
     public function __construct(StaffRepository $staffRepo)
     {
-        $this->middleware('auth:merchant');
+        parent::__construct();
         $this->staffRepo = $staffRepo;
     }
 
     public function index(){
+        $this->setMerchantId();
         $staff_table = app(TableList::class)->setModel(Staff::class)->enableRowsNumberSelector()
             ->setRoutes([
             'index' => ['alias'=>'merchant.staff.index','parameters' => []],
             'create'=> ['alias' => 'merchant.staff.create', 'parameters' => []],
             'destroy'=> ['alias' => 'merchant.staff.remove', 'parameters' => ['id']],
-        ]);
+        ])->addQueryInstructions(function ($query) {
+                $query->where('merchant_id', $this->merchantId);
+            });
 
         $staff_table->addColumn('firstname')->setTitle('Firstname')->isSortable()->sortByDefault()->isSearchable()->useForDestroyConfirmation();
 

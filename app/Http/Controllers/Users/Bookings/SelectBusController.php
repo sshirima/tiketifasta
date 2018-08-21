@@ -17,6 +17,7 @@ use App\Models\ScheduleSeat;
 use App\Models\Seat;
 use App\Models\Trip;
 use App\Services\Bookings\BookingManager;
+use App\Services\DateTime\DatesOperations;
 use App\Services\DateTimeService;
 use App\Services\Payments\PaymentManager;
 use App\Services\Trips\TripsManager;
@@ -24,6 +25,8 @@ use Illuminate\Http\Request;
 
 class SelectBusController extends Controller
 {
+    use DatesOperations;
+
     private $selectedSeat;
 
     private $tripsManager;
@@ -46,9 +49,23 @@ class SelectBusController extends Controller
 
         $input = $request->all();
 
-        $trips = $this->tripsManager->findTripForBookings(DateTimeService::convertDate($input['date'], 'Y-m-d'), 'Dar', '');
+        if ($request->has('date')){
+            $dateIsValid = $this->compareTime($input['date'], date('Y-m-d'));
+            $date = DateTimeService::convertDate($input['date'], 'Y-m-d');
+        } else {
+            $dateIsValid = 1;
+            $input['date'] = date('Y-m-d');
+            $date = null;
+        }
 
-        return view('users.pages.bookings.select_bus')->with(['trips' => $trips]);
+
+        if($dateIsValid){
+            $trips = $this->tripsManager->findTripForBookings($date, $input['from'], $input['to']);
+            return view('users.pages.bookings.select_bus')->with(['trips' => $trips]);
+        } else{
+            return view('users.pages.bookings.select_bus')->with(['date_error'=>1]);
+        }
+       /*return view('users.pages.bookings.select_bus')->with(['trips' => $trips]);*/
     }
 
     /**
@@ -77,10 +94,9 @@ class SelectBusController extends Controller
      */
     public function selectSeat(Request $request, $busId, $scheduleId, $tripId)
     {
+        $trip = $this->tripsManager->getSelectedTripDetails($scheduleId, $tripId, $request->all()['seat']);
 
-        $trip = $this->tripsManager->getSelectedTripDetails($tripId, $request->all()['seat']);
-
-        return view('users.pages.bookings.booking_details')->with(['trip' => $trip]);;
+        return view('users.pages.bookings.booking_details')->with(['trip' => $trip]);
     }
 
     /**
@@ -92,12 +108,27 @@ class SelectBusController extends Controller
      */
     public function bookingStore(CreateBookingRequest $request, $busId, $scheduleId, $tripId)
     {
-        $booking = $this->bookingManager->bookTicket($request->all(), $busId, $scheduleId, $tripId);
+        $booking = null;
+        $error = null;
+        $bookingPayment = null;
+        $trip = null;
 
-        $trip = $this->tripsManager->getSelectedTripDetails($tripId, $request->all()['seat']);
+        //Confirm
+        try
+        {
+            $booking = $this->bookingManager->bookTicket($request->all(), $busId, $scheduleId, $tripId);
+
+            $trip = $this->tripsManager->getSelectedTripDetails($scheduleId, $tripId, $request->all()['seat']);
+
+            $bookingPayment = $booking->bookingPayment;
+        }
+        catch (\Exception $exception)
+        {
+            $error = $exception->getMessage();
+        }
 
         //Present the response to the user for payments
-        return view('users.pages.bookings.booking_confirmation')->with(['booking' => $booking, 'trip' => $trip]);
+        return view('users.pages.bookings.booking_confirmation')->with(['error'=>$error,'bookingPayment'=>$bookingPayment,'booking' => $booking, 'trip' => $trip]);
     }
 
     /**

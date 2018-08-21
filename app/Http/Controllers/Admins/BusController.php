@@ -16,12 +16,13 @@ use App\Repositories\Admin\Buses\BusRepository;
 use App\Repositories\Admin\Buses\BusSeatRepository;
 use App\Services\Buses\AuthorizeBuses;
 use App\Services\Merchants\CheckMerchantContractStatus;
+use App\Services\Trips\TripsAnalyser;
 use Illuminate\Http\Request;
 use Okipa\LaravelBootstrapTableList\TableList;
 
 class BusController extends BaseController
 {
-    use BusBaseController, CheckMerchantContractStatus, AuthorizeBuses;
+    use BusBaseController, CheckMerchantContractStatus, AuthorizeBuses, TripsAnalyser;
 
     protected $seatRepository;
 
@@ -65,6 +66,7 @@ class BusController extends BaseController
     public function edit($id){
         $bus = $this->busRepository->findWithoutFail($id);
 
+        //return json_encode($this->checkTripConsistent($bus->trips,'GO'));
         return view('admins.pages.buses.create')->with($this->getEditParams($bus));
     }
 
@@ -110,6 +112,10 @@ class BusController extends BaseController
             $bus->merchant = $this->getMerchantContractStatus($bus->merchant);
 
             $bus = $this->checkTripPrices($bus);
+
+            $bus->go_trip = $this->checkTripConsistent($bus->trips,'GO');
+
+            $bus->return_trip = $this->checkTripConsistent($bus->trips,'RETURN');
         }
 
         return view('admins.pages.buses.authorize')->with(['bus'=>$bus]);

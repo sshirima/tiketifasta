@@ -11,6 +11,9 @@ namespace App\Http\Controllers\Admins;
 
 use App\Http\Requests\Admin\UpdateMerchantRequest;
 use App\Http\Requests\Merchant\CreateMerchantRequest;
+use App\Mail\RegisterMerchantMail;
+use App\Models\Merchant;
+use App\Models\Staff;
 use App\Repositories\Merchant\MerchantRepository;
 use App\Repositories\Merchant\StaffRepository;
 use App\Services\Merchants\AuthorizeMerchantAccount;
@@ -45,6 +48,23 @@ class MerchantController extends BaseController
         return view('admins.pages.merchants.create')->with(['admin'=>\auth()->user()]);
     }
 
+    public function store(CreateMerchantRequest $request){
+
+        $input =  $request->all();
+
+        $merchantManager = new MerchantManager();
+
+        $merchant = $merchantManager->addMerchant( $input);
+
+        if (!isset($merchant)){
+            Flash::error(__('page_merchant.error_not_saved'));
+        }
+
+        Flash::success(__('page_merchant.success_saved'));
+
+        return redirect(route('admin.merchant.index'));
+    }
+
     public function edit($merchantId){
         return view('admins.pages.merchants.edit')->with(['admin'=>\auth()->user(),'merchant'=>$this->merchantRepository->findWithoutFail($merchantId)]);
     }
@@ -77,23 +97,6 @@ class MerchantController extends BaseController
         }
 
         return view('admins.pages.merchants.show')->with(['admin'=>\auth()->user(),'merchant'=>$merchant]);
-    }
-
-    public function store(CreateMerchantRequest $request){
-
-        $input =  $request->all();
-
-        $merchantManager = new MerchantManager();
-
-        $merchant = $merchantManager->addMerchant( $input);
-
-        if (!isset($merchant)){
-            Flash::error(__('page_merchant.error_not_saved'));
-        }
-
-        Flash::success(__('page_merchant.success_saved'));
-
-        return redirect(route('admin.merchant.index'));
     }
 
     public function delete($id){

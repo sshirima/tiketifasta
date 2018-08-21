@@ -33,7 +33,11 @@ class MerchantComposerSP extends ServiceProvider
                 'merchants.pages.schedules.index',
                 'merchants.pages.schedules.create',
                 'merchants.pages.bookings.index',
+                'merchants.pages.trips.index',
                 'merchants.pages.tickets.index',
+                'merchants.pages.profile.show',
+                'merchants.pages.profile.edit',
+                'merchants.pages.auth.changepass',
             ],
             MerchantComposer::class
         );
