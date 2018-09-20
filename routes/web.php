@@ -27,6 +27,7 @@ Route::get('search/bus', 'Users\Bookings\SelectBusController@search')->name('boo
 Route::get('bus/{b_id}/schedule/{s_id}/trip/{t_id}/select/seat', 'Users\Bookings\SelectBusController@selectBus')->name('booking.buses.select');
 Route::get('bus/{b_id}/schedule/{s_id}/trip/{t_id}/booking-info', 'Users\Bookings\SelectBusController@selectSeat')->name('booking.seat.select');
 Route::get('bus/{b_id}/schedule/{s_id}/trip/{t_id}/booking/store', 'Users\Bookings\SelectBusController@bookingStore')->name('booking.store');
+Route::get('tigo-secure/confirm', 'Users\Bookings\SelectBusController@confirmTigoSecurePayment')->name('booking.tigo-secure.confirm');
 
 // Password Reset Routes...
 Route::get('password/change', 'Users\Auth\ChangePasswordController@showForm')->name('password.change');
@@ -129,6 +130,12 @@ Route::prefix('admin')->group(function () {
 
     //Trips
     Route::get('trips', 'Admins\TripsController@index')->name('admin.trips.index');
+
+    Route::get('booking-payments', 'Admins\BookingPaymentController@index')->name('admin.booking_payments.index');
+    Route::get('customer-payments/mpesa', 'Admins\MpesaC2BController@index')->name('admin.mpesac2b.index');
+    Route::get('customer-payments/tigopesa', 'Admins\TigoSecureC2BController@index')->name('admin.tigosecurec2b.index');
+    Route::get('merchants-payments/mpesa', 'Admins\MpesaB2CController@index')->name('admin.mpesab2c.index');
+    Route::get('merchant-payments/tigopesa', 'Admins\TigoB2CController@index')->name('admin.tigob2c.index');
 
     //Admin account CRUD routes (V2.0)
     Route::get('accounts/admins', 'Admins\AdminAccountsController@index')->name('admin.admin_accounts.index');

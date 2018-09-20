@@ -35,6 +35,22 @@ return [
             'channels' => ['single'],
         ],
 
+        'mpesac2b' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/mpesac2b.log'),
+            'level' => 'debug',
+        ],
+        'mpesab2c' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/mpesab2c.log'),
+            'level' => 'debug',
+        ],
+        'tigosecurec2b' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/tigosecurec2b.log'),
+            'level' => 'debug',
+        ],
+
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),

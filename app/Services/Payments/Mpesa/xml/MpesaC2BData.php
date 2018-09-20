@@ -39,7 +39,7 @@ trait MpesaC2BData
         $transaction->addChild('serviceReceipt',$values['serviceReceipt']);
         $transaction->addChild('serviceDate',$values['serviceDate']);
         $transaction->addChild('serviceID',$values['serviceID']);
-        $transaction->addChild('originalConversationID',$values['originalConversationID']);
+        $transaction->addChild('originatorConversationID',$values['originatorConversationID']);
         $transaction->addChild('conversationID',$values['conversationID']);
         $transaction->addChild('transactionID',$values['transactionID']);
         $transaction->addChild('initiator',$values['initiator']);

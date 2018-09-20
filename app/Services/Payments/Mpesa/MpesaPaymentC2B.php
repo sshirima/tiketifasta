@@ -12,6 +12,7 @@ namespace App\Services\Payments\Mpesa;
 use App\Models\MpesaC2B;
 use App\Services\Payments\Mpesa\xml\MpesaC2BData;
 use App\Services\Payments\PaymentManager;
+use Log;
 
 trait MpesaPaymentC2B
 {
@@ -24,21 +25,24 @@ trait MpesaPaymentC2B
 
     }
 
-    public function validatePaymentC2B(array $attributes)
+    public function validatePaymentC2B(array $attributes):array
     {
-        //Stage 2, fetch by account reference]
+        //Stage 2, fetch by account reference
 
         $mpesaC2B = MpesaC2B::where(['account_reference'=>$attributes['account_reference']])->first();
 
         if (!isset($mpesaC2B)) {
+            Log::channel('mpesac2b')->info('Transaction not found:'.'['.$attributes['mpesa_receipt'].']'. PHP_EOL );
             return array('status'=>false,'message'=>'Transaction not found');
         }
 
         if ($this->isDuplicateC2B($attributes['mpesa_receipt'])) {
+            Log::channel('mpesac2b')->info('Transaction is duplicated:'.'['.$attributes['mpesa_receipt'].']'. PHP_EOL );
             return array('status'=>false,'message'=>'Transaction is duplicated');
         }
 
         if ($mpesaC2B->amount != $attributes['amount']) {
+            Log::channel('mpesac2b')->info('Paid amount is not equal to ticket price:'.'['. 'Paid='.$attributes['amount'].']'. PHP_EOL );
             return array('status'=>false,'message'=>'Paid amount is not equal to ticket price');
         }
 
@@ -65,7 +69,7 @@ trait MpesaPaymentC2B
         return $mpesaC2B->update();
     }
 
-    public function confirmPaymentC2B(MpesaC2B $mpesaC2B)
+    public function confirmPaymentC2BTransaction(MpesaC2B $mpesaC2B)
     {
         //Stage 0
         $mpesaC2B->stage ='0';

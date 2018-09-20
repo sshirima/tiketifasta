@@ -22,6 +22,7 @@ class TigoOnlineC2B extends Model
     const COLUMN_EXTERNAL_REF = 'external_ref_id';
     const COLUMN_MFS_ID = 'mfs_id';
     const COLUMN_ERROR_CODE = 'error_code';
+    const COLUMN_BOOKING_PAYMENT_ID = 'booking_payment_id';
     const COLUMN_AUTHORIZED_AT = 'authorized_at ';
 
     const TABLE = 'tigoonline_c2b';
@@ -35,6 +36,13 @@ class TigoOnlineC2B extends Model
     protected $fillable = [
          self::COLUMN_REFERENCE,self::COLUMN_PHONE_NUMBER,self::COLUMN_AMOUNT,self::COLUMN_CURRENCY,self::COLUMN_FIRST_NAME,
         self::COLUMN_LAST_NAME,self::COLUMN_EMAIL,self::COLUMN_ACCESS_TOKEN,self::COLUMN_TAX,
-        self::COLUMN_FEE,self::COLUMN_STATUS,
+        self::COLUMN_FEE,self::COLUMN_STATUS, self::COLUMN_BOOKING_PAYMENT_ID,
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function bookingPayment(){
+        return $this->belongsTo(BookingPayment::class,self::COLUMN_BOOKING_PAYMENT_ID,BookingPayment::COLUMN_ID);
+    }
 }

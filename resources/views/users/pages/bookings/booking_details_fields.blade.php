@@ -35,7 +35,7 @@
     <div class="row">
         <strong class="col-sm-3">Payment via: </strong>
         <div class="col-sm-8">
-            {!! Form::select('payment',[null=>'Payment','mpesa'=>'M-pesa','tigo'=>'Tigo-Pesa'],null, ['class' => 'form-control']) !!}
+            {!! Form::select('payment',[null=>'Payment','mpesa'=>'M-pesa','tigopesa'=>'Tigo-Pesa'],null, ['class' => 'form-control']) !!}
         </div>
     </div><br>
     <div class="row">

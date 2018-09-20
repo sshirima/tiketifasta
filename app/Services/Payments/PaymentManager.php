@@ -10,6 +10,7 @@ namespace App\Services\Payments;
 
 
 use App\Services\Payments\Mpesa\Mpesa;
+use App\Services\Payments\Tigosecure\TigoOnline;
 use App\Services\Payments\Tigosecure\TigoOnlinePaymentC2B;
 
 class PaymentManager
@@ -17,10 +18,12 @@ class PaymentManager
     use TigoUSSDPaymentService, BookingPaymentService, TigoOnlinePaymentC2B;
 
     private $mpesa;
+    private $tigoOnline;
 
-    public function __construct(Mpesa $mpesa)
+    public function __construct(Mpesa $mpesa, TigoOnline $tigoOnline)
     {
         $this->mpesa = $mpesa;
+        $this->tigoOnline = $tigoOnline;
     }
 
     public function initialiazeMPESAPaymentC2B(array $attributes){
@@ -30,8 +33,15 @@ class PaymentManager
         return $mpesaC2B;
     }
 
-    public function mpesaPaymentReferenceC2B(){
-        return $this->mpesa->getPaymentReference();
+    public function mpesaPaymentReferenceC2B(array $attributes){
+
+        $mpesaC2B = $this->mpesa->initializePaymentC2B($attributes);
+
+        return $mpesaC2B;
+    }
+
+    public function initialiazeTigoSecureC2B(array $attributes){
+        return $this->tigoOnline->initializePaymentC2B($attributes);
     }
 
     public static function random_code($limit)

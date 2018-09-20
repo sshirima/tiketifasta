@@ -27,7 +27,23 @@
             <li class="header">{{__('admin_side_bar_left.header_title_general')}}</li>
             <li class="{{Request::is('admin') ? 'active' : ''}}"><a href="{{route('admin.home')}}"><i class="fas fa-tachometer-alt"></i> <span> {{__('admin_side_bar_left.option_dashboard')}}</span></a></li>
             {{--<li class="{{Request::is('admin/approvals') ? 'active' : ''}}"><a href="{{route('admin.approvals.index')}}"><i class="fas fa-link"></i> <span> {{__('admin_side_bar_left.option_approvals')}}</span></a></li>
-            --}}<li class="{{Request::is('admin/bookings') ? 'active' : ''}}"><a href="{{route('admin.bookings.index')}}"><i class="fas fa-link"></i> <span> {{__('admin_side_bar_left.option_bookings')}}</span></a></li>
+            --}}
+            <li class="treeview menu-open">
+                <a href="#">
+                    <i class="fas fa-link"></i> <span>Payments</span>
+                    <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+                </a>
+                <ul class="treeview-menu" style="display: block;">
+                    <li><a href="{{route('admin.booking_payments.index')}}"><i class="fas fa-link"></i> Booking Payments </a></li>
+                    <li><a href="{{route('admin.mpesac2b.index')}}"><i class="fas fa-link"></i> Mpesa C2B </a></li>
+                    <li><a href="{{route('admin.tigosecurec2b.index')}}"><i class="fas fa-link"></i> Tigopesa C2B </a></li>
+                    <li><a href="{{route('admin.mpesab2c.index')}}"><i class="fas fa-link"></i> Mpesa B2C </a></li>
+                    <li><a href="{{route('admin.tigob2c.index')}}"><i class="fas fa-link"></i> Tigopesa B2C </a></li>
+                </ul>
+            </li>
+            <li class="{{Request::is('admin/bookings') ? 'active' : ''}}"><a href="{{route('admin.bookings.index')}}"><i class="fas fa-link"></i> <span> {{__('admin_side_bar_left.option_bookings')}}</span></a></li>
             <li class="{{Request::is('admin/schedules*') ? 'active' : ''}}"><a href="{{route('admin.schedules.index')}}"><i class="fas fa-link"></i> <span> {{__('admin_side_bar_left.option_schedules')}}</span></a></li>
             <li class="{{Request::is('admin/buses*') ? 'active' : ''}}"><a href="{{route('admin.buses.index')}}"><i class="fas fa-link"></i> <span> {{__('admin_side_bar_left.option_buses')}}</span></a></li>
             <li class="{{Request::is('admin/bustype*') ? 'active' : ''}}"><a href="{{route('admin.bustype.index')}}"><i class="fas fa-link"></i> <span> {{__('admin_side_bar_left.option_bus_types')}}</span></a></li>

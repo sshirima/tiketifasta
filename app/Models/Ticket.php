@@ -13,9 +13,7 @@ class Ticket extends Model
     const COLUMN_PAYMENT_ID = 'payment_id';
     const COLUMN_STATUS = 'status';
     const COLUMN_USER_ID = 'user_id';
-
     const TABLE = 'tickets';
-
     const STATUS_VALID = 'VALID';
     const STATUS_CONFIRMED = 'CONFIRMED';
     const STATUS_EXPIRED = 'EXPIRED';

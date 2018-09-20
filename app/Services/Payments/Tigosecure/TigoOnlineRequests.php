@@ -39,26 +39,39 @@ trait TigoOnlineRequests
                 'lastName' => $tigoOnlineC2B->lastname,
                 'emailId' => $tigoOnlineC2B->email,//Optional
             ],
-            'redirectUri' => route('api.tigo_secure.confirm_payment'),
+            'redirectUri' => route('api.tigo_secure.confirm_payment'),//route('booking.tigo-secure.confirm')
             'callbackUri' => '',//Optional
             'language' => env('TIGOSECURE_LANG'),
             'terminalId' => '',//Optional
             'originPayment' => [
-                'amount' => $tigoOnlineC2B->amount,
+                'amount' => strval($tigoOnlineC2B->amount),
                 'currencyCode' => env('TIGOSECURE_CURRENCY_CODE'),
-                'tax' => 0,//Tax for the transaction in the origin currency
-                'fee' => 0,//Fee applied by the Master Merchant for the transaction in the origin currency. This fee is charged from the subscriber and will be shown to the subscriber. If no fee has been applied the field can be set to 0
+                'tax' => strval($tigoOnlineC2B->tax),//Tax for the transaction in the origin currency
+                'fee' => strval($tigoOnlineC2B->fee),//Fee applied by the Master Merchant for the transaction in the origin currency. This fee is charged from the subscriber and will be shown to the subscriber. If no fee has been applied the field can be set to 0
             ],
-            'exchangeRate' => 1,//[optional] Exchange rate between the origin currency (currency of the sending country) and local currency (currency of the receiving country)
+            'exchangeRate' => '1',//[optional] Exchange rate between the origin currency (currency of the sending country) and local currency (currency of the receiving country)
             'LocalPayment' => [
-                'amount' => $tigoOnlineC2B->amount,
+                'amount' => strval($tigoOnlineC2B->amount),
                 'currencyCode' => env('TIGOSECURE_CURRENCY_CODE'),
             ],
             'transactionRefId' => $tigoOnlineC2B->reference
         ];
     }
 
-    protected function paymentAuthorizationOptions(TigoOnlineC2B $tigoOnlineC2B, $accessToken){
+    protected function validateMFSAccountContent($transactionId, $msisdn, $firstname, $lastname){
+        return [
+            'transactionRefId'=>$transactionId,
+            'ReceivingSubscriber'=>[
+                'account'=>$msisdn,
+                'countryCallingCode'=>env('TIGOSECURE_COUNTRY_CODE'),
+                'countryCode'=>env('TIGOSECURE_COUNTRY'),
+                'firstName'=>$firstname,
+                'lastName'=>$lastname,
+            ]
+        ];
+    }
+
+    /*protected function paymentAuthorizationOptions(TigoOnlineC2B $tigoOnlineC2B, $accessToken){
         return [
             'headers' => [
                 'content-type' => 'application/json',
@@ -85,10 +98,10 @@ trait TigoOnlineRequests
                 'originPayment' => [
                     'amount' => $tigoOnlineC2B->amount,
                     'currencyCode' => env('TIGOSECURE_CURRENCY_CODE'),
-                    'tax' => 0,//Tax for the transaction in the origin currency
-                    'fee' => 0,//Fee applied by the Master Merchant for the transaction in the origin currency. This fee is charged from the subscriber and will be shown to the subscriber. If no fee has been applied the field can be set to 0
+                    'tax' => '0',//Tax for the transaction in the origin currency
+                    'fee' => '0',//Fee applied by the Master Merchant for the transaction in the origin currency. This fee is charged from the subscriber and will be shown to the subscriber. If no fee has been applied the field can be set to 0
                 ],
-                'exchangeRate' => 1,//[optional] Exchange rate between the origin currency (currency of the sending country) and local currency (currency of the receiving country)
+                'exchangeRate' => '0',//[optional] Exchange rate between the origin currency (currency of the sending country) and local currency (currency of the receiving country)
                 'LocalPayment' => [
                     'originPayment' => $tigoOnlineC2B->amount,
                     'currencyCode' => env('TIGOSECURE_CURRENCY_CODE'),
@@ -96,25 +109,5 @@ trait TigoOnlineRequests
                 'transactionRefId' => $tigoOnlineC2B->reference
             ]
         ];
-    }
-
-    protected function validateMFSAccountOptions($transactionId, $msisdn, $firstname, $lastname, $accessToken){
-        return [
-            'headers' =>
-                [
-                    'content-type'=>'application/json',
-                    'accessToken' => $accessToken
-                ],
-            'form_params'=>[
-                'transactionRefId'=>$transactionId,
-                'ReceivingSubscriber'=>[
-                    'account'=>$msisdn,
-                    'countryCallingCode'=>env('TIGOSECURE_COUNTRY_CODE'),
-                    'countryCode'=>env('TIGOSECURE_COUNTRY'),
-                    'firstName'=>$firstname,
-                    'lastName'=>$lastname,
-                ]
-            ]
-        ];
-    }
+    }*/
 }

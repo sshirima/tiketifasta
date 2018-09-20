@@ -15,13 +15,16 @@ use App\Jobs\ConfirmBookingPayment;
 use App\Models\Booking;
 use App\Models\ScheduleSeat;
 use App\Models\Seat;
+use App\Models\TigoOnlineC2B;
 use App\Models\Trip;
 use App\Services\Bookings\BookingManager;
 use App\Services\DateTime\DatesOperations;
 use App\Services\DateTimeService;
 use App\Services\Payments\PaymentManager;
+use App\Services\Payments\Tigosecure\TigoOnline;
 use App\Services\Trips\TripsManager;
 use Illuminate\Http\Request;
+use Log;
 
 class SelectBusController extends Controller
 {
@@ -49,7 +52,7 @@ class SelectBusController extends Controller
 
         $input = $request->all();
 
-        if ($request->has('date')){
+        if ($request->has('date')) {
             $dateIsValid = $this->compareTime($input['date'], date('Y-m-d'));
             $date = DateTimeService::convertDate($input['date'], 'Y-m-d');
         } else {
@@ -59,13 +62,13 @@ class SelectBusController extends Controller
         }
 
 
-        if($dateIsValid){
+        if ($dateIsValid) {
             $trips = $this->tripsManager->findTripForBookings($date, $input['from'], $input['to']);
             return view('users.pages.bookings.select_bus')->with(['trips' => $trips]);
-        } else{
-            return view('users.pages.bookings.select_bus')->with(['date_error'=>1]);
+        } else {
+            return view('users.pages.bookings.select_bus')->with(['date_error' => 1]);
         }
-       /*return view('users.pages.bookings.select_bus')->with(['trips' => $trips]);*/
+        /*return view('users.pages.bookings.select_bus')->with(['trips' => $trips]);*/
     }
 
     /**
@@ -104,7 +107,7 @@ class SelectBusController extends Controller
      * @param $busId
      * @param $scheduleId
      * @param $tripId
-     * @return array
+     * @return $this|string
      */
     public function bookingStore(CreateBookingRequest $request, $busId, $scheduleId, $tripId)
     {
@@ -114,21 +117,60 @@ class SelectBusController extends Controller
         $trip = null;
 
         //Confirm
-        try
-        {
-            $booking = $this->bookingManager->bookTicket($request->all(), $busId, $scheduleId, $tripId);
+        try {
+            $input = $request->all();
+            $res = $this->bookingManager->bookTicket($input, $busId, $scheduleId, $tripId);
+            $booking = $res['booking'];
 
-            $trip = $this->tripsManager->getSelectedTripDetails($scheduleId, $tripId, $request->all()['seat']);
+            if (isset($res['booking']) && isset($res['paymentModel'])){
+                if ($booking->payment == 'mpesa') {
+                    $trip = $this->tripsManager->getSelectedTripDetails($scheduleId, $tripId, $request->all()['seat']);
+                    $bookingPayment = $booking->bookingPayment;
+                    return view('users.pages.bookings.booking_confirmation')->with(['error' => $error, 'bookingPayment' => $bookingPayment, 'booking' => $booking, 'trip' => $trip]);
+                }
 
-            $bookingPayment = $booking->bookingPayment;
+                if ($booking->payment == 'tigopesa') {
+                    $tigoOnlineC2B = $res['paymentModel'];
+                    $tigo = new TigoOnline();
+                    $response = $tigo->paymentAuthorization($tigoOnlineC2B);
+
+                    if ($response['status_code'] == 200) {
+
+                        $res = json_decode($response['response']);
+
+                        if (isset($res->authCode)) {
+                            $tigoOnlineC2B->auth_code = $res->authCode;
+                            $tigoOnlineC2B->authorized_at = $this->convertDate($tigoOnlineC2B->creationDateTime,'Y-m-d H:i:s');
+                            $tigoOnlineC2B->update();
+                            return redirect($res->redirectUrl);
+                        } else {
+                            //Log auth code not found
+                            $tigoOnlineC2B->delete();
+                            $bookingPayment = $booking->bookingPayment;
+                            $bookingPayment->delete();
+                            $booking->delete();
+                            Log::channel('tigosecurec2b')->error('Auth code not found[' . 'Response:' . $response['response'] . ']' . PHP_EOL);
+                            $error = 'Tigo pesa payment authorization failed';
+                            return view('users.pages.bookings.booking_confirmation')->with(['error' => $error, 'bookingPayment' => $bookingPayment, 'booking' => null, 'trip' => $trip]);
+                        }
+
+                    } else {
+                        //Log Payment authorization failed
+                        Log::channel('tigosecurec2b')->error('Authorization failed[' . 'StatusCode:' . $response['status_code'] . ']' . PHP_EOL);
+                        $error = 'Tigo pesa payment authorization failed';
+                        return view('users.pages.bookings.booking_confirmation')->with(['error' => $error, 'bookingPayment' => $bookingPayment, 'booking' => null, 'trip' => $trip]);
+                    }
+                }
+            } else {
+                return view('users.pages.bookings.booking_confirmation')->with(['error' => 'Failed to create bookings, please retry','trip' => $trip]);
+            }
+
+        } catch (\Exception  $exception) {
+            Log::error($exception->getTraceAsString(). PHP_EOL);
+            return view('users.pages.bookings.booking_confirmation')->with(['error' => $exception->getMessage(), 'bookingPayment' => $bookingPayment, 'booking' => null, 'trip' => $trip]);
         }
-        catch (\Exception $exception)
-        {
-            $error = $exception->getMessage();
-        }
 
-        //Present the response to the user for payments
-        return view('users.pages.bookings.booking_confirmation')->with(['error'=>$error,'bookingPayment'=>$bookingPayment,'booking' => $booking, 'trip' => $trip]);
+        return '';
     }
 
     /**

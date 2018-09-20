@@ -11,9 +11,6 @@ namespace App\Http\Controllers\Admins;
 
 use App\Http\Requests\Admin\UpdateMerchantRequest;
 use App\Http\Requests\Merchant\CreateMerchantRequest;
-use App\Mail\RegisterMerchantMail;
-use App\Models\Merchant;
-use App\Models\Staff;
 use App\Repositories\Merchant\MerchantRepository;
 use App\Repositories\Merchant\StaffRepository;
 use App\Services\Merchants\AuthorizeMerchantAccount;

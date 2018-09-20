@@ -14,6 +14,7 @@ use App\Models\Booking;
 use App\Models\BookingPayment;
 use App\Models\ScheduleSeat;
 use App\Models\Seat;
+use App\Models\TigoOnlineC2B;
 use App\Models\Trip;
 use App\Services\Payments\PaymentManager;
 
@@ -40,6 +41,7 @@ trait AddBookingService
         //Initiate payment gateway if the seat is not booked
         $paymentReference = null;
         $scheduleSeat = null;
+        $paymentModel = null;
 
         $payment = $bookingDetails['payment'];
         if (!$isBooked) {
@@ -53,7 +55,7 @@ trait AddBookingService
                 'amount'=>$booking->price,
                 'booking_id'=>$booking->id,
                 'method'=>$payment,
-                'phone_number'=>$payment,
+                'phone_number'=>$booking->phonenumber,
             ]);
 
             if ($payment == 'mpesa') {
@@ -64,22 +66,34 @@ trait AddBookingService
                     'account_reference'=>$bookingPayment->payment_ref,
                     'booking_payment_id'=>$bookingPayment->id,
                 ]);
-
+                $paymentModel = $mpesaC2B;
                 $isInitialized  = isset($mpesaC2B)?true:false;
 
             } else
                 if ($payment == 'tigopesa') {
-                    $isInitialized = $this->paymentManager->initializeTIGOPESAPayment(array());
+                    $tigoOnlineC2B = $this->paymentManager->initialiazeTigoSecureC2B(array(
+                        TigoOnlineC2B::COLUMN_REFERENCE => strtoupper(PaymentManager::random_code(12)),
+                        TigoOnlineC2B::COLUMN_PHONE_NUMBER => $booking->phonenumber,
+                        TigoOnlineC2B::COLUMN_FIRST_NAME =>$booking->firstname,
+                        TigoOnlineC2B::COLUMN_LAST_NAME => $booking->lastname,
+                        TigoOnlineC2B::COLUMN_BOOKING_PAYMENT_ID => $bookingPayment->id,
+                        TigoOnlineC2B::COLUMN_TAX =>'0',
+                        TigoOnlineC2B::COLUMN_FEE => '0',
+                        TigoOnlineC2B::COLUMN_AMOUNT => $booking->price,
+                    ));
+                    $paymentModel = $tigoOnlineC2B;
+                    $isInitialized  = isset($tigoOnlineC2B)?true:false;
+
                 }
         }
 
         //Save the booking records
         if ($isInitialized) {
             //Initialize payment timer
-            ConfirmBookingPayment::dispatch($booking, $scheduleSeat)->delay(now()->addMinutes(5));
+            //ConfirmBookingPayment::dispatch($booking, $scheduleSeat)->delay(now()->addMinutes(5));
         }
 
-        return $booking;
+        return ['booking'=>$booking,'paymentModel'=>$paymentModel];
     }
 
     public function saveBooking(array $attributes){

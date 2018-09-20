@@ -12,6 +12,7 @@ use App\Models\TigoOnlineC2B;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Log;
 
 trait TigoOnlinePaymentC2B
 {
@@ -25,7 +26,9 @@ trait TigoOnlinePaymentC2B
 
         $accessToken = $this->getAccessToken();
 
-        $url = $this->getTigosecureUrl('/v1/tigo/systemstatus');
+        //$url = $this->getTigosecureUrl('/v1/tigo/systemstatus');
+
+        $url = 'https://secure.tigo.com/v1/tigo/systemstatus';
 
         if (isset($accessToken)) {
             $response = $client->request('GET', $url,$this->systemStatusOptions());
@@ -49,48 +52,35 @@ trait TigoOnlinePaymentC2B
 
         $payment = null;
 
-        $client = new Client();
-
         $accessToken = $this->getAccessToken();
 
         if (isset($accessToken)) {
             $this->saveAccessToken($tigoOnlineC2B, $accessToken);
-            $url = 'https://secure.tigo.com/v1/tigo/payment-auth-test-2018/authorize';//env('MPESA_C2B_CONFIRM');
+            //$url = 'https://secure.tigo.com/v1/tigo/payment-auth-test-2018/authorize';//env('MPESA_C2B_CONFIRM');
+            $url = 'https://secure.tigo.com/v1/tigo/payment-auth/authorize';
             $ch = curl_init();
             curl_setopt( $ch, CURLOPT_URL, $url );
             curl_setopt( $ch, CURLOPT_POST, true );
             curl_setopt( $ch, CURLOPT_HTTPHEADER, array('content-type: application/json','accessToken : '.$accessToken));
             curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-
-            curl_setopt( $ch, CURLOPT_POSTFIELDS, json_encode($this->paymentAuthorizationContent($tigoOnlineC2B, $accessToken)));
+            $postFields = json_encode($this->paymentAuthorizationContent($tigoOnlineC2B, $accessToken));
+            curl_setopt( $ch, CURLOPT_POSTFIELDS,$postFields);
             $response = curl_exec($ch);
             // Check HTTP status code
             if (!curl_errno($ch)) {
                 switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
                     case 200:
                         //Confirm the transaction, generate ticket and send notification to user
-                        $payment = $response;
+                        //$payment = $response;
+                        $payment = ['status_code'=>$http_code, 'response'=>$response];
                         break;
                     default:
-                        echo 'Unexpected HTTP code: ', $http_code, "\n";
+                        $payment = ['status_code'=>$http_code, 'response'=>$response];
                 }
             }
             curl_close($ch);
-            /*$this->saveAccessToken($tigoOnlineC2B, $accessToken);
-
-            $url = env('https://secure.tigo.com/v1/tigo/payment-auth-test-2018/authorize');//$this->getTigosecureUrl(env('TIGOSECURE_SRV_AUTHORIZE'));
-
-            $response = $client->request('POST', $url,$this->paymentAuthorizationOptions($tigoOnlineC2B, $accessToken));
-
-            if ($response->getStatusCode() == Response::HTTP_OK){
-                //Save the transaction
-                $this->completeAuthorization($tigoOnlineC2B, $response->getBody());
-                $payment = json_decode($response->getBody());
-            } else {
-                //Log error: Failed to authorize payment
-            }*/
         } else {
-            //Log error: Cant not retrieve the access token
+            return $payment;
         }
 
         return $payment;
@@ -100,26 +90,41 @@ trait TigoOnlinePaymentC2B
 
         $accountStatus = null;
 
-        $client = new Client();
-
         $accessToken = $this->getAccessToken();
 
         if (isset($accessToken)){
 
-            $url = $this->getTigosecureUrl('/v1/tigo/mfs/validateMFSAccount');
+            //$url = $this->getTigosecureUrl('/v1/tigo/mfs/validateMFSAccount');
 
-            //dd($this->validateMFSAccountOptions($transactionId, $msisdn, $firstname, $lastname, $accessToken));
-            $response = $client->request('POST', $url,$this->validateMFSAccountOptions($transactionId, $msisdn, $firstname, $lastname, $accessToken));
-            if ($response->getStatusCode() == Response::HTTP_OK) {
-                //Save the transaction
-                $accountStatus = json_decode($response->getBody());
-            } else {
-                //Log error: Failed to retrieve account status
+            $url = 'https://secure.tigo.com/v1/tigo/mfs/validateMFSAccount';
 
+            //$url = 'https://secure.tigo.com/v1/tigo/mfs/validateMFSAccount-test-2018';
+            $ch = curl_init();
+            curl_setopt( $ch, CURLOPT_URL, $url );
+            curl_setopt( $ch, CURLOPT_POST, true );
+            curl_setopt( $ch, CURLOPT_HTTPHEADER, array('content-type: application/json','accessToken : '.$accessToken));
+            curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+
+            $postFields = json_encode($this->validateMFSAccountContent($transactionId, $msisdn, $firstname, $lastname));
+
+            curl_setopt( $ch, CURLOPT_POSTFIELDS,$postFields);
+            $response = curl_exec($ch);
+
+            // Check HTTP status code
+            if (!curl_errno($ch)) {
+                switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
+                    case 200:
+                        //Confirm the transaction, generate ticket and send notification to user
+                        //$payment = $response;
+                        $accountStatus = ['status_code'=>$http_code, 'response'=>$response];
+                        break;
+                    default:
+                        $accountStatus = ['status_code'=>$http_code, 'response'=>$response];
+                }
             }
+            curl_close($ch);
         } else {
-            //Log error: Cant not retrieve the access token
-
+            return $accountStatus;
         }
 
         return $accountStatus;
@@ -149,7 +154,7 @@ trait TigoOnlinePaymentC2B
      * @param TigoOnlineC2B $tigoOnlineC2B
      * @param Request $request
      */
-    protected function confirmPayment(TigoOnlineC2B $tigoOnlineC2B, Request $request){
+    public function confirmTigoSecurePaymentC2B(TigoOnlineC2B $tigoOnlineC2B, Request $request){
         $input = $request->all();
 
         if($request->has('mfs_id')){

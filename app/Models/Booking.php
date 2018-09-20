@@ -85,6 +85,10 @@ class Booking extends Model
         return $this->belongsTo(Trip::class,self::COLUMN_TRIP_ID,Trip::COLUMN_ID);
     }
 
+    public function confirmBooking(){
+        $this->status = self::STATUS_CONFIRMED;
+        $this->update();
+    }
 
 
     public function dailyBookings(Request $request){
@@ -144,9 +148,9 @@ class Booking extends Model
             });
         $table->addColumn('status')->setTitle('Status')
             ->isCustomHtmlElement(function ($entity, $column) {
-                if ($entity->status == Booking::$STATUS_PENDING){
+                if ($entity->status == Booking::STATUS_PENDING){
                     return "<span style='color: orange'>Pending <i class='fas fa-spinner'></i></span> ";
-                } else if ($entity->status == Booking::$STATUS_CONFIRMED){
+                } else if ($entity->status == Booking::STATUS_CONFIRMED){
                     return "<span style='color: green;'>Confirmed <i class='fas fa-check-circle'></i></span>";
                 } else{
                     return "<span style='color: red;'>Cancelled <i class='fas fa-times-circle'></i></span>";

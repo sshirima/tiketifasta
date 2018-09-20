@@ -188,6 +188,7 @@ return [
     'page_approvals_panel_option_reassign_bus'=>'Re-assigned schedules',
 
     'page_bookings_index_title'=>'Bookings',
+    'page_booking_payments_index_title'=>'Booking Payment',
     'page_bookings_index_form_title'=>'Customer bookings',
     'page_bookings_panel_option_daily_bookings'=>'Daily bookings',
     'page_bookings_form_fields_select_confirmed'=>'Confirmed',
