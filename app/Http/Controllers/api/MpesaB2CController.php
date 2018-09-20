@@ -31,6 +31,7 @@ class MpesaB2CController extends Controller
 
         $response = $this->initializeB2CPayment($mpesaB2C);
 
+        //Some comments
         if(isset($response)){
             return json_encode($response);
         } else {
