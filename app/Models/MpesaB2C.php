@@ -11,7 +11,6 @@ class MpesaB2C extends Model
     const COLUMN_COMMAND_ID = 'command_id';
     const COLUMN_INITIATOR = 'initiator';
     const COLUMN_RECIPIENT = 'recipient';
-    const COLUMN_ISSUED_DATE = 'issued_date';
     const COLUMN_TRANSACTION_DATE = 'transaction_date';
     const COLUMN_TRANSACTION_ID = 'transaction_id';
     const COLUMN_CONVERSATION_ID = 'conversation_id';
@@ -29,7 +28,7 @@ class MpesaB2C extends Model
 
     protected $fillable = [
          self::COLUMN_AMOUNT,self::COLUMN_RECIPIENT,self::COLUMN_COMMAND_ID,self::COLUMN_INITIATOR,self::COLUMN_OG_CONVERSATION_ID,self::COLUMN_RECIPIENT,self::COLUMN_MPESA_RECEIPT,
-        self::COLUMN_ISSUED_DATE,self::COLUMN_TRANSACTION_ID,self::COLUMN_TRANSACTION_DATE,self::COLUMN_RESULT_TYPE,self::COLUMN_CONVERSATION_ID,
+        self::COLUMN_TRANSACTION_ID,self::COLUMN_TRANSACTION_DATE,self::COLUMN_RESULT_TYPE,self::COLUMN_CONVERSATION_ID,
         self::COLUMN_RESULT_CODE,self::COLUMN_WORKING_ACCOUNT_FUNDS,self::COLUMN_UTILITY_ACCOUNT_FUNDS,self::COLUMN_CHARGES_PAID_FUNDS
     ];
 }

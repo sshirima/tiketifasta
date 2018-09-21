@@ -26,7 +26,6 @@ class MpesaB2CController extends Controller
             'command_id'=>'BusinessPayment',
             'initiator'=>env('MPESA_B2C_INITIATOR'),
             'recipient'=>'255754710618',
-            'issued_date'=>date('Y-m-d H:i:s'),
         ]);
 
         $response = $this->initializeB2CPayment($mpesaB2C);
