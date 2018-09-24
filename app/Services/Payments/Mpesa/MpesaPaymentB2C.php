@@ -38,7 +38,7 @@ trait MpesaPaymentB2C
         /*curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);*/
         $response = curl_exec($ch);
-        dd(curl_getinfo($ch, CURLINFO_HTTP_CODE));
+        //dd(curl_getinfo($ch, CURLINFO_HTTP_CODE));
         //Check HTTP status code
         if (!curl_errno($ch)) {
             switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
@@ -46,13 +46,11 @@ trait MpesaPaymentB2C
                     //Confirm the transaction, set booking and ticket  confirmed send notification to user
                     Log::channel('mpesab2c')->info('B2C transaction initiated' . PHP_EOL);
                     $parser = new Parser();
-
                     $returnData = $parser->xml($response);
-
                     break;
                 default:
                     Log::channel('mpesab2c')->error('Unexpected HTTP code: ' . $http_code . '[' . $response . ']' . PHP_EOL);
-
+                    $returnData = $response;
                 //echo 'Unexpected HTTP code: ', $http_code, "\n";
             }
         } else {
