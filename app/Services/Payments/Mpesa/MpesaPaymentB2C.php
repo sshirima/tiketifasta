@@ -55,7 +55,7 @@ trait MpesaPaymentB2C
             }
         } else {
             Log::channel('mpesab2c')->error('Curl error[Error code:' . curl_errno($ch) . ']' . PHP_EOL);
-            //echo curl_errno($ch);
+            $returnData = $response;
         }
         curl_close($ch);
 
