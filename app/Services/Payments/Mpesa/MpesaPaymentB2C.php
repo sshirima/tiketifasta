@@ -25,7 +25,7 @@ trait MpesaPaymentB2C
 
         $requestBody = $this->getBodyContent($mpesaB2C);
 
-        $url = 'https://41.217.203.241:27443/broker/transfer';
+        $url = 'https://broker2.ipg.tz.vodafone.com:27443/broker/transfer';
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_POST, true);
