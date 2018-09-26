@@ -72,7 +72,7 @@ class MpesaC2BController extends BaseController
                 '<div class="label label-success">'.$entity['service_status'].'</div>':'<div class="label label-warning">'.$entity['service_status'].'</div>';
         });
         $table->addColumn('authorized_at')->setTitle('Confirmed at')->isSearchable()->isSortable();
-        $table->addColumn('created_at')->setTitle('Initiated at')->isSearchable()->isSortable()->sortByDefault();
+        $table->addColumn('created_at')->setTitle('Initiated at')->isSearchable()->isSortable()->sortByDefault('desc');
 
 
         return $table;
