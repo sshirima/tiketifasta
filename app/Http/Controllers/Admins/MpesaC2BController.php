@@ -65,7 +65,7 @@ class MpesaC2BController extends BaseController
         $table->addColumn('stage')->setTitle('Stage');
         $table->addColumn('service_status')->setTitle('Status');
         $table->addColumn('authorized_at')->setTitle('Confirmed at')->isSearchable();
-        $table->addColumn('created_at')->setTitle('Initiated at')->isSearchable();
+        $table->addColumn('created_at')->setTitle('Initiated at')->isSearchable()->sortByDefault();
 
 
         return $table;
