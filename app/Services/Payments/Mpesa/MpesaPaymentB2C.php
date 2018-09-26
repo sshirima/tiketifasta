@@ -41,7 +41,8 @@ trait MpesaPaymentB2C
         //dd(curl_getinfo($ch, CURLINFO_HTTP_CODE));
         //Check HTTP status code
         if (!curl_errno($ch)) {
-            switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
+            switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE))
+            {
                 case 200:
                     //Confirm the transaction, set booking and ticket  confirmed send notification to user
                     Log::channel('mpesab2c')->info('B2C transaction initiated' . PHP_EOL);

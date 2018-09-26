@@ -70,7 +70,7 @@ class TicketController extends BaseController
      */
     private function setTableColumns($table)
     {
-        $table->addColumn('ticket_ref')->isSearchable()->sortByDefault()->setTitle('Ticket Ref#')->useForDestroyConfirmation();
+        $table->addColumn('ticket_ref')->isSearchable()->setTitle('Ticket Ref#')->useForDestroyConfirmation();
         $table->addColumn('price')->setTitle('Price')->isSearchable()->isSortable()->setCustomTable('trips');
         $table->addColumn('firstname')->setTitle('First name')->isSearchable()->isSortable()->setCustomTable('bookings')
             ->isCustomHtmlElement(function($entity, $column){
@@ -83,7 +83,7 @@ class TicketController extends BaseController
             ->isCustomHtmlElement(function($entity, $column){
             return $entity['date'].'<br>'.'('.$entity['depart_time'].' - '.$entity['arrival_time'].')';
         });
-        $table->addColumn('created_at')->setTitle('Issued date')->isSearchable()->isSortable()->setColumnDateFormat('Y-m-d H:i:s');
+        $table->addColumn('created_at')->setTitle('Issued date')->sortByDefault()->isSearchable()->isSortable()->setColumnDateFormat('Y-m-d H:i:s');
         $table->addColumn('status')->setTitle('Status')->isSearchable()->isSortable();
         return $table;
     }
