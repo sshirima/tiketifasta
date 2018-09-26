@@ -58,15 +58,21 @@ class MpesaC2BController extends BaseController
     {
         $table->addColumn('account_reference')->setTitle('Reference')->isSearchable();
         $table->addColumn('mpesa_receipt')->setTitle('Mpesa Recipient')->isSearchable();
-        $table->addColumn('amount')->setTitle('Amount')->isSearchable();
-        $table->addColumn('initiator')->setTitle('Paid by')->isSearchable();
+        $table->addColumn('amount')->setTitle('Amount')->isSearchable()->isSortable();
+        $table->addColumn('initiator')->setTitle('Paid by')->isSearchable()->isSortable();
         $table->addColumn('service_receipt')->setTitle('Service ID')->isSearchable();
-        $table->addColumn('transaction_id')->setTitle('Transaction ID')->isSearchable();
+        $table->addColumn('transaction_id')->setTitle('Transaction ID')->isSearchable()->isSortable();
         $table->addColumn('og_conversation_id')->setTitle('Conversation ID')->isSearchable();
-        $table->addColumn('stage')->setTitle('Stage');
-        $table->addColumn('service_status')->setTitle('Status');
-        $table->addColumn('authorized_at')->setTitle('Confirmed at')->isSearchable();
-        $table->addColumn('created_at')->setTitle('Initiated at')->isSearchable()->sortByDefault();
+        $table->addColumn('stage')->setTitle('Stage')->isCustomHtmlElement(function($entity, $column){
+            return $entity['stage']== '0'?
+                '<div class="label label-success">'.'0(OK)'.'</div>':'<div class="label label-warning">'.$entity['stage'].'(Pending)'.'</div>';
+        });
+        $table->addColumn('service_status')->setTitle('Status')->isCustomHtmlElement(function($entity, $column){
+            return $entity['service_status']== '0'?
+                '<div class="label label-success">'.$entity['service_status'].'</div>':'<div class="label label-warning">'.$entity['service_status'].'</div>';
+        });
+        $table->addColumn('authorized_at')->setTitle('Confirmed at')->isSearchable()->isSortable();
+        $table->addColumn('created_at')->setTitle('Initiated at')->isSearchable()->isSortable()->sortByDefault();
 
 
         return $table;
