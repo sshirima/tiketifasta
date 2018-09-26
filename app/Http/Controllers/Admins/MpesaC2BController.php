@@ -40,7 +40,8 @@ class MpesaC2BController extends BaseController
                 'index' => ['alias' => 'admin.mpesac2b.index', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {
                 $query->select('mpesa_c2b.id as id','account_reference','mpesa_receipt','initiator','mpesa_c2b.amount as amount','mpesa_c2b.msisdn as msisdn',
-                    'booking_payment_id','service_receipt','transaction_id','og_conversation_id','stage','service_status','authorized_at','created_at')
+                    'booking_payment_id','service_receipt','transaction_id','og_conversation_id','stage','service_status',
+                    'mpesa_c2b.authorized_at as authorized_at','mpesa_c2b.created_at as created_at')
                     ->join('booking_payments', 'booking_payments.id', '=', 'mpesa_c2b.booking_payment_id');
             });
 
