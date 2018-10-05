@@ -68,7 +68,7 @@ class MpesaC2BController extends BaseController
                 '<div class="label label-success">'.'0(OK)'.'</div>':'<div class="label label-warning">'.$entity['stage'].'(Pending)'.'</div>';
         });
         $table->addColumn('service_status')->setTitle('Status')->isCustomHtmlElement(function($entity, $column){
-            return $entity['service_status']== '0'?
+            return $entity['service_status']== 'confirmed'?
                 '<div class="label label-success">'.$entity['service_status'].'</div>':'<div class="label label-warning">'.$entity['service_status'].'</div>';
         });
         $table->addColumn('authorized_at')->setTitle('Confirmed at')->isSearchable()->isSortable();

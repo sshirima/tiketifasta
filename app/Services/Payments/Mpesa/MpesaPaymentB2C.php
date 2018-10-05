@@ -70,7 +70,7 @@ trait MpesaPaymentB2C
     private function getBodyContent($mpesaB2C){
         $mpesa = new Mpesa();
         $timestamp = date('YmdHis');
-        $spPassword = $mpesa->encryptSPPassword(env('MPESA_SPID'), env('MPESA_PASSWORD'), $timestamp);
+        $spPassword = $mpesa->encryptSPPassword(env('MPESA_B2C_INITIATOR'), env('MPESA_B2C_INITIATOR_PASSWORD'), $timestamp);
         $initiator = env('MPESA_B2C_INITIATOR');
         $initiatorPassword = $mpesa->encryptInitiatorPassword(env('MPESA_B2C_INITIATOR_PASSWORD'));
 

@@ -12,6 +12,8 @@
 |
 */
 
+Route::get('sms/send-sms', 'api\SmsController@send');
+
 Route::get('mpesa/initialize-payment', 'api\MpesaC2BController@initializePaymentC2B');
 Route::get('mpesa/b2c/initialize-payment', 'api\MpesaB2CController@initiateB2CTransaction');
 Route::post('mpesa/validate-payment', 'api\MpesaC2BController@validatePaymentC2B')->name('api.mpesa.validate_payment');
