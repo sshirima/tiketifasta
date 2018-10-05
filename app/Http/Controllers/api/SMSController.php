@@ -17,7 +17,21 @@ class SmsController extends Controller
     public function send(SmppServiceInterface $smpp)
     {
         // One number
-        $smpp->sendOne(255754710618, 'Hi, this SMS was send via SMPP protocol');
+        $sender = 'TIKETIFASTA';//$_GET['senderAddr'];
+        $phonenumber = '0714682070';//$_GET['msisdn'];
+        $phonemessage = 'Testing message';
+
+        $s = new \Smpp();
+        $s->debug=0;
+
+
+        $s->open("41.222.182.51", 10501, "TKJINT", "TKJIN@32");
+
+
+        $s->send_long($sender,$phonenumber, $phonemessage);
+
+
+        $s->close();
 
         // Multiple numbers
         //$smpp->sendBulk([1234567890, 0987654321], 'Hi!');
