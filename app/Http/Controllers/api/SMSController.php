@@ -10,28 +10,30 @@ namespace App\Http\Controllers\api;
 
 
 use App\Http\Controllers\Controller;
+use App\Services\SMS\Smpp;
 use LaravelSmpp\SmppServiceInterface;
 
 class SmsController extends Controller
 {
-    public function send(SmppServiceInterface $smpp)
+
+    public function send()
     {
         // One number
         $sender = 'TIKETIFASTA';//$_GET['senderAddr'];
         $phonenumber = '0714682070';//$_GET['msisdn'];
         $phonemessage = 'Testing message';
 
-        $s = new \Smpp();
-        $s->debug=0;
+        $smpp = new Smpp();
+        $smpp->setDebug(0);
 
 
-        $s->open("41.222.182.51", 10501, "TKJINT", "TKJIN@32");
+        $smpp->open("41.222.182.51", 10501, "TKJINT", "TKJIN@32");
 
 
-        $s->send_long($sender,$phonenumber, $phonemessage);
+        $smpp->send_long($sender,$phonenumber, $phonemessage);
 
 
-        $s->close();
+        $smpp->close();
 
         // Multiple numbers
         //$smpp->sendBulk([1234567890, 0987654321], 'Hi!');

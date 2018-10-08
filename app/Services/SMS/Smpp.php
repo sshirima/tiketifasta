@@ -1,55 +1,22 @@
 <?php
 
-/* **************************************************
- * SMPP v3.4
- * PHP Class to send SMS messages using SMPP v3.4 protocol
- * Rayed Alrashed 
- * 10 August 2008 
- ************************************************** */
-
- 
-if (basename($_SERVER['SCRIPT_NAME']) == 'Smpp.php') {
-  header('Content-Type: text/plain');
-
-  //$src  = ""; // or text 
-  //$dst  = "";
-  //$message = "Test Message";
- 
-  $s = new smpp();
-  $s->debug=0;
-
-  // $host,$port,$system_id,$password
-  //$s->open("10.154.10.16", 2776, "test1", "test1");
-   //$s->open("10.154.10.16", 2776, "nipigetafu1", "npgetafu");
-//--  $s->open("172.16.56.12", 2776, "nipigetafu1", "npgetafu");
-
-  // $source_addr,$destintation_addr,$short_message,$utf=0,$flash=0
-  //$s->send_long($src, $dst, $message);
- //-- $s->send_long("VodaTaarifa", "255754710274", "TEST11");
-
-  /* To send unicode 
-  $utf = true;
-  $message = iconv('Windows-1256','UTF-16BE',$message);
-  $s->send_long($src, $dst, $message, $utf);
-  */  
-
-  $s->close();
-}
-
-
-
-
+namespace App\Services\SMS;
 
 class Smpp {
 
-  var $socket=0;
-  var $seq=0;
-  var $debug=0;
-  var $data_coding=0;
-  var $timeout = 2;
+  private $socket=0;
+    private $seq=0;
+    private $debug=0;
+    private $data_coding=0;
+    private $timeout = 2;
 
   //////////////////////////////////////////////////
-  function send_pdu($id,$data) {
+
+    public function setDebug($value){
+      $this->debug = $value;
+    }
+
+    public function send_pdu($id,$data) {
 
     // increment sequence
     $this->seq +=1;
@@ -166,4 +133,26 @@ class Smpp {
 
 }
 
-?>
+/*if (basename($_SERVER['SCRIPT_NAME']) == 'Smpp.php') {
+    header('Content-Type: text/plain');
+
+    $s = new smpp();
+    $s->debug=0;
+
+    // $host,$port,$system_id,$password
+    //$s->open("10.154.10.16", 2776, "test1", "test1");
+    //$s->open("10.154.10.16", 2776, "nipigetafu1", "npgetafu");
+//--  $s->open("172.16.56.12", 2776, "nipigetafu1", "npgetafu");
+
+    // $source_addr,$destintation_addr,$short_message,$utf=0,$flash=0
+    //$s->send_long($src, $dst, $message);
+    //-- $s->send_long("VodaTaarifa", "255754710274", "TEST11");
+
+    /* To send unicode
+    $utf = true;
+    $message = iconv('Windows-1256','UTF-16BE',$message);
+    $s->send_long($src, $dst, $message, $utf);
+    */
+
+    //$s->close();
+//}
