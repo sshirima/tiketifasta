@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "775ca545ebe6e2b3973ed61797406ef1",
+    "content-hash": "6fee22cd3e271a29890a5a8bb9396bc1",
     "packages": [
         {
             "name": "almasaeed2010/adminlte",
@@ -987,49 +987,6 @@
             "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
             "homepage": "https://github.com/firebase/php-jwt",
             "time": "2017-06-27T22:17:23+00:00"
-        },
-        {
-            "name": "franzose/laravel-smpp",
-            "version": "v1.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/franzose/laravel-smpp.git",
-                "reference": "d8df8f7333b0b0f28a683d98bf3484b00f280ba5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/franzose/laravel-smpp/zipball/d8df8f7333b0b0f28a683d98bf3484b00f280ba5",
-                "reference": "d8df8f7333b0b0f28a683d98bf3484b00f280ba5",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/support": "^5.2",
-                "php-smpp/php-smpp": "1.2"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~5.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "LaravelSmpp\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "authors": [
-                {
-                    "name": "Jan Iwanow",
-                    "email": "iwanow.jan@gmail.com"
-                }
-            ],
-            "description": "SMS sending via SMPP protocol for Laravel framework.",
-            "keywords": [
-                "laravel",
-                "onlinecity",
-                "smpp",
-                "sms"
-            ],
-            "time": "2017-06-23T05:33:09+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -2409,54 +2366,6 @@
                 "random"
             ],
             "time": "2018-07-02T15:55:56+00:00"
-        },
-        {
-            "name": "php-smpp/php-smpp",
-            "version": "1.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/onlinecity/php-smpp.git",
-                "reference": "b8632357b4bf48668aa461d9004c70be9c99de9e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/onlinecity/php-smpp/zipball/b8632357b4bf48668aa461d9004c70be9c99de9e",
-                "reference": "b8632357b4bf48668aa461d9004c70be9c99de9e",
-                "shasum": ""
-            },
-            "require": {
-                "ext-mbstring": "*",
-                "ext-sockets": "*",
-                "php": ">=5.3.3"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "gsmencoder.class.php",
-                    "sockettransport.class.php",
-                    "smppclient.class.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "LGPL"
-            ],
-            "authors": [
-                {
-                    "name": "Hans Duedal",
-                    "email": "hd@oc.dk",
-                    "homepage": "http://oc.dk"
-                }
-            ],
-            "description": "PHP-based SMPP client lib",
-            "homepage": "http://github.com/onlinecity/php-smpp",
-            "keywords": [
-                "gsm",
-                "smpp",
-                "sms",
-                "texting"
-            ],
-            "time": "2015-01-26T10:59:22+00:00"
         },
         {
             "name": "phpseclib/phpseclib",
