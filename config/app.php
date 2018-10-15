@@ -165,6 +165,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         Nathanmac\Utilities\Parser\ParserServiceProvider::class,
         Nathanmac\Utilities\Responder\ResponderServiceProvider::class,
+        LaravelSmpp\LaravelSmppServiceProvider::class,
         //Composer Service provider
         App\Providers\Composers\AdminComposerSP::class,
         App\Providers\Composers\MerchantComposerSP::class,

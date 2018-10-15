@@ -10,6 +10,7 @@
         "barryvdh/laravel-ide-helper": "v2.4.3",
         "doctrine/dbal": "^2.6",
         "fideloper/proxy": "~4.0",
+        "franzose/laravel-smpp": "^1.1",
         "guzzlehttp/guzzle": "^6.3",
         "laracasts/flash": "^3.0",
         "laravel/framework": "5.6.*",
