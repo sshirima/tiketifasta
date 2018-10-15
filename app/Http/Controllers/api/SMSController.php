@@ -32,7 +32,7 @@ class SmsController extends Controller
             $smpp = new Smpp();
             $smpp->setDebug(1);
 
-            $smpp->open("41.222.182.51", 10501, "TKJI", "TKJIN@32");
+            $smpp->open("41.222.182.51", 10501, "TKJINT", "TKJIN@32");
 
             //echo json_encode($connection);
 
