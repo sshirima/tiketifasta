@@ -12,12 +12,11 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use LaravelSmpp\SmppService;
-use LaravelSmpp\SmppServiceInterface;
 
 class SmsController extends Controller
 {
 
-    public function send(Request $request, SmppServiceInterface $smpp)
+    public function send(Request $request)
     {
         // One number
         try{
