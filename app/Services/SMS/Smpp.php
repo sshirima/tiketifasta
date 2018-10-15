@@ -27,6 +27,7 @@ class Smpp {
 
     // Get response length
     $data = fread($this->socket, 4);
+    echo $data;
     if($data==false) die("\nSend PDU: Connection closed!");
     $tmp = unpack('Nlength', $data);
     $command_length = $tmp['length'];
@@ -57,7 +58,7 @@ class Smpp {
     $data  = sprintf("%s\0%s\0", $system_id, $password); // system_id, password 
     $data .= sprintf("%s\0%c", "smpp", 0x34);  // system_type, interface_version
     $data .= sprintf("%c%c%s\0", 1, 1, ""); // addr_ton, addr_npi, address_range 
-      echo $data;
+    //  echo $data;
     $ret = $this->send_pdu(2, $data);
     if($this->debug) print "\n> Bind done!" ;
 
