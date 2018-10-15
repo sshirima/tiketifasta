@@ -60,6 +60,7 @@ class Smpp {
     $data .= sprintf("%c%c%s\0", 1, 1, ""); // addr_ton, addr_npi, address_range 
     //  echo $data;
     $ret = $this->send_pdu(2, $data);
+
     if($this->debug) print "\n> Bind done!" ;
 
     return ($ret['status']==0);
