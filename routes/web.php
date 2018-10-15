@@ -143,6 +143,7 @@ Route::prefix('admin')->group(function () {
     Route::post('accounts/admins/create', 'Admins\AdminAccountsController@store')->name('admin.admin_accounts.store');
     Route::delete('accounts/admins/{id}/delete', 'Admins\AdminAccountsController@destroy')->name('admin.admin_accounts.destroy');
 
+    Route::get('sms/sent_sms', 'Admins\SentSMSController@index')->name('admin.sent_sms.index');
 });
 
 Route::prefix('merchant')->group(function () {

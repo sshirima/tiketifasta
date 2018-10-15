@@ -57,7 +57,7 @@ class Smpp {
     $data  = sprintf("%s\0%s\0", $system_id, $password); // system_id, password 
     $data .= sprintf("%s\0%c", "smpp", 0x34);  // system_type, interface_version
     $data .= sprintf("%c%c%s\0", 1, 1, ""); // addr_ton, addr_npi, address_range 
-
+      echo $data;
     $ret = $this->send_pdu(2, $data);
     if($this->debug) print "\n> Bind done!" ;
 

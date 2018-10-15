@@ -28,9 +28,9 @@ class SmsController extends Controller
             $smpp = new Smpp();
             $smpp->setDebug(0);
 
+            $connection = $smpp->open("41.222.182.51", 10501, "TKJINT", "TKJIN@32");
 
-            $smpp->open("41.222.182.51", 10501, "TKJINT", "TKJIN@32");
-
+            echo json_encode($connection);
 
             $res = $smpp->send_long($sender,$phoneNumber, $message);
 
