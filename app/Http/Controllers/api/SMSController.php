@@ -43,7 +43,7 @@ class SmsController extends Controller
             } else {
                 print 'Sending message failed';
             }
-            $smpp->close();
+            //$smpp->close();
 
             return 'Sent';
 

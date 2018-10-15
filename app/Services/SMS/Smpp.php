@@ -79,6 +79,7 @@ class Smpp {
     $data .= sprintf("%c%c", $this->data_coding,0); // data_coding, sm_default_msg_id
     $data .= sprintf("%c%s", strlen($short_message), $short_message); // sm_length, short_message
     $data .= $optional;
+      print $data;
 
     $ret = $this->send_pdu(4, $data);
     return ($ret['status']==0);
