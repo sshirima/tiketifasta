@@ -27,8 +27,8 @@ class Smpp {
 
     // Get response length
     $data = fread($this->socket, 4);
-    //echo $data;
-    if($data==false) die($this->socket);//die("\nSend PDU: Connection closed!");
+
+    if($data==false) die("\nSend PDU: Connection closed!");
     $tmp = unpack('Nlength', $data);
     $command_length = $tmp['length'];
     if($command_length<12) return;
