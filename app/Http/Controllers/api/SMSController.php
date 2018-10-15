@@ -10,8 +10,8 @@ namespace App\Http\Controllers\api;
 
 
 use App\Http\Controllers\Controller;
-use App\Services\SMS\Smpp;
 use Illuminate\Http\Request;
+use LaravelSmpp\SmppService;
 use LaravelSmpp\SmppServiceInterface;
 
 class SmsController extends Controller
@@ -25,8 +25,9 @@ class SmsController extends Controller
             $sender = $input['sender'];
             $phoneNumber = $input['phonenumber'];
             $message = $input['message'];
+            $smppService = new SmppService(config('laravel-smpp'));
+            $smppService->sendOne($phoneNumber, $message);
 
-            $smpp->sendOne($phoneNumber, $message);
             /*$smpp = new Smpp();
             $smpp->setDebug(0);
 
@@ -39,7 +40,7 @@ class SmsController extends Controller
 
             $smpp->close();*/
 
-            return $res;
+            return 'Sent';
 
         }catch (\Exception $exception){
             $message = $exception->getMessage();
