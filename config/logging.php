@@ -50,6 +50,11 @@ return [
             'path' => storage_path('logs/tigosecurec2b.log'),
             'level' => 'debug',
         ],
+        'tigoussdb2c' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/tigoussdb2c.log'),
+            'level' => 'debug',
+        ],
 
         'single' => [
             'driver' => 'single',

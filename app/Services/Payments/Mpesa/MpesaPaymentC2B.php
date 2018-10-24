@@ -9,10 +9,13 @@
 namespace App\Services\Payments\Mpesa;
 
 
+use App\Models\Booking;
 use App\Models\MpesaC2B;
+use App\Models\Ticket;
 use App\Services\Payments\Mpesa\xml\MpesaC2BData;
 use App\Services\Payments\PaymentManager;
 use Log;
+use Nathanmac\Utilities\Parser\Parser;
 
 trait MpesaPaymentC2B
 {
@@ -58,6 +61,50 @@ trait MpesaPaymentC2B
         $mpesaC2B->stage = '2';
 
         return array('status'=>$mpesaC2B->update(),'mpesaC2B'=>$mpesaC2B);
+    }
+
+    public function confirmPayment(Booking $booking, MpesaC2B $mpesaC2B, Ticket $ticket){
+        $url = env('MPESA_C2B_CONFIRM');
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: text/xml'));
+        curl_setopt($ch, CURLOPT_SSLKEY, '/var/www/html/storage/mpesa/tkj.vodacom.co.tz.key');
+        curl_setopt($ch, CURLOPT_CAINFO, '/var/www/html/storage/mpesa/root.pem');
+        curl_setopt($ch, CURLOPT_SSLCERT, '/var/www/html/storage/mpesa/tkj.vodacom.co.tz.cer');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $this->getBodyContent($ticket, $mpesaC2B));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        $response = curl_exec($ch);
+        //Check HTTP status code
+        if (!curl_errno($ch)) {
+            switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
+                case 200:
+                    //Confirm the transaction, set booking and ticket  confirmed send notification to user
+                    Log::channel('mpesac2b')->info('Transaction confirmed' . PHP_EOL);
+                    $parser = new Parser();
+                    $input = $parser->xml($response);
+
+                    if ($mpesaC2B->og_conversation_id == $input['response']['originatorConversationID']
+                        && $input['response']['serviceStatus'] == 'Confirming' && $input['response']['transactionID'] == $mpesaC2B->transaction_id) {
+                        $mpesa = new Mpesa();
+                        $mpesa->confirmPaymentC2BTransaction($mpesaC2B);
+                        $booking = $ticket->booking()->first();
+                        $booking->confirmBooking();
+                        $this->confirmTicket($ticket);
+                    }
+                    //echo $input;
+                    break;
+                default:
+                    Log::channel('mpesac2b')->error('Unexpected HTTP code: ' . $http_code . '[' . $response . ']' . PHP_EOL);
+                //echo 'Unexpected HTTP code: ', $http_code, "\n";
+            }
+        } else {
+            Log::channel('mpesac2b')->error('Curl error[Error code:' . curl_errno($ch) . ']' . PHP_EOL);
+            //echo curl_errno($ch);
+        }
+        curl_close($ch);
     }
 
     public function processPaymentC2B(MpesaC2B $mpesaC2B)

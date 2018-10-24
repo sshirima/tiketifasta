@@ -26,3 +26,5 @@ Route::get('tigo-secure/system-status', 'api\TigoOnlineController@serverStatus')
 Route::get('tigo-secure/validate-account', 'api\TigoOnlineController@validateAccount')->name('api.tigo_secure.validate_account');
 Route::get('tigo-secure/authorize-payment', 'api\TigoOnlineController@authorizePayment')->name('api.tigo_secure.authorize_payment');
 Route::post('tigo-secure/confirm-payment', 'api\TigoOnlineController@confirmPayment')->name('api.tigo_secure.confirm_payment');
+
+Route::get('tigo/b2c/initialize-payment', 'api\TigoB2CController@initiateB2CTransaction')->name('api.tigo_b2c.initialize_payment');
