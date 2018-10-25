@@ -23,6 +23,8 @@ class TigoUssdB2C
      */
     public function initiatePayment($msisdn, $amount)
     {
+        $reply = null;
+        $ch = curl_init();
         try {
             //Create TigoB2C
             $tigoB2C = TigoB2C::create([
@@ -46,7 +48,6 @@ class TigoUssdB2C
             ]);
 
             $url = env('TIGO_B2C_URL');
-            $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: text/xml'));
@@ -67,24 +68,25 @@ class TigoUssdB2C
                                 $tigoB2C->txn_status = $input['TXNSTATUS'];
                                 $tigoB2C->txn_message = $input['MESSAGE'];
                                 $tigoB2C->update();
-                                return array('status'=>true, 'model'=>$tigoB2C,'response'=>$input);
+                                $reply = array('status'=>true, 'model'=>$tigoB2C,'response'=>$input);
                         }
                         //echo $input;
                         break;
                     default:
                         Log::channel('tigoussdb2c')->error('Unexpected HTTP code: ' . $http_code . '[' . $response . ']' . PHP_EOL);
-                        return array('status'=>false, 'error'=>'Unexpected HTTP code: ' . $http_code);
+                        $reply = array('status'=>false, 'error'=>'Unexpected HTTP code: ' . $http_code);
                     //echo 'Unexpected HTTP code: ', $http_code, "\n";
                 }
             } else {
                 Log::channel('tigoussdb2c')->error('Curl error[Error code:' . curl_errno($ch) . ']' . PHP_EOL);
-                return array('status'=>false, 'error'=>'Curl error[Error code:' . curl_errno($ch) . ']');
+                $reply = array('status'=>false, 'error'=>'Curl error[Error code:' . curl_errno($ch) . ']');
                 //echo curl_errno($ch);
             }
-            curl_close($ch);
         } catch (\Exception $ex) {
-            return array('status'=>false, 'error'=>$ex->getMessage());
+            $reply = array('status'=>false, 'error'=>$ex->getMessage());
         }
+        curl_close($ch);
+        return $reply;
     }
 
     public static function random_code($limit)

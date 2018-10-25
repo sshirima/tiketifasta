@@ -137,6 +137,9 @@ Route::prefix('admin')->group(function () {
     Route::get('merchants-payments/mpesa', 'Admins\MpesaB2CController@index')->name('admin.mpesab2c.index');
     Route::get('merchant-payments/tigopesa', 'Admins\TigoB2CController@index')->name('admin.tigob2c.index');
 
+    Route::get('payments/tigopesa/c2b', 'Admins\TigoSecureC2BController@index')->name('admin.tigoonline_c2b.index');
+    Route::get('payments/tigopesa/b2c', 'Admins\TigoB2CController@index')->name('admin.tigo_b2c.index');
+
     //Admin account CRUD routes (V2.0)
     Route::get('accounts/admins', 'Admins\AdminAccountsController@index')->name('admin.admin_accounts.index');
     Route::get('accounts/admins/create', 'Admins\AdminAccountsController@create')->name('admin.admin_accounts.create');

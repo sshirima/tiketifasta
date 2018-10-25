@@ -8,11 +8,18 @@
 
 return[
     'mpesa'=>[
+        'spid'=>env('MPESA_SPID'),
+        'password'=>env('MPESA_PASSWORD'),
+        'account_name'=>env('MPESA_ACCOUNT_NAME'),
+        'url_confirm'=>env('MPESA_C2B_CONFIRM'),
+
         'c2b'=>[
 
         ],
         'b2c'=>[
-
+            'url_initiate'=>env('MPESA_B2C_INITIATE'),
+            'initiator'=>env('MPESA_B2C_INITIATOR'),
+            'initiator_password'=>env('MPESA_B2C_INITIATOR_PASSWORD'),
         ],
     ],
     'tigo'=>[

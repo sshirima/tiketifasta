@@ -19,48 +19,53 @@ trait MpesaPaymentB2C
 
     use MpesaB2CData;
 
-    public function initializeB2CPayment(MpesaB2C $mpesaB2C){
-
-        $returnData = null;
-
-        $requestBody = $this->getBodyContent($mpesaB2C);
-
-        $url = 'https://broker2.ipg.tz.vodafone.com:27443/broker/transfer';
+    public function initializeB2CPayment(array $values){
+        $reply = null;
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: text/xml'));
-        /*curl_setopt($ch, CURLOPT_SSLKEY, '/var/www/html/storage/mpesa/tkj.vodacom.co.tz.key');
-        curl_setopt($ch, CURLOPT_CAINFO, '/var/www/html/storage/mpesa/root.pem');
-        curl_setopt($ch, CURLOPT_SSLCERT, '/var/www/html/storage/mpesa/tkj.vodacom.co.tz.cer');*/
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $requestBody);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        $response = curl_exec($ch);
-        //dd(curl_getinfo($ch, CURLINFO_HTTP_CODE));
-        //Check HTTP status code
-        if (!curl_errno($ch)) {
-            switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE))
-            {
-                case 200:
-                    //Confirm the transaction, set booking and ticket  confirmed send notification to user
-                    Log::channel('mpesab2c')->info('B2C transaction initiated' . PHP_EOL);
-                    $parser = new Parser();
-                    $returnData = $parser->xml($response);
-                    break;
-                default:
-                    Log::channel('mpesab2c')->error('Unexpected HTTP code: ' . $http_code . '[' . $response . ']' . PHP_EOL);
-                    $returnData = $response;
-                //echo 'Unexpected HTTP code: ', $http_code, "\n";
+        try{
+            $mpesaB2C = $this->createB2CTransaction($values);
+
+            $requestBody = $this->getBodyContent($mpesaB2C);
+
+            $url = config('payments.mpesa.b2c.url_initiate');
+
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: text/xml'));
+            /*curl_setopt($ch, CURLOPT_SSLKEY, '/var/www/html/storage/mpesa/tkj.vodacom.co.tz.key');
+            curl_setopt($ch, CURLOPT_CAINFO, '/var/www/html/storage/mpesa/root.pem');
+            curl_setopt($ch, CURLOPT_SSLCERT, '/var/www/html/storage/mpesa/tkj.vodacom.co.tz.cer');*/
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $requestBody);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+            $response = curl_exec($ch);
+            //dd(curl_getinfo($ch, CURLINFO_HTTP_CODE));
+            //Check HTTP status code
+            if (!curl_errno($ch)) {
+                switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE))
+                {
+                    case 200:
+                        //Confirm the transaction, set booking and ticket  confirmed send notification to user
+                        Log::channel('mpesab2c')->info('B2C transaction initiated' . PHP_EOL);
+                        $parser = new Parser();
+                        $res = $parser->xml($response);
+                        $reply = array('status'=>true, 'model'=>$mpesaB2C,'response'=>$res);
+                        break;
+                    default:
+                        Log::channel('mpesab2c')->error('Unexpected HTTP code: ' . $http_code . '[' . $response . ']' . PHP_EOL);
+                        $reply = array('status'=>false, 'error'=>'Unexpected HTTP code: ' . $http_code . '[' . $response . ']' );
+                }
+            } else {
+                Log::channel('mpesab2c')->error('Curl error[ Error code:' . curl_errno($ch) . ']' . PHP_EOL);
+                $reply = array('status'=>false, 'error'=>'Curl error[ Error code:' . curl_errno($ch) . ']');
             }
-        } else {
-            Log::channel('mpesab2c')->error('Curl error[ Error code:' . curl_errno($ch) . ']' . PHP_EOL);
-            $returnData = $response;
+
+        }catch(\Exception $exception){
+            $reply = array('status'=>false, 'error'=>$exception->getMessage());
         }
         curl_close($ch);
-
-        return $returnData;
+        return $reply;
     }
 
     public function createB2CTransaction($values){
@@ -70,17 +75,17 @@ trait MpesaPaymentB2C
     private function getBodyContent($mpesaB2C){
         $mpesa = new Mpesa();
         $timestamp = date('YmdHis');
-        $spPassword = $mpesa->encryptSPPassword(env('MPESA_B2C_INITIATOR'), env('MPESA_B2C_INITIATOR_PASSWORD'), $timestamp);
-        $initiator = env('MPESA_B2C_INITIATOR');
-        $initiatorPassword = $mpesa->encryptInitiatorPassword(env('MPESA_B2C_INITIATOR_PASSWORD'));
+        $spPassword = $mpesa->encryptSPPassword(config('payments.mpesa.spid'), config('payments.mpesa.password'), $timestamp);
+
+        $initiatorPassword = $mpesa->encryptInitiatorPassword(config('payments.mpesa.b2c.initiator_password'));
 
         return $this->c2bPaymentConfirmRequest([
-            'spId' => env('MPESA_SPID'),
+            'spId' => config('payments.mpesa.spid'),
             'spPassword' => $spPassword,
             'timestamp' => $timestamp,
             'amount' => $mpesaB2C->amount,
             'commandID' => $mpesaB2C->commandID,
-            'initiator' => $initiator,
+            'initiator' => config('payments.mpesa.b2c.initiator'),
             'initiatorPassword' => $initiatorPassword,
             'recipient' => $mpesaB2C->recipient,
             'transactionDate' => $mpesaB2C->transaction_date,

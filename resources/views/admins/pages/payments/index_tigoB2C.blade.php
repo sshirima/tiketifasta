@@ -1,7 +1,7 @@
 @extends('admins.layouts.master')
 
 @section('title')
-    Merchant payment | Tigo
+    Payments | Tigo
 @endsection
 
 @section('content-head')

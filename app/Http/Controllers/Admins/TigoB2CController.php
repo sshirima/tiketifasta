@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Admins;
 
 use App\Models\Booking;
 use App\Models\MpesaC2B;
+use App\Models\TigoB2C;
 use App\Models\TigoOnlineC2B;
 use Illuminate\Http\Request;
 use Okipa\LaravelBootstrapTableList\TableList;
@@ -24,26 +25,25 @@ class TigoB2CController extends BaseController
 
     public function index(Request $request){
 
-        $table = $this->createBookingTable();
+        $table = $this->createDisplayTable();
 
-        return '';
-        //return view('admins.pages.payments.index_mpesaC2B')->with(['table'=>$table]);
+        return view('admins.pages.payments.index_tigoB2C')->with(['table'=>$table]);
     }
 
     /**
      * @return mixed
      */
-    protected function createBookingTable()
+    protected function createDisplayTable()
     {
         $table = app(TableList::class)
-            ->setModel(TigoOnlineC2B::class)
+            ->setModel(TigoB2C::class)
             ->setRowsNumber(10)
             ->enableRowsNumberSelector()
             ->setRoutes([
-                'index' => ['alias' => 'admin.mpesa_c2B.index', 'parameters' => []],
+                'index' => ['alias' => 'admin.tigo_b2c.index', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {
-                $query->select('bookings.id as id','mpesa_c2B.amount as amount','mpesa_c2b.account_reference as reference')
-                    ->join('booking_payments', 'booking_payments.id', '=', 'mpesa_c2B.booking_payment_id');
+                $query->select('tigo_b2c.id as id','reference_id','msisdn1','amount','txn_status','txn_message',
+                    'txn_id','tigo_b2c.created_at','tigo_b2c.updated_at');
             });
 
         $table = $this->setTableColumns($table);
@@ -57,11 +57,18 @@ class TigoB2CController extends BaseController
      */
     private function setTableColumns($table)
     {
-        $table->addColumn('date')->setTitle('Date')->isSearchable()->sortByDefault()->setCustomTable('days');
-        $table->addColumn('status')->setTitle('Status')->isCustomHtmlElement(function($entity, $column){
+        $table->addColumn('msisdn1')->setTitle('Receiver')->isSearchable();
+        $table->addColumn('amount')->setTitle('Reference');
+        $table->addColumn('txn_id')->setTitle('Transaction Id');
+        $table->addColumn('txn_status')->setTitle('Status')->isSearchable();
+        $table->addColumn('txn_message')->setTitle('Status message')->isSearchable();
+        $table->addColumn('updated_at')->setTitle('Updated at')->isSortable()->isSearchable();
+        $table->addColumn('created_at')->setTitle('Created at')->isSortable()->isSearchable()->sortByDefault('desc');
+
+        /*$table->addColumn('status')->setTitle('Status')->isCustomHtmlElement(function($entity, $column){
             return $entity['status'] == Booking::STATUS_CONFIRMED?
                 '<div class="label label-success">'.'Paid'.'</div>':'<div class="label label-warning">'.$entity['status'].'</div>';
-        });
+        });*/
         return $table;
     }
 }

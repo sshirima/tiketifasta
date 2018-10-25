@@ -25,7 +25,7 @@ class TigoSecureC2BController extends BaseController
 
         $table = $this->createBookingTable();
 
-        return view('admins.pages.payments.index_mpesaC2B')->with(['table'=>$table]);
+        return view('admins.pages.payments.index_tigosecureC2B')->with(['table'=>$table]);
     }
 
     /**
@@ -38,9 +38,10 @@ class TigoSecureC2BController extends BaseController
             ->setRowsNumber(10)
             ->enableRowsNumberSelector()
             ->setRoutes([
-                'index' => ['alias' => 'admin.mpesa_c2B.index', 'parameters' => []],
+                'index' => ['alias' => 'admin.tigoonline_c2b.index', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {
-                $query->select('bookings.id as id','tigoonline_c2b.amount as amount','tigoonline_c2b.account_reference as reference')
+                $query->select('tigoonline_c2b.id as id','tigoonline_c2b.amount as amount',
+                    'tigoonline_c2b.reference as reference','tigoonline_c2b.created_at as created_at','tigoonline_c2b.updated_at as updated_at')
                     ->join('booking_payments', 'booking_payments.id', '=', 'tigoonline_c2b.booking_payment_id');
             });
         $table = $this->setTableColumns($table);
@@ -53,7 +54,10 @@ class TigoSecureC2BController extends BaseController
      */
     private function setTableColumns($table)
     {
-        $table->addColumn('date')->setTitle('Date')->isSearchable()->sortByDefault();
+        $table->addColumn('amount')->setTitle('Amount');
+        $table->addColumn('reference')->setTitle('Reference')->isSearchable();
+        $table->addColumn('updated_at')->setTitle('Updated at')->isSearchable();
+        $table->addColumn('created_at')->setTitle('Created at')->isSearchable()->sortByDefault();
         return $table;
     }
 }

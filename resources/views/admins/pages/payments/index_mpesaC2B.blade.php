@@ -1,7 +1,7 @@
 @extends('admins.layouts.master')
 
 @section('title')
-    Customer payments | Mpesa
+    Payments | Mpesa
 @endsection
 
 @section('content-head')

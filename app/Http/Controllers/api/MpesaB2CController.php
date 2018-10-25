@@ -21,24 +21,17 @@ class MpesaB2CController extends Controller
     }
     public function initiateB2CTransaction(){
 
-        try{
-            $mpesaB2C = $this->createB2CTransaction([
-                'amount'=>'100',
-                'command_id'=>'BusinessPayment',
-                'initiator'=>env('MPESA_B2C_INITIATOR'),
-                'recipient'=>'255754710618',
-            ]);
+        $response = $this->initializeB2CPayment([
+            'amount'=>'100',
+            'command_id'=>'BusinessPayment',
+            'initiator'=>config('payments.mpesa.b2c.url_initiate'),
+            'recipient'=>'0754710618',
+        ]);
 
-            $response = $this->initializeB2CPayment($mpesaB2C);
-
-            //No comments
-            if(isset($response)){
-                return json_encode($response);
-            } else {
-                return 'Something went wrong';
-            }
-        }catch (\Exception $ex){
-            return $ex->getMessage();
+        if($response['status']){
+            return 'Success : '.json_encode($response['response']);
+        } else {
+            return 'Error: '.$response['error'];
         }
     }
 }

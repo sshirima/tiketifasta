@@ -23,9 +23,9 @@ class TigoB2CController extends Controller
 
         //No comments
         if($response['status'] == true){
-            return 'Payment initiated successful'.json_encode($response['response']);
+            return 'Success : '.json_encode($response['response']);
         } else {
-            return 'Error:'.$response['error'];
+            return 'Error : '.$response['error'];
         }
     }
 }
