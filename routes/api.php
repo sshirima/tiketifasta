@@ -27,5 +27,5 @@ Route::get('tigo-secure/validate-account', 'api\TigoOnlineController@validateAcc
 Route::get('tigo-secure/authorize-payment', 'api\TigoOnlineController@authorizePayment')->name('api.tigo_secure.authorize_payment');
 Route::post('tigo-secure/confirm-payment', 'api\TigoOnlineController@confirmPayment')->name('api.tigo_secure.confirm_payment');
 
-Route::get('tigo/b2c/initialize-payment', 'api\TigoB2CController@initiateB2CTransaction')->name('api.tigo_b2c.initialize_payment');
-Route::get('mpesa/b2c/initialize-payment', 'api\MpesaB2CController@initializeB2CPayment')->name('api.mpesa_b2c.initialize_payment');
+Route::get('tigo/b2c/initialize-payment', 'api\TigoB2CController@initiateTransaction')->name('api.tigo_b2c.initialize_payment');
+Route::get('mpesa/b2c/initialize-payment', 'api\MpesaB2CController@initiateTransaction')->name('api.mpesa_b2c.initialize_payment');

@@ -15,7 +15,7 @@ use App\Services\Payments\TigoUSSD\TigoUssdB2C;
 
 class TigoB2CController extends Controller
 {
-    public function initiateB2CTransaction(){
+    public function initiateTransaction(){
 
         $tigoB2C = new TigoUssdB2C();
 

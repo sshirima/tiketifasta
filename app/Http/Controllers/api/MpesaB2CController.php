@@ -19,12 +19,12 @@ class MpesaB2CController extends Controller
     public function encryptPassword(){
 
     }
-    public function initiateB2CTransaction(){
+    public function initiateTransaction(){
 
-        $response = $this->initializeB2CPayment([
+        $response = $this->initiatePayment([
             'amount'=>'100',
             'command_id'=>'BusinessPayment',
-            'initiator'=>config('payments.mpesa.b2c.url_initiate'),
+            'initiator'=>config('payments.mpesa.b2c.initiator'),
             'recipient'=>'0754710618',
         ]);
 

@@ -17,7 +17,7 @@ return[
 
         ],
         'b2c'=>[
-            'url_initiate'=>env('MPESA_B2C_INITIATE'),
+            'url_initiate'=>env('MPESA_B2C_URL'),
             'initiator'=>env('MPESA_B2C_INITIATOR'),
             'initiator_password'=>env('MPESA_B2C_INITIATOR_PASSWORD'),
         ],

@@ -19,7 +19,7 @@ trait MpesaPaymentB2C
 
     use MpesaB2CData;
 
-    public function initializeB2CPayment(array $values){
+    public function initiatePayment(array $values){
         $reply = null;
         $ch = curl_init();
         try{
