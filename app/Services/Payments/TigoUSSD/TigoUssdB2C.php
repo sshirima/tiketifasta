@@ -69,6 +69,8 @@ class TigoUssdB2C
                                 $tigoB2C->txn_message = $input['MESSAGE'];
                                 $tigoB2C->update();
                                 $reply = array('status'=>true, 'model'=>$tigoB2C,'response'=>$input);
+                        } else {
+                            $reply = array('status'=>false, 'error'=>$input);
                         }
                         //echo $input;
                         break;
