@@ -25,7 +25,7 @@ class TigoB2CController extends Controller
         if($response['status'] == true){
             return 'Success : '.json_encode($response['response']);
         } else {
-            return 'Error : '.$response['error'];
+            return 'Error : '.json_encode($response['error']);
         }
     }
 }
