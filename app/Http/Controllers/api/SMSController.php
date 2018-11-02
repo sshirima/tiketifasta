@@ -23,9 +23,7 @@ class SmsController extends Controller
         // One number
         try{
             $input = $request->all();
-            $sender = $input['sender'];
             $phoneNumber = $input['phonenumber'];
-            $message = $input['message'];
 
             $smpp = new Smpp();
             $smpp->setDebug(0);
@@ -38,7 +36,7 @@ class SmsController extends Controller
 
             //echo json_encode($connection);
 
-            $res = $smpp->send_long($sender,$phoneNumber, $message);
+            $res = $smpp->send_long(config('smsc.tigo.snmp.settings.sender'),$phoneNumber, $message);
 
             if ($res == true){
                 print 'Message sent';

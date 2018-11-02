@@ -83,7 +83,7 @@
                             <h4 class="mb-5">Ticket information</h4>
                             <div class="text-info">Ticket ref: <b>{{strtoupper($ticket->ticket_ref)}}</b></div>
                             <div class="text-info">Status: @if($ticket->status == 'CONFIRMED')
-                                    <div class="alert-success">{{$ticket->status}}</div>
+                                    <div class="alert-success">Ticket has been confirmed</div>
                                 @else
                                     <div class="alert-warning ">{{$ticket->status}}</div>
                                 @endif</div>
@@ -107,7 +107,7 @@
                 @if(isset($ticket))
                     <div class="row">
                         <div class="col-lg-12">
-                            <p class="lead mb-0"> Thanks for working with us!</p>
+                            <p class="lead mb-0"> Thanks for for booking with us, your ticket reference been sent to number <b>{{$ticket->booking->phonenumber}}</b></p>
                         </div>
                     </div>
                 @else
@@ -125,6 +125,7 @@
                 @else
                     <div class="alert alert-warning">This seat has been booked, please try another seat</div>
                 @endif
+
             @endif
         </div>
     </section>

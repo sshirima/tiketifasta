@@ -14,14 +14,16 @@ use App\Models\TigoOnlineC2B;
 use App\Services\DateTime\DatesOperations;
 use App\Services\Payments\PaymentManager;
 use App\Services\Payments\Tigosecure\TigoOnline;
+use App\Services\SMS\SendSMS;
 use App\Services\Tickets\AddTicket;
 use Illuminate\Http\Request;
 use Exception;
+use App\Services\SMS\Smpp;
 use Log;
 
 class TigoOnlineController extends Controller
 {
-    use DatesOperations, AddTicket;
+    use DatesOperations, AddTicket, SendSMS;
 
     private $tigoOnline;
 
@@ -139,7 +141,7 @@ class TigoOnlineController extends Controller
                         $ticket = $this->createTicket($bookingPayment);
                         $booking->confirmBooking();
                         $this->confirmTicket($ticket);
-
+                        $this->sendTicketReference($ticket);
                         return view('users.pages.bookings.booking_confirmation')->with(['ticket'=>$ticket,'bookingPayment' => $bookingPayment, 'booking' => $booking]);
                     } else {
                         $error = 'Access code and verification code mismatch';

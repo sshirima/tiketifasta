@@ -22,7 +22,8 @@ class Mpesa
 
     public function encryptSPPassword($spId, $spPassword, $timestamp)
     {
-        return base64_encode(hash("sha256", $spId.$spPassword.$timestamp, true));
+        return base64_encode(strtoupper(hash('sha256', $spId.$spPassword.$timestamp)));
+        //return base64_encode(hash("sha256", $spId.$spPassword.$timestamp, true));
     }
 
     public function encryptInitiatorPassword($password)

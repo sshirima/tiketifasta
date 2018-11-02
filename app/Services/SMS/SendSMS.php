@@ -9,26 +9,25 @@
 namespace App\Services\SMS;
 
 
+use App\Models\Ticket;
+
 trait SendSMS
 {
-    public function sendToOne($sender,$phoneNumber, $message){
-        try{
-            $smpp = new Smpp();
+    public function sendTicketReference(Ticket $ticket){
+        $phoneNumber = $ticket->booking->phonenumber;
 
-            $smpp->setDebug(0);
+        $format = config('smsc.format');
 
-            $smpp->open(env('TIGO_SMPP_HOST'), env('TIGO_SMPP_PORT'), env('TIGO_SMPP_USERNAME'), env('TIGO_SMPP_PASSWORD'));
+        $message = sprintf($format,$ticket->booking->firstname,strtoupper($ticket->ticket_ref));
 
-            $res = $smpp->send_long($sender,$phoneNumber, $message);
+        $smpp = new Smpp();
 
-            $smpp->close();
+        if($ticket->booking->payment == 'tigopesa'){
+            $smpp->open(config('smsc.tigo.snmp.account.host'), config('smsc.tigo.snmp.account.port'), config('smsc.tigo.snmp.account.username'), config('smsc.tigo.snmp.account.password'));
 
-            return $res;
-
-        }catch (\Exception $exception){
-            $message = $exception->getMessage();
-            return $message;
+            return $smpp->send_long(config('smsc.tigo.snmp.settings.sender'),$phoneNumber, $message);
+        }else{
+           return false;
         }
     }
-
 }
