@@ -7,6 +7,7 @@
  */
 
 return [
+    'format'=>'Dear %s, your ticket reference is %s',
     'voda'=>[],
     'tigo'=>[
         'snmp'=>[

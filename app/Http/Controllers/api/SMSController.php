@@ -26,11 +26,13 @@ class SmsController extends Controller
             $sender = $input['sender'];
             $phoneNumber = $input['phonenumber'];
             $message = $input['message'];
-            /*$smppService = new SmppService(new Repository(config('laravel-smpp')));
-            $smppService->sendOne($phoneNumber, $message);*/
 
             $smpp = new Smpp();
-            $smpp->setDebug(1);
+            $smpp->setDebug(0);
+
+            $format = config('smsc.format');
+
+            $message = sprintf($format,'Samson','TKB4G667');
 
             $smpp->open("41.222.182.51", 10501, "TKJINT", "TKJIN@32");
 
@@ -45,7 +47,7 @@ class SmsController extends Controller
             }
             //$smpp->close();
 
-            return 'Sent';
+            //return 'Sent';
 
         }catch (\Exception $exception){
             $message = $exception->getMessage();

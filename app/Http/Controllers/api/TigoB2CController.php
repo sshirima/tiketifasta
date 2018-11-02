@@ -19,7 +19,7 @@ class TigoB2CController extends Controller
 
         $tigoB2C = new TigoUssdB2C();
 
-        $response = $tigoB2C->initiatePayment('0658123367','1000');
+        $response = $tigoB2C->initiatePayment('0766734427','1000');
 
         //No comments
         if($response['status'] == true){
