@@ -51,6 +51,7 @@ trait MpesaPaymentB2C
                         $parser = new Parser();
                         $res = $parser->xml($response);
                         $mpesaB2C->result_code = $res['response']['responseCode'];
+                        $mpesaB2C->update();
                         $reply = array('status'=>true, 'model'=>$mpesaB2C,'response'=>$res);
                         break;
                     default:
@@ -76,7 +77,7 @@ trait MpesaPaymentB2C
     private function getBodyContent($mpesaB2C){
         $mpesa = new Mpesa();
         $timestamp = date('YmdHis');
-        $spPassword = $mpesa->encryptSPPassword(config('payments.mpesa.spid'), config('payments.mpesa.password'), $timestamp);
+        $spPassword = $mpesa->encryptSPPassword(config('payments.mpesa.b2c.spid'), config('payments.mpesa.b2c.sppassword'), $timestamp);
 
         $initiatorPassword = $mpesa->encryptInitiatorPassword(config('payments.mpesa.b2c.initiator_password'));
 
