@@ -34,7 +34,7 @@ class SmsController extends Controller
 
             $message = sprintf($format,'Samson','TKB4G667');
 
-            $smpp->open("41.222.182.51", 10501, "TKJINT", "TKJIN@32");
+            $smpp->open(config('smsc.tigo.snmp.account.host'), config('smsc.tigo.snmp.account.port'), config('smsc.tigo.snmp.account.username'), config('smsc.tigo.snmp.account.password'));
 
             //echo json_encode($connection);
 
