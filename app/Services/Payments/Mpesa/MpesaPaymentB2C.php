@@ -78,7 +78,7 @@ trait MpesaPaymentB2C
 
     private function getParametersInitiatB2CeRequest($mpesaB2C){
         $mpesa = new Mpesa();
-        $timestamp = $timestamp = PaymentManager::getCurrentTimestamp();
+        $timestamp = PaymentManager::getCurrentTimestamp();
         $spPassword = $mpesa->encryptSPPassword(config('payments.mpesa.b2c.spid'), config('payments.mpesa.b2c.sppassword'), $timestamp);
 
         $initiatorPassword = $mpesa->encryptInitiatorPassword(config('payments.mpesa.b2c.initiator_password'));
