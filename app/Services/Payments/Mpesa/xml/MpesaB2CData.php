@@ -12,7 +12,7 @@ namespace App\Services\Payments\Mpesa\xml;
 trait MpesaB2CData
 {
 
-    public function c2bPaymentConfirmRequest(array $values){
+    public function b2cPaymentConfirmRequest(array $values){
         $xmlDoc = new \SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><brokerRequest version="2.0" xmlns="http://infowise.co.tz/broker/"></brokerRequest>');
         //$result = $xmlDoc->addChild('result');
         $serviceProvider = $xmlDoc->addChild('serviceProvider');
@@ -28,6 +28,7 @@ trait MpesaB2CData
         $transaction->addChild('recipient',$values['recipient']);
         $transaction->addChild('transactionDate',$values['transactionDate']);
         $transaction->addChild('transactionID',$values['transactionID']);
+        $transaction->addChild('originatorConversationID',$values['originatorConversationID']);
 
         return $xmlDoc->asXML();
     }

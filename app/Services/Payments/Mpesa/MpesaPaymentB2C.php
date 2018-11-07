@@ -83,7 +83,7 @@ trait MpesaPaymentB2C
 
         $initiatorPassword = $mpesa->encryptInitiatorPassword(config('payments.mpesa.b2c.initiator_password'));
 
-        return $this->c2bPaymentConfirmRequest([
+        return $this->b2cPaymentConfirmRequest([
             'spId' => config('payments.mpesa.b2c.spid'),
             'spPassword' => $spPassword,
             'timestamp' => $timestamp,
@@ -92,6 +92,7 @@ trait MpesaPaymentB2C
             'initiator' => config('payments.mpesa.b2c.initiator'),
             'initiatorPassword' => $initiatorPassword,
             'recipient' => $mpesaB2C->recipient,
+            'originatorConversationID' => $mpesaB2C->og_conversation_id,
             'transactionDate' => $mpesaB2C->transaction_date,
             'transactionID' => $mpesaB2C->transaction_id,
         ]);
