@@ -27,6 +27,7 @@ class MpesaB2CController extends Controller
             'command_id'=>'BusinessPayment',
             'initiator'=>config('payments.mpesa.b2c.initiator'),
             'recipient'=>'0754710618',
+            'transaction_date'=>PaymentManager::getCurrentTimestamp(),
             'transaction_id'=>strtoupper(PaymentManager::random_code(10)),
         ]);
 
