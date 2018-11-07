@@ -52,7 +52,7 @@ trait MpesaPaymentB2C
                         $parser = new Parser();
                         $res = $parser->xml($response);
                         $mpesaB2C->result_code = $res['response']['responseCode'];
-                        $mpesaB2C->result_desc = $res['response']['responseDesc'];
+                        $mpesaB2C->result_desc = isset($res['response']['responseDesc'])?$res['response']['responseDesc']:'';
                         $mpesaB2C->update();
                         $reply = array('status'=>true, 'model'=>$mpesaB2C,'response'=>$res);
                         break;
