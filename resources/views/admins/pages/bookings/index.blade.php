@@ -1,31 +1,32 @@
 @extends('admins.layouts.master')
 
 @section('title')
-    {{ __('admin_pages.page_bookings_index_title') }}
+    Bookings
 @endsection
 
 @section('content-head')
     <section class="content-header">
         <h1>
-            {{__('admin_page_bookings.content_header_title')}}
-            <small>{{__('admin_page_bookings.content_header_sub_title')}}</small>
+            Current bookings
+            <small>{{__('merchant_page_bookings.content_header_sub_title')}}</small>
         </h1>
         <ol class="breadcrumb">
             <li>
-                <a href="{{route('admin.bookings.index')}}"> {{__('admin_page_bookings.navigation_link_index')}}</a>
+                <a href="{{route('admin.buses.index')}}"> Bookings </a>
             </li>
-            <li class="active">{{__('admin_page_bookings.navigation_link_create')}}</li>
+            <li class="active">View</li>
         </ol>
     </section>
 @endsection
 
 @section('content-body')
+    @include('flash::message')
     <section class="content container-fluid">
-        <div class="box box-primary">
-            <div class="box-header">
-                Bookings
+        <div class="nav-tabs-custom">
+            <div class="nav nav-tabs">
+                @include('admins.pages.bookings.booking_panel')
             </div>
-            <div class="box-body">
+            <div class="tab-content">
                 {!! $bookingTable->render() !!}
             </div>
         </div>

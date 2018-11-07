@@ -46,6 +46,9 @@ class AdminComposerSP extends ServiceProvider
                 'admins.pages.payments.index_tigosecureC2B',
                 'admins.pages.payments.index_tigoB2C',
                 'admins.pages.payments.index_mpesaB2C',
+                'admins.pages.tickets.index',
+                'admins.pages.buses.prices',
+                'admins.pages.staff.index',
             ],
             AdminComposer::class
         );

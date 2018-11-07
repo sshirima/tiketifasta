@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Admins;
 
 use App\Models\Booking;
+use App\Models\MpesaB2C;
 use App\Models\MpesaC2B;
 use Illuminate\Http\Request;
 use Okipa\LaravelBootstrapTableList\TableList;
@@ -25,8 +26,7 @@ class MpesaB2CController extends BaseController
 
         $table = $this->createBookingTable();
 
-        return '';
-        //return view('admins.pages.payments.index_mpesaC2B')->with(['table'=>$table]);
+        return view('admins.pages.payments.index_mpesaC2B')->with(['table'=>$table]);
     }
 
     /**
@@ -35,14 +35,14 @@ class MpesaB2CController extends BaseController
     protected function createBookingTable()
     {
         $table = app(TableList::class)
-            ->setModel(MpesaC2B::class)
+            ->setModel(MpesaB2C::class)
             ->setRowsNumber(10)
             ->enableRowsNumberSelector()
             ->setRoutes([
-                'index' => ['alias' => 'admin.mpesa_c2B.index', 'parameters' => []],
+                'index' => ['alias' => 'admin.mpesab2c.index', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {
-                $query->select('bookings.id as id','mpesa_c2B.amount as amount','mpesa_c2b.account_reference as reference')
-                    ->join('booking_payments', 'booking_payments.id', '=', 'mpesa_c2B.booking_payment_id');
+                $query->select('mpesa_b2c.id as id','mpesa_b2c.amount as amount','mpesa_b2c.recipient as recipient','transaction_date','transaction_id',
+                'conversation_id','og_conversation_id','mpesa_receipt','result_type','result_code','working_account_funds','utility_account_funds','charges_paid_funds');
             });
 
         $table = $this->setTableColumns($table);
@@ -56,11 +56,15 @@ class MpesaB2CController extends BaseController
      */
     private function setTableColumns($table)
     {
-        $table->addColumn('date')->setTitle('Date')->isSearchable()->sortByDefault()->setCustomTable('days');
-        $table->addColumn('status')->setTitle('Status')->isCustomHtmlElement(function($entity, $column){
-            return $entity['status'] == Booking::STATUS_CONFIRMED?
-                '<div class="label label-success">'.'Paid'.'</div>':'<div class="label label-warning">'.$entity['status'].'</div>';
-        });
+        $table->addColumn('amount')->setTitle('Amount')->isSearchable();
+        $table->addColumn('recipient')->setTitle('Recipient')->isSearchable();
+        $table->addColumn('transaction_date')->setTitle('Transaction date')->isSearchable();
+        $table->addColumn('transaction_id')->setTitle('Transaction Id')->isSearchable();
+        $table->addColumn('mpesa_receipt')->setTitle('Mpesa receipt')->isSearchable();
+        $table->addColumn('result_type')->setTitle('Result type')->isSearchable();
+        $table->addColumn('result_code')->setTitle('Result code')->isSearchable();
+        $table->addColumn('created_at')->isSortable()->setTitle('Created at');
+        $table->addColumn('updated_at')->isSortable()->setTitle('Updated at')->sortByDefault('desc');
         return $table;
     }
 }

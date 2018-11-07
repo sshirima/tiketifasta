@@ -62,8 +62,8 @@ class BusSchedulingController extends BaseController
             //$this->dispatch(new AssignSchedule(['date'=>$date,'direction'=> $input['direction']], $busId));
         }
 
-        return json_encode($report);
-        //return redirect(route('merchant.buses.schedules.create', $busId));
+        //return json_encode($report);
+        return redirect(route('merchant.buses.schedules.create', $busId));
     }
 
     /**

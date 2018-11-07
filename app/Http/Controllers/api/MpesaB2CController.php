@@ -11,6 +11,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Services\Payments\Mpesa\MpesaPaymentB2C;
+use App\Services\Payments\PaymentManager;
 
 class MpesaB2CController extends Controller
 {
@@ -26,6 +27,7 @@ class MpesaB2CController extends Controller
             'command_id'=>'BusinessPayment',
             'initiator'=>config('payments.mpesa.b2c.initiator'),
             'recipient'=>'0754710618',
+            'transaction_id'=>strtoupper(PaymentManager::random_code(10)),
         ]);
 
         if($response['status']){

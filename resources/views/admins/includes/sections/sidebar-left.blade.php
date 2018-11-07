@@ -36,13 +36,14 @@
             </span>
                 </a>
                 <ul class="treeview-menu" style="display: block;">
-                    <li><a href="{{route('admin.booking_payments.index')}}"><i class="fas fa-link"></i> Booking Payments </a></li>
-                    <li><a href="{{route('admin.mpesac2b.index')}}"><i class="fas fa-link"></i> Mpesa C2B </a></li>
-                    <li><a href="{{route('admin.tigosecurec2b.index')}}"><i class="fas fa-link"></i> Tigopesa C2B </a></li>
-                    <li><a href="{{route('admin.mpesab2c.index')}}"><i class="fas fa-link"></i> Mpesa B2C </a></li>
-                    <li><a href="{{route('admin.tigob2c.index')}}"><i class="fas fa-link"></i> Tigopesa B2C </a></li>
+                    <li class="{{Request::is('admin/booking-payments') ? 'active' : ''}}"><a href="{{route('admin.booking_payments.index')}}"><i class="fas fa-link"></i> Booking Payments </a></li>
+                    <li class="{{Request::is('admin/customer-payments/mpesa') ? 'active' : ''}}"><a href="{{route('admin.mpesac2b.index')}}"><i class="fas fa-link"></i> Mpesa C2B </a></li>
+                    <li class="{{Request::is('admin/customer-payments/tigopesa') ? 'active' : ''}}"><a href="{{route('admin.tigosecurec2b.index')}}"><i class="fas fa-link"></i> Tigopesa C2B </a></li>
+                    <li class="{{Request::is('admin/merchants-payments/mpesa') ? 'active' : ''}}"><a href="{{route('admin.mpesab2c.index')}}"><i class="fas fa-link"></i> Mpesa B2C </a></li>
+                    <li class="{{Request::is('admin/merchant-payments/tigopesa') ? 'active' : ''}}"><a href="{{route('admin.tigob2c.index')}}"><i class="fas fa-link"></i> Tigopesa B2C </a></li>
                 </ul>
             </li>
+            <li class="{{Request::is('admin/tickets') ? 'active' : ''}}"><a href="{{route('admin.tickets.index')}}"><i class="fas fa-link"></i> <span> {{__('admin_side_bar_left.option_tickets')}}</span></a></li>
             <li class="{{Request::is('admin/bookings') ? 'active' : ''}}"><a href="{{route('admin.bookings.index')}}"><i class="fas fa-link"></i> <span> {{__('admin_side_bar_left.option_bookings')}}</span></a></li>
             <li class="{{Request::is('admin/schedules*') ? 'active' : ''}}"><a href="{{route('admin.schedules.index')}}"><i class="fas fa-link"></i> <span> {{__('admin_side_bar_left.option_schedules')}}</span></a></li>
             <li class="{{Request::is('admin/buses*') ? 'active' : ''}}"><a href="{{route('admin.buses.index')}}"><i class="fas fa-link"></i> <span> {{__('admin_side_bar_left.option_buses')}}</span></a></li>
@@ -50,8 +51,18 @@
             <li class="{{Request::is('admin/merchants*') ? 'active' : ''}}"><a href="{{route('admin.merchant.index')}}"><i class="fas fa-link"></i> <span> {{__('admin_side_bar_left.option_merchants')}}</span></a></li>
             <li class="{{Request::is('admin/routes*') ? 'active' : ''}}"><a href="{{route('admin.routes.index')}}"><i class="fas fa-code-branch"></i> <span> {{__('admin_side_bar_left.option_routes')}}</span></a></li>
             <li class="{{Request::is('admin/locations*') ? 'active' : ''}}"><a href="{{route('admin.location.index')}}"><i class="fas fa-location-arrow"></i> <span> {{__('admin_side_bar_left.option_locations')}}</span></a></li>
-            <li class="{{Request::is('accounts/admins*') ? 'active' : ''}}"><a href="{{route('admin.admin_accounts.index')}}"><i class="fas fa-link"></i> <span> {{__('admin_side_bar_left.option_accounts_admin')}}</span></a></li>
-
+            <li class="treeview menu-open">
+                <a href="#">
+                    <i class="fas fa-link"></i> <span>Accounts</span>
+                    <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+                </a>
+                <ul class="treeview-menu" style="display: block;">
+                    <li class="{{Request::is('admin/accounts/admins*') ? 'active' : ''}}"><a href="{{route('admin.admin_accounts.index')}}"><i class="fas fa-link"></i> <span> {{__('admin_side_bar_left.option_accounts_admin')}}</span></a></li>
+                    <li class="{{Request::is('admin/accounts/merchants*') ? 'active' : ''}}"><a href="{{route('admin.merchant_accounts.index')}}"><i class="fas fa-link"></i> <span> {{__('admin_side_bar_left.option_accounts_merchants')}}</span></a></li>
+                </ul>
+            </li>
             <li class="header">{{__('admin_side_bar_left.header_title_account')}}</li>
             <li class="{{Request::is('admin/payment-accounts*') ? 'active' : ''}}"><a href="{{route('admin.payments-accounts.index')}}"><i class="fas fa-link"></i> <span> {{__('admin_side_bar_left.option_payment_accounts')}}</span></a></li>
             <li ><a href="{{route('admin.logout')}}"><i class="fas fa-sign-out-alt"></i> <span> {{__('admin_side_bar_left.option_logout')}}</span></a></li>

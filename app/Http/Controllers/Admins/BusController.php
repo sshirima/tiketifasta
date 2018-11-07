@@ -51,7 +51,6 @@ class BusController extends BaseController
         return view('admins.pages.buses.create')->with($this->getCreateParams());
     }
 
-
     public function store(CreateBusRequest $request)
     {
         $bus = $this->busRepository->create($request->all());

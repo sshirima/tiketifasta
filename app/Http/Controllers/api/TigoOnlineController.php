@@ -141,7 +141,7 @@ class TigoOnlineController extends Controller
                         $ticket = $this->createTicket($bookingPayment);
                         $booking->confirmBooking();
                         $this->confirmTicket($ticket);
-                        $this->sendTicketReference($ticket);
+                        $this->sendTicketReference($ticket, $ticket->booking->payment);
                         return view('users.pages.bookings.booking_confirmation')->with(['ticket'=>$ticket,'bookingPayment' => $bookingPayment, 'booking' => $booking]);
                     } else {
                         $error = 'Access code and verification code mismatch';

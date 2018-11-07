@@ -55,6 +55,11 @@ return [
             'path' => storage_path('logs/tigoussdb2c.log'),
             'level' => 'debug',
         ],
+        'sms_logs' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/sms_logs.log'),
+            'level' => 'debug',
+        ],
 
         'single' => [
             'driver' => 'single',

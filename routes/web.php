@@ -121,6 +121,7 @@ Route::prefix('admin')->group(function () {
     Route::get('buses/{id}/routes', 'Admins\Buses\BusRouteController@showRoute')->name('admin.buses.route.show');
     Route::get('buses/{id}/schedules', 'Admins\Buses\BusScheduleController@index')->name('admin.buses.schedules');
     Route::get('buses/{id}/schedules/events', 'Merchants\Buses\BusSchedulingController@busSchedules');
+    Route::get('buses/{id}/prices', 'Admins\Buses\BusTripController@tripPrice')->name('admin.buses.assign_price');
     Route::get('bookings', 'Admins\BookingController@index')->name('admin.bookings.index');
     Route::get('schedules', 'Admins\ScheduleController@index')->name('admin.schedules.index');
     Route::get('payment-accounts', 'Admins\SystemPaymentController@index')->name('admin.payments-accounts.index');
@@ -147,6 +148,11 @@ Route::prefix('admin')->group(function () {
     Route::delete('accounts/admins/{id}/delete', 'Admins\AdminAccountsController@destroy')->name('admin.admin_accounts.destroy');
 
     Route::get('sms/sent_sms', 'Admins\SentSMSController@index')->name('admin.sent_sms.index');
+    Route::get('bookings', 'Admins\BookingController@index')->name('admin.bookings.index');
+    //Tickets
+    Route::get('tickets', 'Admins\TicketController@index')->name('admin.tickets.index');
+
+    Route::get('account/merchants', 'Admins\StaffController@index')->name('admin.merchant_accounts.index');
 });
 
 Route::prefix('merchant')->group(function () {

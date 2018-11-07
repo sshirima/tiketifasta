@@ -86,6 +86,7 @@ return [
     'page_bus_edit_panel_routes'=>'Routes',
     'page_bus_edit_panel_price'=>'Prices',
     'page_bus_edit_panel_bus_schedules'=>'Schedules',
+    'page_bus_edit_panel_bus_prices'=>'Prices',
     'page_bus_edit_panel_bus_authorizes'=>'Authorizes',
     'page_bus_edit_panel_general_seats'=>'Bus seats',
     'page_bus_edit_panel_general_ticket_prices'=>'Ticket prices',
