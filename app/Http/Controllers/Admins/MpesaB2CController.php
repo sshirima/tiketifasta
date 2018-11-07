@@ -42,7 +42,8 @@ class MpesaB2CController extends BaseController
                 'index' => ['alias' => 'admin.mpesab2c.index', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {
                 $query->select('mpesa_b2c.id as id','mpesa_b2c.amount as amount','mpesa_b2c.recipient as recipient','transaction_date','transaction_id',
-                'conversation_id','og_conversation_id','mpesa_receipt','result_type','result_code','working_account_funds','utility_account_funds','charges_paid_funds');
+                'conversation_id','og_conversation_id','mpesa_receipt','result_type','result_code','result_desc',
+                    'working_account_funds','utility_account_funds','charges_paid_funds');
             });
 
         $table = $this->setTableColumns($table);
@@ -63,6 +64,7 @@ class MpesaB2CController extends BaseController
         $table->addColumn('mpesa_receipt')->setTitle('Mpesa receipt')->isSearchable();
         $table->addColumn('result_type')->setTitle('Result type')->isSearchable();
         $table->addColumn('result_code')->setTitle('Result code')->isSearchable();
+        $table->addColumn('result_desc')->setTitle('Result description');
         $table->addColumn('created_at')->isSortable()->setTitle('Created at');
         $table->addColumn('updated_at')->isSortable()->setTitle('Updated at')->sortByDefault('desc');
         return $table;
