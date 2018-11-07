@@ -11,6 +11,7 @@ namespace App\Services\Payments\Mpesa;
 
 use App\Models\MpesaB2C;
 use App\Services\Payments\Mpesa\xml\MpesaB2CData;
+use App\Services\Payments\PaymentManager;
 use Nathanmac\Utilities\Parser\Parser;
 use Log;
 
@@ -25,7 +26,7 @@ trait MpesaPaymentB2C
         try{
             $mpesaB2C = $this->createB2CTransaction($values);
 
-            $requestBody = $this->getBodyContent($mpesaB2C);
+            $requestBody = $this->getParametersInitiatB2CeRequest($mpesaB2C);
 
             $url = config('payments.mpesa.b2c.url_initiate');
 
@@ -75,9 +76,9 @@ trait MpesaPaymentB2C
         return MpesaB2C::create($values);
     }
 
-    private function getBodyContent($mpesaB2C){
+    private function getParametersInitiatB2CeRequest($mpesaB2C){
         $mpesa = new Mpesa();
-        $timestamp = date('YmdHis');
+        $timestamp = $timestamp = PaymentManager::getCurrentTimestamp();
         $spPassword = $mpesa->encryptSPPassword(config('payments.mpesa.b2c.spid'), config('payments.mpesa.b2c.sppassword'), $timestamp);
 
         $initiatorPassword = $mpesa->encryptInitiatorPassword(config('payments.mpesa.b2c.initiator_password'));

@@ -131,6 +131,10 @@ trait MpesaPaymentC2B
         $mpesaC2B->update();
     }
 
+    /**
+     * @param $mpesaId
+     * @return bool
+     */
     public function isDuplicateC2B($mpesaId)
     {
         $mpesaC2B = MpesaC2B::where(['mpesa_receipt' => $mpesaId])->first();
@@ -142,7 +146,11 @@ trait MpesaPaymentC2B
         }
     }
 
-    function random_code($limit)
+    /**
+     * @param $limit
+     * @return bool|string
+     */
+    public function random_code($limit)
     {
         return substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, $limit);
     }

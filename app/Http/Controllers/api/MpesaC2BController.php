@@ -16,6 +16,7 @@ use App\Services\Bookings\AuthorizeBooking;
 use App\Services\Payments\Mpesa\Mpesa;
 use App\Services\Payments\Mpesa\MpesaPaymentC2B;
 use App\Services\Payments\Mpesa\xml\MpesaC2BData;
+use App\Services\Payments\PaymentManager;
 use App\Services\Tickets\AddTicket;
 use Illuminate\Http\Request;
 use Nathanmac\Utilities\Parser\Parser;
@@ -80,7 +81,7 @@ class MpesaC2BController extends Controller
             curl_setopt($ch, CURLOPT_CAINFO, '/var/www/html/storage/mpesa/root.pem');
             curl_setopt($ch, CURLOPT_SSLCERT, '/var/www/html/storage/mpesa/tkj.vodacom.co.tz.cer');
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $this->getBodyContent($ticket, $mpesaC2B));
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $this->getParametersConfirmResponse($ticket, $mpesaC2B));
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
             $response = curl_exec($ch);
@@ -116,10 +117,10 @@ class MpesaC2BController extends Controller
         }
     }
 
-    private function getBodyContent($ticket, $mpesaC2B)
+    private function getParametersConfirmResponse($ticket, $mpesaC2B)
     {
         $mpesa = new Mpesa();
-        $timestamp = date('YmdHis');
+        $timestamp = PaymentManager::getCurrentTimestamp();
         $spPassword = $mpesa->encryptSPPassword(env('MPESA_SPID'), env('MPESA_PASSWORD'), $timestamp);
 
         return $this->c2bPaymentConfirmRequest([

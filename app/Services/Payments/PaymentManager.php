@@ -48,4 +48,9 @@ class PaymentManager
     {
         return substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, $limit);
     }
+
+    public static function getCurrentTimestamp(){
+        date_default_timezone_set('Africa/Dar_es_Salaam');
+        return date('YmdHis');
+    }
 }

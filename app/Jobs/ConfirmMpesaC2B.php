@@ -6,6 +6,7 @@ use App\Models\BookingPayment;
 use App\Models\MpesaC2B;
 use App\Services\Payments\Mpesa\Mpesa;
 use App\Services\Payments\Mpesa\xml\MpesaC2BData;
+use App\Services\Payments\PaymentManager;
 use App\Services\Tickets\AddTicket;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
@@ -50,7 +51,7 @@ class ConfirmMpesaC2B implements ShouldQueue
             curl_setopt($ch, CURLOPT_CAINFO, '/var/www/html/storage/mpesa/root.pem');
             curl_setopt($ch, CURLOPT_SSLCERT, '/var/www/html/storage/mpesa/tkj.vodacom.co.tz.cer');
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $this->getBodyContent($ticket, $this->mpesaC2B));
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $this->getConfirmParameterRequest($ticket, $this->mpesaC2B));
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
             $response = curl_exec($ch);
@@ -87,10 +88,10 @@ class ConfirmMpesaC2B implements ShouldQueue
         }
     }
 
-    private function getBodyContent($ticket, $mpesaC2B)
+    private function getConfirmParameterRequest($ticket, $mpesaC2B)
     {
         $mpesa = new Mpesa();
-        $timestamp = date('YmdHis');
+        $timestamp = PaymentManager::getCurrentTimestamp();
         $spPassword = $mpesa->encryptSPPassword(env('MPESA_SPID'), env('MPESA_PASSWORD'), $timestamp);
 
         return $this->c2bPaymentConfirmRequest([
