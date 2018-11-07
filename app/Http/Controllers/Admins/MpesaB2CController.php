@@ -43,7 +43,7 @@ class MpesaB2CController extends BaseController
             ])->addQueryInstructions(function ($query) {
                 $query->select('mpesa_b2c.id as id','mpesa_b2c.amount as amount','mpesa_b2c.recipient as recipient','transaction_date','transaction_id',
                 'conversation_id','og_conversation_id','mpesa_receipt','result_type','result_code','result_desc',
-                    'working_account_funds','utility_account_funds','charges_paid_funds');
+                    'working_account_funds','utility_account_funds','charges_paid_funds','mpesa_b2c.created_at as created_at','mpesa_b2c.updated_at as updated_at');
             });
 
         $table = $this->setTableColumns($table);
