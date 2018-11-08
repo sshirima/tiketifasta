@@ -19,6 +19,8 @@ return[
             'url_initiate'=>env('MPESA_B2C_URL'),
             'initiator'=>env('MPESA_B2C_INITIATOR'),
             'initiator_password'=>env('MPESA_B2C_INITIATOR_PASSWORD'),
+            'timeout'=>env('MPESA_B2C_TIMEOUT'),
+            'connect_timeout'=>env('MPESA_B2C_CONNECT_TIMEOUT'),
         ],
     ],
     'tigo'=>[

@@ -12,6 +12,8 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Services\Payments\Mpesa\MpesaPaymentB2C;
 use App\Services\Payments\PaymentManager;
+use Illuminate\Http\Request;
+use Nathanmac\Utilities\Parser\Parser;
 
 class MpesaB2CController extends Controller
 {
@@ -20,22 +22,29 @@ class MpesaB2CController extends Controller
     public function encryptPassword(){
 
     }
-    public function initiateTransaction(){
+    public function initiateB2CTransaction(){
 
-        $response = $this->initiatePayment([
-            'amount'=>'100',
-            'command_id'=>'BusinessPayment',
-            'initiator'=>config('payments.mpesa.b2c.initiator'),
-            'recipient'=>'0754710618',
-            'og_conversation_id'=>PaymentManager::random_code(12),
-            'transaction_date'=>PaymentManager::getCurrentTimestamp(),
-            'transaction_id'=>strtoupper(PaymentManager::random_code(10)),
-        ]);
+        $response = $this->initializeMpesaB2CTransaction('0754710618','1000');
 
         if($response['status']){
             return 'Success : '.json_encode($response['response']);
         } else {
             return 'Error: '.$response['error'];
         }
+    }
+
+    /**
+     * @param Request $request
+     * @return string
+     */
+    public function confirmB2CTransaction(Request $request){
+        try{
+            /*$parser = new Parser();
+            $input = $parser->xml($request->getContent());*/
+            $response = $this->confirmMpesaB2CTransaction($request);
+        } catch (\Exception $exception){
+            return 'Error:'.$exception->getMessage();
+        }
+        return $response?json_encode('Success'):'Error';
     }
 }

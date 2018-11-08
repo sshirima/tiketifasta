@@ -12,7 +12,7 @@ namespace App\Services\Payments\Mpesa\xml;
 trait MpesaC2BData
 {
 
-    public function validatePaymentResponseC2B(array $values){
+    public function mpesaC2BValidationResponse(array $values){
         $xmlDoc = new \SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><mpesaBroker version="2.0" xmlns="http://infowise.co.tz/broker/"></mpesaBroker>');
         $response = $xmlDoc->addChild('response');
         $response->addChild('conversationID',$values['conversationID']);

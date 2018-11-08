@@ -26,7 +26,7 @@ class MpesaB2CController extends BaseController
 
         $table = $this->createBookingTable();
 
-        return view('admins.pages.payments.index_mpesaC2B')->with(['table'=>$table]);
+        return view('admins.pages.payments.index_mpesaB2C')->with(['table'=>$table]);
     }
 
     /**
@@ -43,7 +43,8 @@ class MpesaB2CController extends BaseController
             ])->addQueryInstructions(function ($query) {
                 $query->select('mpesa_b2c.id as id','mpesa_b2c.amount as amount','mpesa_b2c.recipient as recipient','transaction_date','transaction_id',
                 'conversation_id','og_conversation_id','mpesa_receipt','result_type','result_code','result_desc',
-                    'working_account_funds','utility_account_funds','charges_paid_funds','mpesa_b2c.created_at as created_at','mpesa_b2c.updated_at as updated_at');
+                    'working_account_funds','utility_account_funds','charges_paid_funds','mpesa_b2c.status as status',
+                    'mpesa_b2c.created_at as created_at','mpesa_b2c.updated_at as updated_at');
             });
 
         $table = $this->setTableColumns($table);
@@ -63,8 +64,7 @@ class MpesaB2CController extends BaseController
         $table->addColumn('transaction_id')->setTitle('Transaction Id')->isSearchable();
         $table->addColumn('mpesa_receipt')->setTitle('Mpesa receipt')->isSearchable();
         $table->addColumn('result_type')->setTitle('Result type')->isSearchable();
-        $table->addColumn('result_code')->setTitle('Result code')->isSearchable();
-        $table->addColumn('result_desc')->setTitle('Result description');
+        $table->addColumn('status')->setTitle('Status')->isSearchable();
         $table->addColumn('created_at')->isSortable()->setTitle('Created at');
         $table->addColumn('updated_at')->isSortable()->setTitle('Updated at')->sortByDefault('desc');
         return $table;

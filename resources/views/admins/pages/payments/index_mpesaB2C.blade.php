@@ -21,11 +21,11 @@
 
 @section('content-body')
     <section class="content container-fluid">
-        <div class="box box-primary">
-            <div class="box-header">
-                Bookings
+        <div class="nav-tabs-custom">
+            <div class="nav nav-tabs">
+                <li class="{{Request::is('admin/merchants-payments/mpesa') ? 'active' : ''}}"><a href="{{route('admin.mpesab2c.index')}}" >All transactions</a></li>
             </div>
-            <div class="box-body">
+            <div class="tab-content">
                 {!! $table->render() !!}
             </div>
         </div>

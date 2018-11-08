@@ -15,7 +15,8 @@
 Route::get('sms/send-sms', 'api\SmsController@send')->name('send_sms');
 
 Route::get('mpesa/initialize-payment', 'api\MpesaC2BController@initializePaymentC2B');
-Route::get('mpesa/b2c/initialize-payment', 'api\MpesaB2CController@initiateB2CTransaction');
+Route::post('mpesa/b2c/confirm-transaction', 'api\MpesaB2CController@confirmB2CTransaction')->name('api.mpesa.b2c.confirm_transaction');
+Route::get('mpesa/b2c/initiate-transaction', 'api\MpesaB2CController@initiateB2CTransaction')->name('api.mpesa_b2c.initialize_payment');
 Route::post('mpesa/validate-payment', 'api\MpesaC2BController@validatePaymentC2B')->name('api.mpesa.validate_payment');
 Route::get('mpesa/confirm-payment', 'api\MpesaC2BController@confirmPaymentC2B')->name('api.mpesa.confirm_payment');
 Route::post('tiketifasta/C2B-request-url', 'api\MpesaC2BController@validatePaymentC2B')->name('api.mpesa.confirm_payment');
@@ -26,6 +27,4 @@ Route::get('tigo-secure/system-status', 'api\TigoOnlineController@serverStatus')
 Route::get('tigo-secure/validate-account', 'api\TigoOnlineController@validateAccount')->name('api.tigo_secure.validate_account');
 Route::get('tigo-secure/authorize-payment', 'api\TigoOnlineController@authorizePayment')->name('api.tigo_secure.authorize_payment');
 Route::post('tigo-secure/confirm-payment', 'api\TigoOnlineController@confirmPayment')->name('api.tigo_secure.confirm_payment');
-
 Route::get('tigo/b2c/initialize-payment', 'api\TigoB2CController@initiateTransaction')->name('api.tigo_b2c.initialize_payment');
-Route::get('mpesa/b2c/initialize-payment', 'api\MpesaB2CController@initiateTransaction')->name('api.mpesa_b2c.initialize_payment');

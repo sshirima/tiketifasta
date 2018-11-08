@@ -14,6 +14,7 @@ use App\Models\MpesaC2B;
 use App\Models\Ticket;
 use App\Services\Payments\Mpesa\xml\MpesaC2BData;
 use App\Services\Payments\PaymentManager;
+use Illuminate\Http\Request;
 use Log;
 use Nathanmac\Utilities\Parser\Parser;
 
@@ -21,11 +22,22 @@ trait MpesaPaymentC2B
 {
     use MpesaC2BData;
 
+    public function getMpesaC2BValidationResponse(Request $request){
+        $parser = new Parser();
+        $input = $parser->xml($request->getContent());
+        return $this->mpesaC2BValidationResponse([
+            'conversationID' => $input['request']['transaction']['conversationID'],
+            'originatorConversationID' => $input['request']['transaction']['originatorConversationID'],
+            'responseCode' => 0,
+            'responseDesc' => 'Received',
+            'serviceStatus' => 'Success',
+            'transactionID' => $input['request']['transaction']['transactionID'],
+        ]);
+    }
+
     public function initializePaymentC2B(array $attributes)
     {
-        //Stage 3 create transaction reference, msisdn, amount, reference
         return MpesaC2B::create($attributes);
-
     }
 
     public function validatePaymentC2B(array $attributes):array

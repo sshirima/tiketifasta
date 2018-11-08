@@ -25,17 +25,12 @@ use Log;
 
 class MpesaC2BController extends Controller
 {
-    use AuthorizeBooking, AddTicket, MpesaC2BData;
+    use AuthorizeBooking, AddTicket, MpesaC2BData, MpesaPaymentC2B;
     private $mpesa;
 
     public function __construct(Mpesa $mpesa)
     {
         $this->mpesa = $mpesa;
-    }
-
-    public function keys()
-    {
-        //return Storage::disk('mpesa')->get('tkj.vodacom.co.tz.key');
     }
 
     public function validatePaymentC2B(Request $request)
@@ -45,14 +40,7 @@ class MpesaC2BController extends Controller
             $parser = new Parser();
             $input = $parser->xml($request->getContent());
 
-            $response = $this->mpesa->validatePaymentResponseC2B([
-                'conversationID' => $input['request']['transaction']['conversationID'],
-                'originatorConversationID' => $input['request']['transaction']['originatorConversationID'],
-                'responseCode' => 0,
-                'responseDesc' => 'Received',
-                'serviceStatus' => 'Success',
-                'transactionID' => $input['request']['transaction']['transactionID'],
-            ]);
+            $response = $this->getMpesaC2BValidationResponse($request);
 
             ValidateMpesaC2B::dispatch($input, new Mpesa());
 
