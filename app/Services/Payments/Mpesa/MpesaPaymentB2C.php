@@ -125,9 +125,9 @@ trait MpesaPaymentB2C
     protected function processMpesaB2CInitializationResponse($res, $mpesaB2C)
     {
         $mpesaB2C->result_code = $res['response']['responseCode'];
-        $mpesaB2C->result_desc = isset($res['response']['responseDesc']) ? $res['response']['responseDesc'] : 'Success';
+        $mpesaB2C->result_desc = isset($res['response']['responseDesc']) ? $res['response']['responseDesc'] : 'Pending_confirmation';
         $mpesaB2C->init_code = $res['response']['responseCode'];
-        $mpesaB2C->init_desc = isset($res['response']['responseDesc']) ? $res['response']['responseDesc'] : 'Success';
+        $mpesaB2C->init_desc = isset($res['response']['responseDesc']) ? $res['response']['responseDesc'] : 'Pending_confirmation';
         if ($res['response']['responseCode'] == '0') {
             $mpesaB2C->status = MpesaB2C::STATUS_LEVEL[0];
         } else {
