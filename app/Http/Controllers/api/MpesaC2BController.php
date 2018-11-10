@@ -10,14 +10,14 @@ namespace App\Http\Controllers\api;
 
 
 use App\Http\Controllers\Controller;
-use App\Jobs\ValidateMpesaC2B;
+use App\Jobs\MpesaC2BTransactionProcessor;
 use App\Models\BookingPayment;
 use App\Services\Bookings\AuthorizeBooking;
 use App\Services\Payments\Mpesa\Mpesa;
 use App\Services\Payments\Mpesa\MpesaPaymentC2B;
 use App\Services\Payments\Mpesa\xml\MpesaC2BData;
 use App\Services\Payments\PaymentManager;
-use App\Services\Tickets\AddTicket;
+use App\Services\Tickets\TicketManager;
 use Illuminate\Http\Request;
 use Nathanmac\Utilities\Parser\Parser;
 use Exception;
@@ -25,7 +25,7 @@ use Log;
 
 class MpesaC2BController extends Controller
 {
-    use AuthorizeBooking, AddTicket, MpesaC2BData, MpesaPaymentC2B;
+    use AuthorizeBooking, TicketManager, MpesaC2BData, MpesaPaymentC2B;
     private $mpesa;
 
     public function __construct(Mpesa $mpesa)
@@ -33,7 +33,7 @@ class MpesaC2BController extends Controller
         $this->mpesa = $mpesa;
     }
 
-    public function validatePaymentC2B(Request $request)
+    public function validateMpesaC2BTransaction(Request $request)
     {
 
         try {
@@ -42,7 +42,7 @@ class MpesaC2BController extends Controller
 
             $response = $this->getMpesaC2BValidationResponse($request);
 
-            ValidateMpesaC2B::dispatch($input, new Mpesa());
+            MpesaC2BTransactionProcessor::dispatch($input, new Mpesa());
 
         } catch (Exception $ex) {
             return json_encode($ex->getMessage());//response($response, 200, ['Content-type'=>'application/xml']);
@@ -83,7 +83,7 @@ class MpesaC2BController extends Controller
                         $input = $parser->xml($response);
                         if ($mpesaC2B->og_conversation_id == $input['response']['originatorConversationID']
                             && $input['response']['serviceStatus'] == 'Confirming' && $input['response']['transactionID'] == $mpesaC2B->transaction_id) {
-                            $this->mpesa->confirmPaymentC2BTransaction($mpesaC2B);
+                            $this->mpesa->setMpesaC2BStatusConfirmed($mpesaC2B);
                             $booking = $ticket->booking()->first();
                             $booking->confirmBooking();
                             $this->confirmTicket($ticket);

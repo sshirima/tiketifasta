@@ -85,6 +85,9 @@ class Booking extends Model
         return $this->belongsTo(Trip::class,self::COLUMN_TRIP_ID,Trip::COLUMN_ID);
     }
 
+    /**
+     *
+     */
     public function confirmBooking(){
         $this->status = self::STATUS_CONFIRMED;
         $this->update();

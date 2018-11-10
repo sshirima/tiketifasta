@@ -107,7 +107,7 @@ trait MpesaPaymentB2C
             'spPassword' => $spPassword,
             'timestamp' => $timestamp,
             'amount' => $mpesaB2C->amount,
-            'commandID' => $mpesaB2C->commandID,
+            'commandID' => config(''),
             'initiator' => config('payments.mpesa.b2c.initiator'),
             'initiatorPassword' => $initiatorPassword,
             'recipient' => $mpesaB2C->recipient,

@@ -22,6 +22,11 @@ trait MpesaPaymentC2B
 {
     use MpesaC2BData;
 
+    public function initializePaymentC2B(array $attributes)
+    {
+        return MpesaC2B::create($attributes);
+    }
+
     public function getMpesaC2BValidationResponse(Request $request){
         $parser = new Parser();
         $input = $parser->xml($request->getContent());
@@ -35,14 +40,20 @@ trait MpesaPaymentC2B
         ]);
     }
 
-    public function initializePaymentC2B(array $attributes)
+    public function validateMpesaC2BTransaction(array $request):array
     {
-        return MpesaC2B::create($attributes);
-    }
-
-    public function validatePaymentC2B(array $attributes):array
-    {
-        //Stage 2, fetch by account reference
+        $attributes = [
+            'amount' => $request['request']['transaction']['amount'],
+            'account_reference' => $request['request']['transaction']['accountReference'],
+            'command_id' => $request['request']['transaction']['commandID'],
+            'initiator' => $request['request']['transaction']['initiator'],
+            'og_conversation_id' => $request['request']['transaction']['originatorConversationID'],
+            'recipient' => $request['request']['transaction']['recipient'],
+            'mpesa_receipt' => $request['request']['transaction']['mpesaReceipt'],
+            'transaction_date' => $request['request']['transaction']['transactionDate'],
+            'transaction_id' => $request['request']['transaction']['transactionID'],
+            'conversation_id' => $request['request']['transaction']['conversationID'],
+        ];
 
         $mpesaC2B = MpesaC2B::where(['account_reference'=>$attributes['account_reference']])->first();
 
@@ -71,55 +82,11 @@ trait MpesaPaymentC2B
         $mpesaC2B->conversation_id = $attributes['conversation_id'];
         $mpesaC2B->authorized_at = date('Y-m-d H:i:s');
         $mpesaC2B->stage = '2';
-
+        
         return array('status'=>$mpesaC2B->update(),'mpesaC2B'=>$mpesaC2B);
     }
 
-    public function confirmPayment(Booking $booking, MpesaC2B $mpesaC2B, Ticket $ticket){
-        $url = env('MPESA_C2B_CONFIRM');
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: text/xml'));
-        curl_setopt($ch, CURLOPT_SSLKEY, '/var/www/html/storage/mpesa/tkj.vodacom.co.tz.key');
-        curl_setopt($ch, CURLOPT_CAINFO, '/var/www/html/storage/mpesa/root.pem');
-        curl_setopt($ch, CURLOPT_SSLCERT, '/var/www/html/storage/mpesa/tkj.vodacom.co.tz.cer');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $this->getBodyContent($ticket, $mpesaC2B));
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        $response = curl_exec($ch);
-        //Check HTTP status code
-        if (!curl_errno($ch)) {
-            switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
-                case 200:
-                    //Confirm the transaction, set booking and ticket  confirmed send notification to user
-                    Log::channel('mpesac2b')->info('Transaction confirmed' . PHP_EOL);
-                    $parser = new Parser();
-                    $input = $parser->xml($response);
-
-                    if ($mpesaC2B->og_conversation_id == $input['response']['originatorConversationID']
-                        && $input['response']['serviceStatus'] == 'Confirming' && $input['response']['transactionID'] == $mpesaC2B->transaction_id) {
-                        $mpesa = new Mpesa();
-                        $mpesa->confirmPaymentC2BTransaction($mpesaC2B);
-                        $booking = $ticket->booking()->first();
-                        $booking->confirmBooking();
-                        $this->confirmTicket($ticket);
-                    }
-                    //echo $input;
-                    break;
-                default:
-                    Log::channel('mpesac2b')->error('Unexpected HTTP code: ' . $http_code . '[' . $response . ']' . PHP_EOL);
-                //echo 'Unexpected HTTP code: ', $http_code, "\n";
-            }
-        } else {
-            Log::channel('mpesac2b')->error('Curl error[Error code:' . curl_errno($ch) . ']' . PHP_EOL);
-            //echo curl_errno($ch);
-        }
-        curl_close($ch);
-    }
-
-    public function processPaymentC2B(MpesaC2B $mpesaC2B)
+    public function generateServiceNumber(MpesaC2B $mpesaC2B)
     {
         //Generate service number
         $mpesaC2B->service_receipt = strtoupper(PaymentManager::random_code(8));
@@ -128,7 +95,90 @@ trait MpesaPaymentC2B
         return $mpesaC2B->update();
     }
 
-    public function confirmPaymentC2BTransaction(MpesaC2B $mpesaC2B)
+    /**
+     * @param Booking $booking
+     * @param MpesaC2B $mpesaC2B
+     * @param Ticket $ticket
+     * @return array
+     */
+    public function createMpesaC2BConfirmRequest(Booking $booking, MpesaC2B $mpesaC2B, Ticket $ticket){
+
+        try{
+
+            $url = env('MPESA_C2B_CONFIRM');
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_POST, true);
+
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: text/xml'));
+            curl_setopt($ch, CURLOPT_SSLKEY, '/var/www/html/storage/mpesa/tkj.vodacom.co.tz.key');
+            curl_setopt($ch, CURLOPT_CAINFO, '/var/www/html/storage/mpesa/root.pem');
+            curl_setopt($ch, CURLOPT_SSLCERT, '/var/www/html/storage/mpesa/tkj.vodacom.co.tz.cer');
+
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $this->getMpesaC2BRequestParams($ticket, $mpesaC2B));
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+
+            $response = curl_exec($ch);
+            //Check HTTP status code
+            if (!curl_errno($ch)) {
+                switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
+                    case 200:
+                        Log::channel('mpesac2b')->info('Transaction confirmed' . PHP_EOL);
+                        $reply = ['status'=>true, 'response'=>$response];
+                        break;
+                    default:
+                        Log::channel('mpesac2b')->error('Unexpected HTTP code: ' . $http_code . '[' . $response . ']' . PHP_EOL);
+                        $reply = ['status'=>false, 'error'=>'Unexpected HTTP code: ' . $http_code . '[' . $response . ']'];
+                }
+            } else {
+                Log::channel('mpesac2b')->error('Curl error[Error code:' . curl_errno($ch) . ']' . PHP_EOL);
+                $reply = ['status'=>true, 'response'=>'Curl error[Error code:' . curl_errno($ch) . ']'];
+            }
+
+            curl_close($ch);
+        }catch (\Exception $exception){
+            Log::channel('mpesac2b')->error('Error:' . $exception->getMessage() . PHP_EOL);
+            $reply = ['status'=>true, 'response'=>'Error:' . $exception->getMessage()];
+        }
+
+        return $reply;
+    }
+
+    /**
+     * @param $ticket
+     * @param $mpesaC2B
+     * @return mixed
+     */
+    private function getMpesaC2BRequestParams($ticket, $mpesaC2B)
+    {
+        $mpesa = new Mpesa();
+        $timestamp = PaymentManager::getCurrentTimestamp();
+        $spPassword = $mpesa->encryptSPPassword(env('MPESA_SPID'), env('MPESA_PASSWORD'), $timestamp);
+
+        return $this->c2bPaymentConfirmRequest([
+            'spId' => env('MPESA_SPID'),
+            'spPassword' => $spPassword,
+            'timestamp' => $timestamp,
+            'resultType' => 'Completed',
+            'resultCode' => 0,
+            'resultDesc' => 'Successful',
+            'serviceReceipt' => $ticket->ticket_ref,//Ticket receipt
+            'serviceDate' => date('Y-m-d H:i:s'),//Ticket ID
+            'serviceID' => $ticket->id,//Ticket ID
+            'originatorConversationID' => $mpesaC2B->og_conversation_id,//Ticket ID
+            'conversationID' => $mpesaC2B->conversation_id,//Ticket ID
+            'transactionID' => $mpesaC2B->transaction_id,//Ticket ID
+            'initiator' => null,//$this->mpesaC2B->reference,//Ticket ID
+            'initiatorPassword' => null, //$this->mpesaC2B->reference,//Ticket ID
+        ]);
+    }
+
+    /**
+     * @param MpesaC2B $mpesaC2B
+     */
+    public function setMpesaC2BStatusConfirmed(MpesaC2B $mpesaC2B)
     {
         //Stage 0
         $mpesaC2B->stage ='0';
@@ -165,5 +215,19 @@ trait MpesaPaymentC2B
     public function random_code($limit)
     {
         return substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, $limit);
+    }
+
+    /**
+     * @param $mpesaC2B
+     * @param $response
+     * @return bool
+     */
+    public function verifyMpesaC2BResponse($mpesaC2B, $response): bool
+    {
+        $parser = new Parser();
+        $input = $parser->xml($response);
+
+        return $mpesaC2B->og_conversation_id == $input['response']['originatorConversationID']
+            && $input['response']['serviceStatus'] == 'Confirming' && $input['response']['transactionID'] == $mpesaC2B->transaction_id;
     }
 }

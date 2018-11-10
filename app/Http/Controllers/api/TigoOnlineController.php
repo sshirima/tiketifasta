@@ -15,7 +15,7 @@ use App\Services\DateTime\DatesOperations;
 use App\Services\Payments\PaymentManager;
 use App\Services\Payments\Tigosecure\TigoOnline;
 use App\Services\SMS\SendSMS;
-use App\Services\Tickets\AddTicket;
+use App\Services\Tickets\TicketManager;
 use Illuminate\Http\Request;
 use Exception;
 use App\Services\SMS\Smpp;
@@ -23,7 +23,7 @@ use Log;
 
 class TigoOnlineController extends Controller
 {
-    use DatesOperations, AddTicket, SendSMS;
+    use DatesOperations, TicketManager, SendSMS;
 
     private $tigoOnline;
 

@@ -20,6 +20,7 @@ return[
             'initiator'=>env('MPESA_B2C_INITIATOR'),
             'initiator_password'=>env('MPESA_B2C_INITIATOR_PASSWORD'),
             'timeout'=>env('MPESA_B2C_TIMEOUT'),
+            'command_id'=>env('MPESA_B2C_COMMAND_ID'),
             'connect_timeout'=>env('MPESA_B2C_CONNECT_TIMEOUT'),
         ],
     ],

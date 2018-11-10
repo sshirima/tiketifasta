@@ -26,7 +26,7 @@ trait AuthorizeBooking
     /**
      * @param Booking $booking
      */
-    public function setBookingAuthorized(Booking $booking){
+    public function authorizeBooking(Booking $booking){
         $booking->status = 'AUTHORIZED';
         $booking->update();
 
