@@ -141,6 +141,7 @@ trait MpesaPaymentB2C
     protected function confirmMpesaB2CTransaction(Request $request){
         $parser = new Parser();
         $input = $parser->xml($request->getContent());
+
         $resType = $input['ns3:resultType'];
         $resCode = $input['ns3:resultCode'];
         $resDesc = $input['ns3:resultDesc'];
@@ -149,6 +150,8 @@ trait MpesaPaymentB2C
         $trID = $input['ns3:transactionID'];
         $mpesaReceipt =$input['ns3:mpesaReceipt'];
         $resultParams =$input['ns3:resultParameters']['ns3:parameter'];
+
+        \Log::channel('mpesab2c')->error('Confirmation request received: Transaction ID='.$trID . PHP_EOL);
 
         $mpesaB2C = MpesaB2C::where(['transaction_id'=>$trID])->first();
 

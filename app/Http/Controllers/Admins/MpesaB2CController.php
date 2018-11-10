@@ -63,7 +63,8 @@ class MpesaB2CController extends BaseController
         $table->addColumn('transaction_date')->setTitle('Transaction date')->isSearchable();
         $table->addColumn('transaction_id')->setTitle('Transaction Id')->isSearchable();
         $table->addColumn('mpesa_receipt')->setTitle('Mpesa receipt')->isSearchable();
-        $table->addColumn('result_type')->setTitle('Result type')->isSearchable();
+        $table->addColumn('result_code')->setTitle('Result code')->isSearchable();
+        $table->addColumn('result_desc')->setTitle('Result Desc')->isSearchable();
         $table->addColumn('status')->setTitle('Status')->isSearchable();
         $table->addColumn('created_at')->isSortable()->setTitle('Created at');
         $table->addColumn('updated_at')->isSortable()->setTitle('Updated at')->sortByDefault('desc');
