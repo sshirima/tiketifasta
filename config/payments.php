@@ -33,6 +33,8 @@ return[
             'pin'=>env('TIGO_B2C_PIN'),
             'language'=>env('TIGO_B2C_LANGUAGE'),
             'type'=>env('TIGO_B2C_TYPE'),
+            'confirm_otp'=>env('TIGO_B2C_CONFIRM_OTP'),
+            'otp_message'=> env('TIGO_B2C_OTP_MESSAGE'),
         ],
     ],
     'airtel'=>[],

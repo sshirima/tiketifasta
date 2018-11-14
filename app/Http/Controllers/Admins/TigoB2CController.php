@@ -9,15 +9,16 @@
 namespace App\Http\Controllers\Admins;
 
 use App\Http\Requests\Admin\TigoSendCashRequest;
-use App\Models\Booking;
-use App\Models\MpesaC2B;
 use App\Models\TigoB2C;
-use App\Models\TigoOnlineC2B;
+use App\Services\Payments\TigoUSSD\TigoPaymentB2C;
+use App\Services\SMS\SendSMS;
 use Illuminate\Http\Request;
 use Okipa\LaravelBootstrapTableList\TableList;
 
 class TigoB2CController extends BaseController
 {
+
+    use TigoPaymentB2C, SendSMS;
 
     public function __construct()
     {
@@ -43,10 +44,50 @@ class TigoB2CController extends BaseController
 
     }
 
+    /**
+     * @param TigoSendCashRequest $request
+     * @return array
+     */
     public function sendCashSubmit(TigoSendCashRequest $request){
-        $receiver = $request->all()['receiver'];
+        $input = $request->all();
 
-        return $request->all();
+        $tigpB2C = $this->createTigoB2CModel($input['receiver'],$input['amount']);
+
+        //Generate and Send OTP
+        $otp = rand(1000, 9999);
+
+        \Session::put('otp',$otp);
+        \Session::put('tigoReferenceId',$tigpB2C->reference_id);
+
+        $phoneNumber = config('payments.tigo.bc2.confirm_otp');
+        $message = sprintf(config('payments.tigo.bc2.otp_message'), $otp);
+
+        $sendSMS = $this->sendOneSMS('tigopesa',$phoneNumber, $message);
+
+        if ($sendSMS['status']){
+            //return view('admins.pages.payments.tigoB2C_send_cash')->with(['otpIsSent'=>true]);
+            return view('admins.pages.payments.tigoB2C_send_cash')->with(['otpIsSent'=>true]);
+        }else{
+            return view('admins.pages.payments.tigoB2C_send_cash')->with(['otpIsSent'=>false, 'error'=>$sendSMS['error']]);
+            //return view('admins.pages.sms.send_sms')->with(['sentStatus'=>false,'error'=>$sendSMS['error']]);
+        }
+    }
+
+    public function verifyTransactionOTP(Request $request){
+        //return $request->all()['otp'];
+        $input = $request->all();
+
+        $enteredOtp = $input['otp'];
+        $OTP = $request->session()->get('otp');
+
+        //Removing Session variable
+        \Session::forget('OTP');
+
+        if ($enteredOtp == $OTP){
+            return 'OTP verified';
+        } else {
+            return 'Fail to verify OTP';
+        }
     }
 
     /**

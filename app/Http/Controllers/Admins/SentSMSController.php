@@ -93,7 +93,10 @@ class SentSMSController extends BaseController
 
         $table->addColumn('operator')->setTitle('Operator')->isSearchable();
 
-        $table->addColumn('is_sent')->setTitle('Sent status')->isSearchable();
+        $table->addColumn('is_sent')->setTitle('Sent status')->isSearchable()->isCustomHtmlElement(function($entity, $column){
+            return $entity['is_sent']?
+                '<div class="label label-success">'.'Sent'.'</div>':'<div class="label label-danger">'.'Failed'.'</div>';
+        });
 
         $table->addColumn('created_at')->setTitle('Created at')->isSortable()->isSearchable()->sortByDefault();
 

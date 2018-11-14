@@ -12,9 +12,9 @@ use App\Models\TigoB2C;
 use Log;
 use Nathanmac\Utilities\Parser\Parser;
 
-class TigoUssdB2C
+trait TigoPaymentB2C
 {
-    use TigoUSSDB2CData;
+    use TigoB2CData;
 
     /**
      * @param $msisdn
@@ -27,15 +27,7 @@ class TigoUssdB2C
         $ch = curl_init();
         try {
             //Create TigoB2C
-            $tigoB2C = TigoB2C::create([
-                'type' => config('payments.tigo.bc2.type'),
-                'reference_id' => strtoupper(self::random_code(8)),
-                'msisdn' => config('payments.tigo.bc2.mfi'),
-                'pin' => config('payments.tigo.bc2.pin'),
-                'msisdn1' => $msisdn,
-                'amount' => $amount,
-                'language' =>  config('payments.tigo.bc2.language'),
-            ]);
+            $tigoB2C = $this->createTigoB2CModel($msisdn, $amount);
 
             $requestContent = $this->b2cInitiatePaymentData([
                 'type' => config('payments.tigo.bc2.type'),
@@ -97,5 +89,24 @@ class TigoUssdB2C
     public static function random_code($limit)
     {
         return substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, $limit);
+    }
+
+    /**
+     * @param $msisdn
+     * @param $amount
+     * @return mixed
+     */
+    public function createTigoB2CModel($msisdn, $amount)
+    {
+        $tigoB2C = TigoB2C::create([
+            'type' => config('payments.tigo.bc2.type'),
+            'reference_id' => strtoupper(self::random_code(8)),
+            'msisdn' => config('payments.tigo.bc2.mfi'),
+            'pin' => config('payments.tigo.bc2.pin'),
+            'msisdn1' => $msisdn,
+            'amount' => $amount,
+            'language' => config('payments.tigo.bc2.language'),
+        ]);
+        return $tigoB2C;
     }
 }

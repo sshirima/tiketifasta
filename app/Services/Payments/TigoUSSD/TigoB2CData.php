@@ -9,7 +9,7 @@
 namespace App\Services\Payments\TigoUSSD;
 
 
-trait TigoUSSDB2CData
+trait TigoB2CData
 {
 
     public function b2cInitiatePaymentData(array $values){

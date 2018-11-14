@@ -32,6 +32,7 @@ return [
     'page_payment_account_fields_input_name_placeholder'=>'Enter account name...',
     'page_payment_account_fields_button_save'=>'Save information',
     'page_payment_account_fields_issue'=>'Issue',
+    'page_payment_account_fields_verify'=>'Verify',
     'page_payment_account_fields_send'=>'Send SMS',
 
     'page_locations_table_head_location_name'=>'Location name',
