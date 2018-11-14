@@ -52,11 +52,12 @@ class SentSMSController extends BaseController
 
         $sendSMS=$this->sendOneSMS($input['operator'],$input['receiver'],$input['message']);
 
-         if ($sendSMS['status']){
+        return json_encode($sendSMS);
+         /*if ($sendSMS['status']){
              return 'MessageSent';
          }else{
              return $sendSMS['error'];
-         }
+         }*/
     }
 
     /**
