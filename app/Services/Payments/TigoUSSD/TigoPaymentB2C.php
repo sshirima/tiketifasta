@@ -95,7 +95,7 @@ trait TigoPaymentB2C
      * @param $phoneNumber
      * @return array
      */
-    public function checkNumber($phoneNumber){
+    public function confirmReceiverNumber($phoneNumber){
 
         if (!is_numeric($phoneNumber)){
             return array('status'=>false,'error'=>'Not numeric number');

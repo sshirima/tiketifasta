@@ -51,7 +51,7 @@ class TigoB2CController extends BaseController
     public function sendCashSubmit(TigoSendCashRequest $request){
         $input = $request->all();
 
-        $numberCheck = $this->checkNumber($input['receiver']);
+        $numberCheck = $this->confirmReceiverNumber($input['receiver']);
 
         if(!$numberCheck['status']){
             return view('admins.pages.payments.tigoB2C_send_cash')->with(['otpIsSent'=>false, 'error'=>$numberCheck['error']]);
