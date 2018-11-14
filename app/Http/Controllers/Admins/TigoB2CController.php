@@ -51,13 +51,21 @@ class TigoB2CController extends BaseController
     public function sendCashSubmit(TigoSendCashRequest $request){
         $input = $request->all();
 
-        $tigpB2C = $this->createTigoB2CModel($input['receiver'],$input['amount']);
+        $numberCheck = $this->checkNumber($input['receiver']);
+
+        if(!$numberCheck['status']){
+            return view('admins.pages.payments.tigoB2C_send_cash')->with(['otpIsSent'=>false, 'error'=>$numberCheck['error']]);
+        }
+
+        $receiver = $numberCheck['number'];
+
+        $tigpB2C = $this->createTigoB2CModel($receiver,$input['amount']);
 
         //Generate and Send OTP
         $otp = rand(1000, 9999);
 
         \Session::put('otp',$otp);
-        \Session::put('tigoReferenceId',$tigpB2C->reference_id);
+        \Session::put('tigob2cReferenceId',$tigpB2C->reference_id);
 
         $phoneNumber = config('payments.tigo.bc2.confirm_otp');
         $message = sprintf(config('payments.tigo.bc2.otp_message'), $otp);
@@ -73,20 +81,47 @@ class TigoB2CController extends BaseController
         }
     }
 
+    /**
+     * @param Request $request
+     * @return string
+     */
     public function verifyTransactionOTP(Request $request){
-        //return $request->all()['otp'];
+
         $input = $request->all();
 
         $enteredOtp = $input['otp'];
         $OTP = $request->session()->get('otp');
 
         //Removing Session variable
-        \Session::forget('OTP');
+        \Session::forget('otp');
 
         if ($enteredOtp == $OTP){
-            return 'OTP verified';
+
+            $reference = $request->session()->get('tigob2cReferenceId');
+
+            $tigoB2C = TigoB2C::where(['reference_id'=>$reference])->first();
+
+            if (!isset($tigoB2C)){
+                \Session::forget('tigob2cReferenceId');
+                return view('admins.pages.payments.tigoB2C_send_cash')->with(['otpVerified'=>false,'moneySent'=>false,'error'=>'Fail to retrieve transaction']);
+            }
+
+            $response = $this->initiatePayment($tigoB2C->msisdn1, $tigoB2C->amount);
+
+            //No comments
+            if ($response['status'] == true) {
+                return view('admins.pages.payments.tigoB2C_send_cash')->with(['otpVerified'=>true,'moneySent'=>true, 'response'=>$response['response']]);
+                //return 'Success : ' . json_encode($response['response']);
+            } else {
+                return view('admins.pages.payments.tigoB2C_send_cash')->with(['otpVerified'=>false,'moneySent'=>false,'error'=>$response['error']]);
+                //return 'Error : ' . json_encode($response['error']);
+            }
+
         } else {
-            return 'Fail to verify OTP';
+            return back()->with(['otpIsSent'=>true, 'error'=>'OTP verification failed']);
+
+            //view('admins.pages.payments.tigoB2C_send_cash')->with(['otpVerified'=>false,'moneySent'=>false,'error'=>'OTP verification failed']);
+            //return 'Fail to verify OTP';
         }
     }
 

@@ -33,6 +33,9 @@
                         <div class="row">
                             <div class="container col-md-6 col-md-offset-1">
                                 <div class="alert alert-primary"> Please enter the One Time Password(OTP) sent to your phone for verification</div>
+                                @if(isset($error))
+                                    <div class="alert alert-danger"> {{$error}}</div>
+                                @endif
                                 <form class="form-horizontal" role="form" method="post" action="{{route('admin.tigob2c.send_cash.verify_otp')}}" accept-charset="UTF-8" style="padding: 20px">
                                     <div class="form-group">
                                         {!! Form::label('otp', 'OTP:', ['class'=>'col-sm-5 control-label', 'for'=>'otp']) !!}
@@ -59,7 +62,7 @@
                         </div>
                     @endif
 
-                @elseif(isset($otpVerified))
+                @elseif(isset($otpVerified) && isset($moneySent))
                     OTP Verified!!!
                 @else
                     <div class="row">

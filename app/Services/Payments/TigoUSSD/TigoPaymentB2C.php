@@ -92,6 +92,30 @@ trait TigoPaymentB2C
     }
 
     /**
+     * @param $phoneNumber
+     * @return array
+     */
+    public function checkNumber($phoneNumber){
+
+        if (!is_numeric($phoneNumber)){
+            return array('status'=>false,'error'=>'Not numeric number');
+        }
+
+        if ((strlen($phoneNumber) == 10)){
+            if($this->startsWithZero($phoneNumber,'0')){
+                $phoneNumber = '255'.substr($phoneNumber,1,10);
+                return array('status'=>true,'number'=> $phoneNumber);
+            } else {
+                return array('status'=>false,'error'=>'Number does not start with zero');
+            }
+        } else if((strlen($phoneNumber) == 12)) {
+            return array('status'=>true,'number'=>$phoneNumber);
+        } else{
+            return array('status'=>false,'error'=>'10 or 12 digits number required');
+        }
+    }
+
+    /**
      * @param $msisdn
      * @param $amount
      * @return mixed
