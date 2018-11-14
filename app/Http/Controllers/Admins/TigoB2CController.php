@@ -64,7 +64,7 @@ class TigoB2CController extends BaseController
         //Generate and Send OTP
         $otp = rand(1000, 9999);
 
-        \Session::put('otp',3333);
+        \Session::put('otp',$otp);
 
         \Session::put('tigob2cReferenceId',$tigpB2C->reference_id);
 
@@ -73,7 +73,7 @@ class TigoB2CController extends BaseController
 
         $sendSMS = $this->sendOneSMS('tigopesa',$phoneNumber, $message);
 
-        if (1){
+        if ($sendSMS['status']){
             //return view('admins.pages.payments.tigoB2C_send_cash')->with(['otpIsSent'=>true]);
             return view('admins.pages.payments.tigoB2C_send_cash')->with(['otpIsSent'=>true]);
         }else{
