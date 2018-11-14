@@ -1,32 +1,34 @@
 @extends('admins.layouts.master')
 
 @section('title')
-    Sent SMS
+    Payments | Tigo
 @endsection
 
 @section('content-head')
-    <section class="content-header">
+    {{--<section class="content-header">
         <h1>
-            <small></small>
+            {{__('admin_page_bookings.content_header_title')}}
+            <small>{{__('admin_page_bookings.content_header_sub_title')}}</small>
         </h1>
         <ol class="breadcrumb">
             <li>
-                <a href="{{route('admin.sent_sms.index')}}"> Sent sms</a>
+                <a href="{{route('admin.bookings.index')}}"> {{__('admin_page_bookings.navigation_link_index')}}</a>
             </li>
-            <li class="active">View</li>
+            <li class="active">{{__('admin_page_bookings.navigation_link_create')}}</li>
         </ol>
-    </section>
+    </section>--}}
 @endsection
 
 @section('content-body')
     <section class="content container-fluid">
         <div class="nav-tabs-custom">
             <div class="nav nav-tabs">
-                @include('admins.pages.sms.send_sms_option_fields')
+                @include('admins.pages.payments.tigoB2C_options_filed')
             </div>
             <div class="tab-content">
                 {!! $table->render() !!}
             </div>
         </div>
     </section>
+
 @endsection

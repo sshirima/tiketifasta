@@ -3,7 +3,6 @@
     <div class="col-sm-7">
         {{Form::select('payment_mode',[0=>'Select payment method','mpesa'=>'M-PESA','tigopesa'=>'TIGO-PESA','airtelmoney'=>'AIRTEL-MONEY'],null,['class'=>'form-control'])}}
     </div>
-
 </div>
 <div class="form-group">
     {!! Form::label('account_number', __('admin_pages.page_payment_account_fields_label_name'), ['class'=>'col-sm-5 control-label', 'for'=>'account_number']) !!}

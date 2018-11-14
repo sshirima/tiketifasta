@@ -1,7 +1,7 @@
 @extends('admins.layouts.master')
 
 @section('title')
-    Sent SMS
+    Sending SMS
 @endsection
 
 @section('content-head')
@@ -13,7 +13,7 @@
             <li>
                 <a href="{{route('admin.sent_sms.index')}}"> Sent sms</a>
             </li>
-            <li class="active">View</li>
+            <li class="active">Sending SMS</li>
         </ol>
     </section>
 @endsection
@@ -25,7 +25,14 @@
                 @include('admins.pages.sms.send_sms_option_fields')
             </div>
             <div class="tab-content">
-                {!! $table->render() !!}
+                <div class="row">
+                    <div class="container col-md-6 col-md-offset-1">
+                        <form class="form-horizontal" role="form" method="post" action="{{route('admin.sms.send.submit')}}" accept-charset="UTF-8" style="padding: 20px">
+                            @include('admins.pages.sms.send_sms_fields')
+                        </form>
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>

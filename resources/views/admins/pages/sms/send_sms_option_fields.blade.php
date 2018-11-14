@@ -1,0 +1,2 @@
+<li class="{{Request::is('admin/sms/view') ? 'active' : ''}}"><a href="{{route('admin.sent_sms.index')}}" >View SMS</a></li>
+<li class="{{Request::is('admin/sms/send') ? 'active' : ''}}"><a href="{{route('admin.sms.send')}}" >Send</a></li>

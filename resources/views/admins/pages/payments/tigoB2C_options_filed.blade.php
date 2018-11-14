@@ -1,0 +1,2 @@
+<li class="{{Request::is('admin/merchant-payments/tigopesa') ? 'active' : ''}}"><a href="{{route('admin.tigob2c.index')}}" >Transactions</a></li>
+<li class="{{Request::is('admin/merchant-payments/tigopesa/send_cash') ? 'active' : ''}}"><a href="{{route('admin.tigob2c.send_cash')}}" >Issue transaction</a></li>

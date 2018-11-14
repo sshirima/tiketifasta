@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers\Admins;
 
+use App\Http\Requests\Admin\TigoSendCashRequest;
 use App\Models\Booking;
 use App\Models\MpesaC2B;
 use App\Models\TigoB2C;
@@ -23,11 +24,29 @@ class TigoB2CController extends BaseController
         parent::__construct();
     }
 
+    /**
+     * @param Request $request
+     * @return $this
+     */
     public function index(Request $request){
 
         $table = $this->createDisplayTable();
 
-        return view('admins.pages.payments.index_tigoB2C')->with(['table'=>$table]);
+        return view('admins.pages.payments.tigoB2C_index')->with(['table'=>$table]);
+    }
+
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function sendCash(){
+        return view('admins.pages.payments.tigoB2C_send_cash');
+
+    }
+
+    public function sendCashSubmit(TigoSendCashRequest $request){
+        $receiver = $request->all()['receiver'];
+
+        return $request->all();
     }
 
     /**

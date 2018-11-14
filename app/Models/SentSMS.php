@@ -12,7 +12,8 @@ class SentSMS extends Model
     const COLUMN_RECEIVER = 'receiver';
     const COLUMN_SENDER = 'sender';
     const COLUMN_MESSAGE = 'message';
-    const COLUMN_OPERATOR = 'message';
+    const COLUMN_OPERATOR = 'operator';
+    const COLUMN_IS_SENT = 'is_sent';
 
     const TABLE = 'sent_sms';
     /**

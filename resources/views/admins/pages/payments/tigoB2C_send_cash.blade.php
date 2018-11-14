@@ -1,7 +1,7 @@
 @extends('admins.layouts.master')
 
 @section('title')
-    Payments | Tigo
+    Send cash | Tigo
 @endsection
 
 @section('content-head')
@@ -21,13 +21,21 @@
 
 @section('content-body')
     <section class="content container-fluid">
-        <div class="box box-primary">
-            <div class="box-header">
-                Bookings
+        <div class="nav-tabs-custom">
+            <div class="nav nav-tabs">
+                @include('admins.pages.payments.tigoB2C_options_filed')
             </div>
-            <div class="box-body">
-                {!! $table->render() !!}
+            <div class="tab-content">
+                <div class="row">
+                    <div class="container col-md-6 col-md-offset-1">
+                        <form class="form-horizontal" role="form" method="post" action="{{route('admin.tigob2c.send_cash.submit')}}" accept-charset="UTF-8" style="padding: 20px">
+                            @include('admins.pages.payments.tigoB2C_send_cash_fields')
+                        </form>
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>
+
 @endsection

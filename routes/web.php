@@ -137,6 +137,8 @@ Route::prefix('admin')->group(function () {
     Route::get('customer-payments/tigopesa', 'Admins\TigoSecureC2BController@index')->name('admin.tigosecurec2b.index');
     Route::get('merchants-payments/mpesa', 'Admins\MpesaB2CController@index')->name('admin.mpesab2c.index');
     Route::get('merchant-payments/tigopesa', 'Admins\TigoB2CController@index')->name('admin.tigob2c.index');
+    Route::get('merchant-payments/tigopesa/send_cash', 'Admins\TigoB2CController@sendCash')->name('admin.tigob2c.send_cash');
+    Route::post('merchant-payments/tigopesa/send_cash/submit', 'Admins\TigoB2CController@sendCashSubmit')->name('admin.tigob2c.send_cash.submit');
 
     Route::get('payments/tigopesa/c2b', 'Admins\TigoSecureC2BController@index')->name('admin.tigoonline_c2b.index');
     Route::get('payments/tigopesa/b2c', 'Admins\TigoB2CController@index')->name('admin.tigo_b2c.index');
@@ -147,7 +149,9 @@ Route::prefix('admin')->group(function () {
     Route::post('accounts/admins/create', 'Admins\AdminAccountsController@store')->name('admin.admin_accounts.store');
     Route::delete('accounts/admins/{id}/delete', 'Admins\AdminAccountsController@destroy')->name('admin.admin_accounts.destroy');
 
-    Route::get('sms/sent_sms', 'Admins\SentSMSController@index')->name('admin.sent_sms.index');
+    Route::get('sms/view', 'Admins\SentSMSController@index')->name('admin.sent_sms.index');
+    Route::get('sms/send', 'Admins\SentSMSController@sendSMS')->name('admin.sms.send');
+    Route::post('sms/send', 'Admins\SentSMSController@sendSMSSubmit')->name('admin.sms.send.submit');
     Route::get('bookings', 'Admins\BookingController@index')->name('admin.bookings.index');
     //Tickets
     Route::get('tickets', 'Admins\TicketController@index')->name('admin.tickets.index');
