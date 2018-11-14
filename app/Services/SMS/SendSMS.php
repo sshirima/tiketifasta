@@ -26,13 +26,13 @@ trait SendSMS
 
         if ($numCheck['status'] == false){
             \Log::channel('sms_logs')->error($numCheck['error'] . PHP_EOL);
-            return false;
+            return ['status'=>false,'error'=>$numCheck['error']];
         }
 
         $sendSMS = $this->sendMessage($operator, $numCheck['number'], $message);
 
         if($sendSMS['status']){
-            return true;
+            return ['status'=>true];
         } else {
             return ['status'=>false,'error'=>$sendSMS['error']];
         }

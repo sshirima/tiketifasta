@@ -50,14 +50,13 @@ class SentSMSController extends BaseController
     public function sendSMSSubmit(SendSMSRequest $request){
         $input = $request->all();
 
-        $sendSMS=$this->sendOneSMS($input['operator'],$input['receiver'],$input['message']);
-
-        return json_encode($sendSMS);
-         /*if ($sendSMS['status']){
+        $sendSMS = $this->sendOneSMS($input['operator'],$input['receiver'],$input['message']);
+        
+         if ($sendSMS['status']){
              return 'MessageSent';
          }else{
              return $sendSMS['error'];
-         }*/
+         }
     }
 
     /**
