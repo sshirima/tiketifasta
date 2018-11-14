@@ -29,13 +29,18 @@
                 @if(isset($otpIsSent))
 
                     @if($otpIsSent)
-
                         <div class="row">
                             <div class="container col-md-6 col-md-offset-1">
-                                <div class="alert alert-primary"> Please enter the One Time Password(OTP) sent to your phone for verification</div>
-                                @if(isset($error))
-                                    <div class="alert alert-danger"> {{$error}}</div>
+
+                                @if(isset($otpVerified))
+                                    <div class="alert alert-danger">
+                                        OTP Verification failed, Please try again<br>
+                                        <b>{{$reentryCount}}</b> Re-entry remain
+                                    </div>
+                                    @else
+                                    <div class="alert alert-primary"> Please enter the One Time Password(OTP) sent to your phone for verification</div>
                                 @endif
+
                                 <form class="form-horizontal" role="form" method="post" action="{{route('admin.tigob2c.send_cash.verify_otp')}}" accept-charset="UTF-8" style="padding: 20px">
                                     @include('admins.pages.payments.tigoB2C_otp_fields')
                                 </form>
@@ -56,16 +61,24 @@
 
                         @if($moneySent)
                             <div class="row">
-                                <div class="container col-md-6 col-md-offset-1">
+                                <div class="container col-md-11 col-md-offset-1">
                                     <div class="alert alert-success"> <i class="fas fa-check-circle"></i> Fund transfer successful...</div>
-                                    <div class="alert alert-success"> {{$response}}</div>
+                                    <div class="alert alert-default">
+                                        Transaction reference: {{$response['REFERENCEID']}}<br>
+                                        Transaction ID: {{$response['TXNID']}}<br>
+                                        Message: {{$response['MESSAGE']}}<br>
+
+                                    </div>
                                 </div>
                             </div>
                         @else
                             <div class="row">
                                 <div class="container col-md-6 col-md-offset-1">
                                     <div class="alert alert-warning"> <i class="fas fa-times-circle"></i> Fund transfer failed...</div>
-                                    <div class="alert alert-danger"> {{$response}}</div>
+                                    <div class="alert alert-danger">
+                                        Transaction reference: {{$response['REFERENCEID']}}<br>
+                                        Message: {{$response['MESSAGE']}}<br>
+                                    </div>
                                 </div>
                             </div>
                         @endif

@@ -35,6 +35,7 @@ return[
             'type'=>env('TIGO_B2C_TYPE'),
             'confirm_otp'=>env('TIGO_B2C_CONFIRM_OTP'),
             'otp_message'=> env('TIGO_B2C_OTP_MESSAGE'),
+            'otp_max_reentry'=> env('TIGO_B2C_OTP_MAX_REENTRY'),
         ],
     ],
     'airtel'=>[],

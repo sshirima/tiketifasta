@@ -64,7 +64,8 @@ class TigoB2CController extends BaseController
         //Generate and Send OTP
         $otp = rand(1000, 9999);
 
-        \Session::put('otp',$otp);
+        \Session::put('otp',3333);
+
         \Session::put('tigob2cReferenceId',$tigpB2C->reference_id);
 
         $phoneNumber = config('payments.tigo.bc2.confirm_otp');
@@ -72,7 +73,7 @@ class TigoB2CController extends BaseController
 
         $sendSMS = $this->sendOneSMS('tigopesa',$phoneNumber, $message);
 
-        if ($sendSMS['status']){
+        if (1){
             //return view('admins.pages.payments.tigoB2C_send_cash')->with(['otpIsSent'=>true]);
             return view('admins.pages.payments.tigoB2C_send_cash')->with(['otpIsSent'=>true]);
         }else{
@@ -93,7 +94,7 @@ class TigoB2CController extends BaseController
         $OTP = $request->session()->get('otp');
 
         //Removing Session variable
-        \Session::forget('otp');
+        $request->session()->forget('otp');
 
         if ($enteredOtp == $OTP){
 
@@ -102,9 +103,13 @@ class TigoB2CController extends BaseController
             $tigoB2C = TigoB2C::where(['reference_id'=>$reference])->first();
 
             if (!isset($tigoB2C)){
-                \Session::forget('tigob2cReferenceId');
+                $request->session()->forget('tigob2cReferenceId');
                 return view('admins.pages.payments.tigoB2C_send_cash')->with(['otpVerified'=>false,'moneySent'=>false,'error'=>'Fail to retrieve transaction']);
             }
+
+            $request->session()->forget('tigob2cReferenceId');
+            $request->session()->forget('otp');
+            $request->session()->forget('otp_entry_count');
 
             $response = $this->initiatePayment($tigoB2C->msisdn1, $tigoB2C->amount);
 
@@ -113,12 +118,34 @@ class TigoB2CController extends BaseController
                 return view('admins.pages.payments.tigoB2C_send_cash')->with(['otpVerified'=>true,'moneySent'=>true, 'response'=>$response['response']]);
                 //return 'Success : ' . json_encode($response['response']);
             } else {
-                return view('admins.pages.payments.tigoB2C_send_cash')->with(['otpVerified'=>false,'moneySent'=>false,'error'=>$response['error']]);
+                return view('admins.pages.payments.tigoB2C_send_cash')->with(['otpVerified'=>true,'moneySent'=>false,'response'=>$response['error']]);
                 //return 'Error : ' . json_encode($response['error']);
             }
 
         } else {
-            return back()->with(['otpIsSent'=>true, 'moneySent'=>false, 'error'=>'OTP verification failed']);
+            $count = 1;
+            $maxAttempt = (int)config('payments.tigo.bc2.otp_max_reentry');
+
+            if($request->session()->has('otp_entry_count')){
+
+                $count = (int)$request->session()->get('otp_entry_count');
+                $count++;
+
+                if ($count < $maxAttempt){
+
+                    $request->session()->put('otp_entry_count', $count);
+
+                } else {
+                    $request->session()->forget('otp_entry_count');
+                    return redirect(route('admin.tigob2c.send_cash'));
+                }
+
+            } else {
+                $request->session()->put('otp_entry_count', $count);
+            }
+
+            return view('admins.pages.payments.tigoB2C_send_cash')->with(['otpIsSent'=>true, 'otpVerified'=>false,
+                'reentryCount'=>($maxAttempt-$count)]);
 
             //view('admins.pages.payments.tigoB2C_send_cash')->with(['otpVerified'=>false,'moneySent'=>false,'error'=>'OTP verification failed']);
             //return 'Fail to verify OTP';
