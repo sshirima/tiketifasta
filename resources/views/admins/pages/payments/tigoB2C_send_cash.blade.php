@@ -37,19 +37,7 @@
                                     <div class="alert alert-danger"> {{$error}}</div>
                                 @endif
                                 <form class="form-horizontal" role="form" method="post" action="{{route('admin.tigob2c.send_cash.verify_otp')}}" accept-charset="UTF-8" style="padding: 20px">
-                                    <div class="form-group">
-                                        {!! Form::label('otp', 'OTP:', ['class'=>'col-sm-5 control-label', 'for'=>'otp']) !!}
-                                        <div class="col-sm-7">
-                                            {!! Form::number('otp', null, ['class' => 'form-control', 'placeholder'=>'OTP']) !!}
-                                        </div>
-                                    </div>
-                                    @csrf
-                                    <div class="form-group">
-                                        <div class="col-sm-7 col-md-offset-5">
-                                            {!! Form::submit(__('admin_pages.page_payment_account_fields_verify'), ['class' => 'btn btn-primary']) !!}
-                                            <a href="{!! route('admin.tigob2c.send_cash') !!}" class="btn btn-default">{{__('admin_pages.page_locations_fields_button_cancel')}}</a>
-                                        </div>
-                                    </div>
+                                    @include('admins.pages.payments.tigoB2C_otp_fields')
                                 </form>
                             </div>
                         </div>
@@ -63,7 +51,36 @@
                     @endif
 
                 @elseif(isset($otpVerified) && isset($moneySent))
-                    OTP Verified!!!
+
+                    @if($otpVerified)
+
+                        @if($moneySent)
+                            <div class="row">
+                                <div class="container col-md-6 col-md-offset-1">
+                                    <div class="alert alert-success"> <i class="fas fa-check-circle"></i> Fund transfer successful...</div>
+                                    <div class="alert alert-success"> {{$response}}</div>
+                                </div>
+                            </div>
+                        @else
+                            <div class="row">
+                                <div class="container col-md-6 col-md-offset-1">
+                                    <div class="alert alert-warning"> <i class="fas fa-times-circle"></i> Fund transfer failed...</div>
+                                    <div class="alert alert-danger"> {{$response}}</div>
+                                </div>
+                            </div>
+                        @endif
+                    @else
+                        <div class="row">
+                            <div class="container col-md-6 col-md-offset-1">
+                                <div class="alert alert-danger"> <i class="fas fa-times-circle"></i> OTP verification failed</div>
+
+                                <form class="form-horizontal" role="form" method="post" action="{{route('admin.tigob2c.send_cash.verify_otp')}}" accept-charset="UTF-8" style="padding: 20px">
+                                    @include('admins.pages.payments.tigoB2C_otp_fields')
+                                </form>
+
+                            </div>
+                        </div>
+                    @endif
                 @else
                     <div class="row">
                         <div class="container col-md-6 col-md-offset-1">

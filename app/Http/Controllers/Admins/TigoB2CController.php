@@ -118,7 +118,7 @@ class TigoB2CController extends BaseController
             }
 
         } else {
-            return back()->with(['otpIsSent'=>true, 'error'=>'OTP verification failed']);
+            return back()->with(['otpIsSent'=>true, 'moneySent'=>false, 'error'=>'OTP verification failed']);
 
             //view('admins.pages.payments.tigoB2C_send_cash')->with(['otpVerified'=>false,'moneySent'=>false,'error'=>'OTP verification failed']);
             //return 'Fail to verify OTP';
