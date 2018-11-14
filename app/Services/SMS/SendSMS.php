@@ -133,7 +133,7 @@ trait SendSMS
                 $sentSMS->is_sent = $sendSMSStatus;
                 $sentSMS->update();
 
-                return $sendSMSStatus;
+                return ['status'=>$sendSMSStatus];
             } else {
                 return ['status'=>false,'error'=>'Invalid operator'];
             }
