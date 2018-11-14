@@ -121,7 +121,10 @@
             @else
 
                 @if(isset($error))
-                    <div class="alert alert-danger">Something went wrong, please try again</div>
+                    <div class="alert alert-warning">Something went wrong, please try again</div>
+
+                    <div class="alert alert-danger">{{$error}}</div>
+                    
                 @else
                     <div class="alert alert-warning">This seat has been booked, please try another seat</div>
                 @endif

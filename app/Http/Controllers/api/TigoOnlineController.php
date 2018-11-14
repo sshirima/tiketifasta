@@ -156,7 +156,9 @@ class TigoOnlineController extends Controller
                 Log::channel('tigosecurec2b')->error('Transaction confirmation failed[' . 'TransactionRef:' .
                     $input['transaction_ref_id'] . ', ErrorCode:'.$input['error_code'].']' . PHP_EOL);
 
-                return $this->tigoOnline->errorCategory($input['error_code']);
+                $error = 'Transaction failed: '.$this->tigoOnline->errorCategory($input['error_code']);
+                return view('users.pages.bookings.booking_confirmation')->with(['error' => $error]);
+                //return $this->tigoOnline->errorCategory($input['error_code']);
             }
         } catch (Exception $ex) {
             return $ex->getMessage();
