@@ -51,11 +51,11 @@ class SentSMSController extends BaseController
         $input = $request->all();
 
         $sendSMS = $this->sendOneSMS($input['operator'],$input['receiver'],$input['message']);
-        
+
          if ($sendSMS['status']){
-             return 'MessageSent';
+             return view('admins.pages.sms.send_sms')->with(['sentStatus'=>true,'phoneNumber'=>$input['receiver']]);
          }else{
-             return $sendSMS['error'];
+             return view('admins.pages.sms.send_sms')->with(['sentStatus'=>false,'error'=>$sendSMS['error']]);
          }
     }
 

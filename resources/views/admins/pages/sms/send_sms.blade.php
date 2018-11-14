@@ -25,13 +25,30 @@
                 @include('admins.pages.sms.send_sms_option_fields')
             </div>
             <div class="tab-content">
-                <div class="row">
-                    <div class="container col-md-6 col-md-offset-1">
-                        <form class="form-horizontal" role="form" method="post" action="{{route('admin.sms.send.submit')}}" accept-charset="UTF-8" style="padding: 20px">
-                            @include('admins.pages.sms.send_sms_fields')
-                        </form>
+                @if(isset($sentStatus))
+                    @if($sentStatus)
+                        <div class="row">
+                            <div class="container col-md-6 col-md-offset-1">
+                                <div class="alert alert-success"> Message has been sent to number <b>{{$phoneNumber}}</b></div>
+                            </div>
+                        </div>
+                    @else
+                        <div class="row">
+                            <div class="container col-md-6 col-md-offset-1">
+                                <div class="alert alert-danger"> Failed to send SMS</div>
+                                <div class="alert alert-danger"> Error : {{$error}}</div>
+                            </div>
+                        </div>
+                    @endif
+                    @else
+                    <div class="row">
+                        <div class="container col-md-6 col-md-offset-1">
+                            <form class="form-horizontal" role="form" method="post" action="{{route('admin.sms.send.submit')}}" accept-charset="UTF-8" style="padding: 20px">
+                                @include('admins.pages.sms.send_sms_fields')
+                            </form>
+                        </div>
                     </div>
-                </div>
+                @endif
 
             </div>
         </div>
