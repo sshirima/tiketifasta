@@ -77,6 +77,39 @@
                                 </div>
                             </div>
                         @endif
+                            @if(isset($transaction))
+                                <div>
+                                    <div>
+                                        <h4 class="mb-5">Trip information</h4>
+                                        <div>
+                                            <span class="lead mb-0">Date: </span><span
+                                                    class="lead mb-0"><strong>{{$transaction->bookingPayment->schedule->day->date}}</strong></span>
+                                        </div>
+                                        <div>
+                                            <span class="lead mb-0">Depart time: </span><span
+                                                    class="lead mb-0"><strong>{{$transaction->bookingPayment->booking->trip->depart_time}}</strong></span>
+                                        </div>
+                                        <div>
+                                            <span class="lead mb-0">Arrival time: </span><span
+                                                    class="lead mb-0"><strong>{{$transaction->bookingPayment->booking->trip->arrival_time}}</strong></span>
+                                        </div>
+                                        <div>
+                                            <span class="lead mb-0">Company: </span><span
+                                                    class="lead mb-0"><strong>{{$trip->bus->merchant->name}}</strong>  <strong> {{' ('.$transaction->bookingPayment->booking->trip->bus->reg_number.') '}} </strong></span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div>
+                                            <span class="lead mb-0">Seat name: </span><span
+                                                    class="lead mb-0"><strong>{{$transaction->bookingPayment->booking->seat->seat_name}}</strong></span>
+                                        </div>
+                                        <div>
+                                            <span class="lead mb-0">Ticket price: </span><span
+                                                    class="lead mb-0"><strong>{{$transaction->bookingPayment->booking->trip->price}}</strong>  <strong> {{' (Tshs) '}} </strong></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
                     </div>
                     @if(isset($ticket))
                         <div class="col-lg-4">
@@ -86,14 +119,14 @@
                                         class="lead mb-0"><strong>{{strtoupper($ticket->ticket_ref)}}</strong></span>
                             </div>
                             <div>
-                                <span class="lead mb-0">Ticket status: </span><span
-                                        class="lead mb-0"><strong>Status: @if($ticket->status == 'CONFIRMED')
-                                            <div class="alert-success">Confirmed</div>
-                                        @else
-                                            <div class="alert-warning ">{{$ticket->status}}</div>
-                                        @endif</strong></span>
+                                <span class="lead mb-0">Ticket: </span><span
+                                        class="lead mb-0"><strong>{{$ticket->status}}</strong></span>
                             </div>
-                            
+                            <div>
+                                <span class="lead mb-0">Issued at: </span><span
+                                        class="lead mb-0"><strong>{{$ticket->created_at}}</strong></span>
+                            </div>
+
                         </div>
                     @else
                         <div class="col-lg-4">

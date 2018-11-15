@@ -10,6 +10,7 @@ namespace App\Http\Controllers\api;
 
 
 use App\Http\Controllers\Controller;
+use App\Models\Booking;
 use App\Models\TigoOnlineC2B;
 use App\Services\DateTime\DatesOperations;
 use App\Services\Payments\PaymentManager;
@@ -132,17 +133,32 @@ class TigoOnlineController extends Controller
 
             if($input['trans_status'] == 'success'){
                 $transactionId = $input['transaction_ref_id'];
-                $transaction = TigoOnlineC2B::with(['bookingPayment','bookingPayment.booking'])->where(['reference'=>$transactionId])->first();
+                $transaction = TigoOnlineC2B::with(['bookingPayment','bookingPayment.booking','bookingPayment.booking.schedule.day',
+                    'bookingPayment.booking.trip','bookingPayment.booking.trip.bus','bookingPayment.booking.trip.bus.merchant',
+                    'bookingPayment.booking.trip.bus','bookingPayment.booking.seat'])->where(['reference'=>$transactionId])->first();
+
                 if (isset($transaction)) {
                     if ($transaction->access_token == $input['verification_code']) {
+
                         $this->tigoOnline->confirmTigoSecurePaymentC2B($transaction, $request);
+
                         $booking = $transaction->bookingPayment->booking;
+
                         $bookingPayment = $transaction->bookingPayment;
+
                         $ticket = $this->createTicket($bookingPayment);
+
                         $booking->confirmBooking();
+
                         $this->confirmTicket($ticket);
-                        $this->sendTicketReference($ticket, $ticket->booking->payment);
-                        return view('users.pages.bookings.booking_confirmation')->with(['ticket'=>$ticket,'bookingPayment' => $bookingPayment, 'booking' => $booking]);
+
+                        $message = $this->generateTicketMessage($ticket, $transaction);
+
+                        $phoneNumber = $ticket->booking->phonenumber;
+
+                        $this->sendTicketReference($ticket->booking->payment, $phoneNumber, $message);
+
+                        return view('users.pages.bookings.booking_confirmation')->with(['ticket'=>$ticket,'transaction'=>$transaction,'bookingPayment' => $bookingPayment, 'booking' => $booking]);
                     } else {
                         $error = 'Access code and verification code mismatch';
                         return view('users.pages.bookings.booking_confirmation')->with(['error' => $error]);

@@ -53,19 +53,6 @@ class Schedule extends Model
         return $this->belongsTo(Bus::class,self::COLUMN_BUS_ID,Bus::COLUMN_ID);
     }
 
-
-
-    public static function notScheduled($busId, $dayId){
-        $routes = DB::table(BusRoute::TABLE)
-            ->join(Schedule::TABLE,Schedule::BUS_ROUTE_ID,'=',BusRoute::ID)
-            ->where([BusRoute::BUS_ID=>$busId, Schedule::DAY_ID=>$dayId])->get();
-        if ($routes->isEmpty()){
-            return true;
-        }else{
-            return false;
-        }
-    }
-
     /**
      * Scope a query to only include popular users.
      *

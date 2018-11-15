@@ -38,32 +38,22 @@ trait SendSMS
         }
     }
 
-    /**
-     * @param Ticket $ticket
-     * @param $operator
-     * @return array|bool
-     */
-    public function sendTicketReference(Ticket $ticket, $operator){
 
-        $numCheck = $this->checkNumber($ticket->booking->phonenumber);
+    public function sendTicketReference($operator, $phoneNumber, $message){
+
+        $numCheck = $this->checkNumber($phoneNumber);
 
         if ($numCheck['status'] == false){
             \Log::channel('sms_logs')->error($numCheck['error'] . PHP_EOL);
             return false;
         }
 
-        $phoneNumber = $numCheck['number'];
-
-        $format = config('smsc.format');
-
-        $message = sprintf($format,$ticket->booking->firstname,strtoupper($ticket->ticket_ref));
-
-        $isSent = $this->sendMessage($operator, $phoneNumber, $message);
+        $isSent = $this->sendMessage($operator, $numCheck['number'], $message);
 
         if($isSent){
             return $isSent;
         } else {
-            return ['status'=>false,'error'=>'Failed to send SMS'];
+            return ['status'=>false,'error'=>$isSent['error']];
         }
     }
 
