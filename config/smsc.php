@@ -7,7 +7,7 @@
  */
 
 return [
-    'format'=>'Dear %s, You have booked \n Bus number:%s\n, From:%s to %s\n, Travelling on:$s\n, Ticket ref:%s\n.Thank you',
+    'format'=>'Dear %s, You have booked Bus number:%s, From:%s to %s, Travelling on: $s, Ticket ref:%s.Thank you',
     'voda'=>[],
     'tigo'=>[
         'snmp'=>[

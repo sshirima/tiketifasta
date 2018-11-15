@@ -82,6 +82,12 @@
                                     <div>
                                         <h4 class="mb-5">Trip information</h4>
                                         <div>
+                                            <span class="lead mb-0"></span><span
+                                                    class="lead mb-0"><strong>{{$transaction->bookingPayment->booking->trip->from->name}}</strong></span> to
+                                            <span
+                                                    class="lead mb-0"><strong>{{$transaction->bookingPayment->booking->trip->to->name}}</strong></span>
+                                        </div>
+                                        <div>
                                             <span class="lead mb-0">Date: </span><span
                                                     class="lead mb-0"><strong>{{$transaction->bookingPayment->booking->schedule->day->date}}</strong></span>
                                         </div>

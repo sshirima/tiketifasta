@@ -56,13 +56,16 @@ trait TicketManager
 
         $customerName = $ticket->booking->firstname;
         $busRegNumber = $tigoOnlineC2B->bookingPayment->booking->trip->bus->reg_number;
+
         $date = $tigoOnlineC2B->bookingPayment->booking->schedule->day->date;
         $time = $tigoOnlineC2B->bookingPayment->booking->trip->depart_time;
+        $formattedDate = \DateTime::createFromFormat('Y-m-d G:i', $date.' '.$time)->format('Y:m:d G:i');
+
         $from = $tigoOnlineC2B->bookingPayment->booking->trip->from->name;
         $to = $tigoOnlineC2B->bookingPayment->booking->trip->to->name;
         $ticketRef = $ticket->ticket_ref;
 
-        $message = sprintf($format,$customerName, $busRegNumber, $date.' '.$time, $from, $to, strtoupper($ticketRef));
+        $message = sprintf($format,$customerName, $busRegNumber,  $from, $to, $formattedDate, strtoupper($ticketRef));
 
         return $message;
     }
