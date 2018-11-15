@@ -56,7 +56,7 @@ trait TicketManager
 
         $customerName = $ticket->booking->firstname;
         $busRegNumber = $tigoOnlineC2B->bookingPayment->booking->trip->bus->reg_number;
-        $date = $tigoOnlineC2B->bookingPayment->schedule->day->date;
+        $date = $tigoOnlineC2B->bookingPayment->booking->schedule->day->date;
         $time = $tigoOnlineC2B->bookingPayment->booking->trip->depart_time;
         $from = $tigoOnlineC2B->bookingPayment->booking->trip->from->name;
         $to = $tigoOnlineC2B->bookingPayment->booking->trip->to->name;

@@ -83,7 +83,7 @@
                                         <h4 class="mb-5">Trip information</h4>
                                         <div>
                                             <span class="lead mb-0">Date: </span><span
-                                                    class="lead mb-0"><strong>{{$transaction->bookingPayment->schedule->day->date}}</strong></span>
+                                                    class="lead mb-0"><strong>{{$transaction->bookingPayment->booking->schedule->day->date}}</strong></span>
                                         </div>
                                         <div>
                                             <span class="lead mb-0">Depart time: </span><span
@@ -95,7 +95,7 @@
                                         </div>
                                         <div>
                                             <span class="lead mb-0">Company: </span><span
-                                                    class="lead mb-0"><strong>{{$trip->bus->merchant->name}}</strong>  <strong> {{' ('.$transaction->bookingPayment->booking->trip->bus->reg_number.') '}} </strong></span>
+                                                    class="lead mb-0"><strong>{{$transaction->bookingPayment->booking->trip->bus->merchant->name}}</strong>  <strong> {{' ('.$transaction->bookingPayment->booking->trip->bus->reg_number.') '}} </strong></span>
                                         </div>
                                     </div>
                                     <div>

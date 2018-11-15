@@ -184,8 +184,8 @@ class TigoOnlineController extends Controller
                 //return $this->tigoOnline->errorCategory($input['error_code']);
             }
         } catch (Exception $ex) {
-            return $transaction;
-            //return $ex->getTraceAsString();
+            //return $transaction;
+            return $ex->getMessage();
         }
     }
 }
