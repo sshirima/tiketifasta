@@ -37,18 +37,30 @@ class Schedule extends Model
 
     public $conditions = array();
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function day(){
         return $this->belongsTo(Day::class,self::COLUMN_DAY_ID, Day::COLUMN_ID);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function date(){
         return $this->belongsTo(Day::class,self::COLUMN_DAY_ID, Day::COLUMN_ID);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function bookings(){
         return $this->hasMany(Booking::class,Booking::COLUMN_SCHEDULE_ID, self::COLUMN_ID);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function bus(){
         return $this->belongsTo(Bus::class,self::COLUMN_BUS_ID,Bus::COLUMN_ID);
     }

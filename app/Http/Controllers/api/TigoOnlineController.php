@@ -82,6 +82,10 @@ class TigoOnlineController extends Controller
         return json_encode($response);
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|string
+     */
     public function authorizePayment(Request $request)
     {
         try {
@@ -128,6 +132,7 @@ class TigoOnlineController extends Controller
      */
     public function confirmPayment(Request $request)
     {
+        $transaction = null;
         try {
             $input = $request->all();
 
@@ -159,6 +164,7 @@ class TigoOnlineController extends Controller
                         $this->sendTicketReference($ticket->booking->payment, $phoneNumber, $message);
 
                         return view('users.pages.bookings.booking_confirmation')->with(['ticket'=>$ticket,'transaction'=>$transaction,'bookingPayment' => $bookingPayment, 'booking' => $booking]);
+
                     } else {
                         $error = 'Access code and verification code mismatch';
                         return view('users.pages.bookings.booking_confirmation')->with(['error' => $error]);
@@ -178,7 +184,8 @@ class TigoOnlineController extends Controller
                 //return $this->tigoOnline->errorCategory($input['error_code']);
             }
         } catch (Exception $ex) {
-            return $ex->getTraceAsString();
+            return $transaction;
+            //return $ex->getTraceAsString();
         }
     }
 }
