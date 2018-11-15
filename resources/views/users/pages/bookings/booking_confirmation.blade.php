@@ -81,12 +81,19 @@
                     @if(isset($ticket))
                         <div class="col-lg-4">
                             <h4 class="mb-5">Ticket information</h4>
-                            <div class="text-info">Ticket ref: <b>{{strtoupper($ticket->ticket_ref)}}</b></div>
-                            <div class="text-info">Status: @if($ticket->status == 'CONFIRMED')
-                                    <div class="alert-success">Ticket has been confirmed</div>
-                                @else
-                                    <div class="alert-warning ">{{$ticket->status}}</div>
-                                @endif</div>
+                            <div>
+                                <span class="lead mb-0">Ticket ref: </span><span
+                                        class="lead mb-0"><strong>{{strtoupper($ticket->ticket_ref)}}</strong></span>
+                            </div>
+                            <div>
+                                <span class="lead mb-0">Ticket status: </span><span
+                                        class="lead mb-0"><strong>Status: @if($ticket->status == 'CONFIRMED')
+                                            <div class="alert-success">Confirmed</div>
+                                        @else
+                                            <div class="alert-warning ">{{$ticket->status}}</div>
+                                        @endif</strong></span>
+                            </div>
+                            
                         </div>
                     @else
                         <div class="col-lg-4">
