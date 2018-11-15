@@ -59,7 +59,8 @@ trait TicketManager
 
         $date = $tigoOnlineC2B->bookingPayment->booking->schedule->day->date;
         $time = $tigoOnlineC2B->bookingPayment->booking->trip->depart_time;
-        $formattedDate = \DateTime::createFromFormat('Y-m-d G:i', $date.' '.$time)->format('Y:m:d G:i');
+        $formattedDate = date('Y:m:d G:i', strtotime($date.' '.$time));
+        //$formattedDate = \DateTime::createFromFormat('Y-m-d G:i', $date.' '.$time)->format('Y:m:d G:i');
 
         $from = $tigoOnlineC2B->bookingPayment->booking->trip->from->name;
         $to = $tigoOnlineC2B->bookingPayment->booking->trip->to->name;
