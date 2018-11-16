@@ -19,13 +19,13 @@ class TigoB2CController extends Controller
 
     public function initiateTransaction(){
 
-        /*$response = $this->initiatePayment('255655791244', '1000');
+        $response = $this->initiatePayment('255714682070', '500');
 
         //No comments
         if ($response['status'] == true) {
             return 'Success : ' . json_encode($response['response']);
         } else {
             return 'Error : ' . json_encode($response['error']);
-        }*/
+        }
     }
 }
