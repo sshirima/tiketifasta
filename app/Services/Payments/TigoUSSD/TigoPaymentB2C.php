@@ -45,7 +45,20 @@ trait TigoPaymentB2C
             curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: text/xml'));
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $requestContent);
+
+            curl_setopt($ch, CURLOPT_TIMEOUT, config('payments.mpesa.b2c.timeout'));
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, config('payments.mpesa.b2c.connect_timeout'));
+
             $response = curl_exec($ch);
+
+            if ($response === false) {
+                $info = curl_getinfo($ch);
+                if ($info['http_code'] === 0) {
+                    Log::channel('mpesab2c')->error('Connection timeout:' . PHP_EOL);
+                    $this->setTigoB2CTransactionTimeout($tigoB2C);
+                }
+            }
+
             //Check HTTP status code
             if (!curl_errno($ch)) {
                 switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
@@ -132,5 +145,9 @@ trait TigoPaymentB2C
             'language' => config('payments.tigo.bc2.language'),
         ]);
         return $tigoB2C;
+    }
+
+    private function setTigoB2CTransactionTimeout(TigoB2C $tigoB2C){
+
     }
 }

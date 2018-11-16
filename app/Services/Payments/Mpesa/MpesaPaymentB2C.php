@@ -48,10 +48,12 @@ trait MpesaPaymentB2C
             curl_setopt($ch, CURLOPT_POSTFIELDS, $requestBody);
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-            $response = curl_exec($ch);
+
 
             curl_setopt($ch, CURLOPT_TIMEOUT, config('payments.mpesa.b2c.timeout'));
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, config('payments.mpesa.b2c.connect_timeout'));
+
+            $response = curl_exec($ch);
 
             if ($response === false) {
                 $info = curl_getinfo($ch);
