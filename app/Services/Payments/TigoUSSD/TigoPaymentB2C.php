@@ -62,8 +62,8 @@ trait TigoPaymentB2C
                                 $tigoB2C->update();
                                 $reply = array('status'=>true, 'model'=>$tigoB2C,'response'=>$input);
                         } else {
-                            $tigoB2C->txn_status = $input['TXNSTATUS'];
-                            $tigoB2C->txn_message = $input['MESSAGE'];
+                            $tigoB2C->txn_status = isset($input['TXNSTATUS'])?$input['TXNSTATUS']:'null';
+                            $tigoB2C->txn_message = isset($input['MESSAGE'])?$input['MESSAGE']:'null';
                             $tigoB2C->update();
                             $reply = array('status'=>false, 'error'=>$input);
                         }
