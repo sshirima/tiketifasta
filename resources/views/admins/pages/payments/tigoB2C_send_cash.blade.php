@@ -76,8 +76,8 @@
                                 <div class="container col-md-6 col-md-offset-1">
                                     <div class="alert alert-warning"> <i class="fas fa-times-circle"></i> Fund transfer failed...</div>
                                     <div class="alert alert-danger">
-                                        Transaction reference: {{$response['REFERENCEID']}}<br>
-                                        Message: {{$response['MESSAGE']}}<br>
+                                        Transaction reference: {{isset($response['REFERENCEID'])?$response['REFERENCEID']:'null'}}<br>
+                                        Message: {{isset($response['MESSAGE'])?$response['MESSAGE']:'null'}}<br>
                                     </div>
                                 </div>
                             </div>

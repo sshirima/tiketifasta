@@ -140,9 +140,11 @@ Route::prefix('admin')->group(function () {
     Route::get('merchant-payments/tigopesa/send_cash', 'Admins\TigoB2CController@sendCash')->name('admin.tigob2c.send_cash');
     Route::get('merchant-payments/tigopesa/send_cash/submit', 'Admins\TigoB2CController@sendCashSubmit')->name('admin.tigob2c.send_cash.submit');
     Route::post('merchant-payments/tigopesa/send_cash/verify-otp', 'Admins\TigoB2CController@verifyTransactionOTP')->name('admin.tigob2c.send_cash.verify_otp');
+    Route::get('merchant-payments/index', 'Admins\MerchantPaymentController@index')->name('admin.merchant_payments.index');
 
     Route::get('payments/tigopesa/c2b', 'Admins\TigoSecureC2BController@index')->name('admin.tigoonline_c2b.index');
     Route::get('payments/tigopesa/b2c', 'Admins\TigoB2CController@index')->name('admin.tigo_b2c.index');
+
 
     //Admin account CRUD routes (V2.0)
     Route::get('accounts/admins', 'Admins\AdminAccountsController@index')->name('admin.admin_accounts.index');

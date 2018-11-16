@@ -125,7 +125,7 @@
                                         class="lead mb-0"><strong>{{strtoupper($ticket->ticket_ref)}}</strong></span>
                             </div>
                             <div>
-                                <span class="lead mb-0">Ticket: </span><span
+                                <span class="lead mb-0">Status: </span><span
                                         class="lead mb-0"><strong>{{$ticket->status}}</strong></span>
                             </div>
                             <div>

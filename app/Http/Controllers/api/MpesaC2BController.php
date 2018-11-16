@@ -25,7 +25,7 @@ use Log;
 
 class MpesaC2BController extends Controller
 {
-    use AuthorizeBooking, TicketManager, MpesaC2BData, MpesaPaymentC2B;
+    use AuthorizeBooking, TicketManager, MpesaPaymentC2B;
     private $mpesa;
 
     public function __construct(Mpesa $mpesa)
@@ -33,6 +33,10 @@ class MpesaC2BController extends Controller
         $this->mpesa = $mpesa;
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response|string
+     */
     public function validateMpesaC2BTransaction(Request $request)
     {
 
@@ -51,6 +55,9 @@ class MpesaC2BController extends Controller
         return response($response, 200, ['Content-type' => 'application/xml']);
     }
 
+    /**
+     * @param Request $request
+     */
     public function confirmPaymentC2B(Request $request)
     {
         try {
@@ -60,7 +67,7 @@ class MpesaC2BController extends Controller
 
             $ticket = $this->createTicket($bookingPayment);
 
-            $url = env('MPESA_C2B_CONFIRM');
+            $url = config('payments.mpesa.c2b.confirm_payment_url');
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_POST, true);

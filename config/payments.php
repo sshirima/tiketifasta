@@ -11,7 +11,7 @@ return[
         'account_name'=>env('MPESA_ACCOUNT_NAME'),
 
         'c2b'=>[
-            'url_confirm'=>env('MPESA_C2B_CONFIRM'),
+            'confirm_payment_url'=>env('MPESA_C2B_CONFIRM'),
         ],
         'b2c'=>[
             'spid'=>env('MPESA_B2C_SPID'),

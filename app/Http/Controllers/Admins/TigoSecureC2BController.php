@@ -54,8 +54,16 @@ class TigoSecureC2BController extends BaseController
      */
     private function setTableColumns($table)
     {
+        $table->addColumn('phone_number')->setTitle('Sent from');
         $table->addColumn('amount')->setTitle('Amount');
         $table->addColumn('reference')->setTitle('Reference')->isSearchable();
+        $table->addColumn('firstname')->setTitle('Name')->isSearchable()->isCustomHtmlElement(function($entity, $column){
+            return $entity['firstname'].' '.$entity['lastname'];
+        });
+        $table->addColumn('email')->setTitle('Email')->isSearchable();
+        $table->addColumn('status')->setTitle('Status')->isCustomHtmlElement(function($entity, $column){
+            return $entity['status'];
+        });
         $table->addColumn('updated_at')->setTitle('Updated at')->isSearchable();
         $table->addColumn('created_at')->setTitle('Created at')->isSearchable()->sortByDefault();
         return $table;
