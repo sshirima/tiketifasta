@@ -79,6 +79,13 @@ class Booking extends Model
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     *
+     */
+    public function ticket(){
+        return $this->hasOne(Ticket::class,Ticket::COLUMN_BOOKING_ID,self::COLUMN_ID);
+    }
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function trip(){
