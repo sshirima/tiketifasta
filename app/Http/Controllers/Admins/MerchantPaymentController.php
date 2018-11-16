@@ -23,8 +23,11 @@ class MerchantPaymentController extends BaseController
 
     public function index(Request $request){
 
-        return Merchant::with(['buses','buses.schedules','buses.schedules.bookings','buses.schedules.bookings.ticket',
+        return Merchant::with(['buses','buses.schedules','buses.schedules.bookings','buses.schedules.bookings.ticket'=> function ($query) {
+            $query->whereDate(['created_at'=>'2018-11-14']);
+        },
             'buses.schedules.bookings.ticket.bookingPayment'])->get();
+        //'created_at'=>date('Y-m-d')
         //$table = $this->createBookingTable();
 
         //return view('admins.pages.payments.index_booking_payments')->with(['table'=>$table]);
