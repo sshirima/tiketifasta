@@ -87,7 +87,7 @@ class MerchantPaymentController extends BaseController
                     ->where('merchant.id','=', $this->merchantId);
             });
 
-        $table = $this->setSummaryReportColumns($table);
+        $table = $this->setMerchantReportColumns($table);
 
         return $table;
     }
@@ -115,7 +115,7 @@ class MerchantPaymentController extends BaseController
                     ->groupBy('days.date','merchants.id','booking_payments.method');
             });
 
-        $table = $this->setMerchantReportColumns($table);
+        $table = $this->setSummaryReportColumns($table);
 
         return $table;
     }
@@ -152,7 +152,7 @@ class MerchantPaymentController extends BaseController
             return '<a href="'.route('admin.merchant_payments.merchant_report', $entity['merchant_id']).'">'.$entity['date'].'</a>';
         });
 
-        $table->addColumn('firstname')->setTitle('Name')->isSearchable()->sortByDefault()->setCustomTable('bookings')->isCustomHtmlElement(function($entity, $column){
+        $table->addColumn('firstname')->setTitle('Name')->isSearchable()->setCustomTable('bookings')->isCustomHtmlElement(function($entity, $column){
             return $entity['firstname'].' '.$entity['lastname'];
         });
 
