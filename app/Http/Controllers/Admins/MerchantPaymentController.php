@@ -84,8 +84,12 @@ class MerchantPaymentController extends BaseController
     private function setSummaryReportColumns($table)
     {
         $table->addColumn('date')->setTitle('Date')->isSearchable()->sortByDefault()->setCustomTable('days');
-        $table->addColumn('method')->setTitle('Payment via')->isSearchable()->setCustomTable('booking_payments');
-        $table->addColumn('amount')->setTitle('Amount')->isSearchable()->setCustomTable('booking_payments');
+        $table->addColumn('method')->setTitle('Payment via')->isSearchable()->setCustomTable('booking_payments')->isCustomHtmlElement(function($entity, $column){
+            return $entity['payment_method'];
+        });
+        $table->addColumn('amount')->setTitle('Amount')->isSearchable()->setCustomTable('booking_payments')->isCustomHtmlElement(function($entity, $column){
+            return $entity['price'];
+        });
 
         return $table;
     }
