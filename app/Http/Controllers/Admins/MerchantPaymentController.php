@@ -65,36 +65,6 @@ class MerchantPaymentController extends BaseController
     /**
      * @return mixed
      */
-    protected function merchantReportTable($merchantId)
-    {
-        $this->merchantId = $merchantId;
-
-        $table = app(TableList::class)
-            ->setModel(Schedule::class)
-            ->setRowsNumber(10)
-            ->enableRowsNumberSelector()
-            ->setRoutes([
-                'index' => ['alias' => 'admin.merchant_payments.summary', 'parameters' => []],
-            ])->addQueryInstructions(function ($query) {
-                $query->select('merchants.id as merchant_id','merchants.name as merchant_name','days.date as date','booking_payments.method as payment_method',
-                    \DB::raw('sum(booking_payments.amount) as price'))
-                    ->join('bookings','bookings.schedule_id','=','schedules.id')
-                    ->join('buses','buses.id','=','schedules.bus_id')
-                    ->join('merchants','merchants.id','=','buses.merchant_id')
-                    ->join('days','days.id','=','schedules.day_id')
-                    ->join('tickets','tickets.booking_id','=','bookings.id')
-                    ->join('booking_payments','booking_payments.booking_id','=','bookings.id')
-                    ->where('merchant.id','=', $this->merchantId);
-            });
-
-        $table = $this->setMerchantReportColumns($table);
-
-        return $table;
-    }
-
-    /**
-     * @return mixed
-     */
     protected function summaryReportTable()
     {
         $table = app(TableList::class)
@@ -116,6 +86,36 @@ class MerchantPaymentController extends BaseController
             });
 
         $table = $this->setSummaryReportColumns($table);
+
+        return $table;
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function merchantReportTable($merchantId)
+    {
+        $this->merchantId = $merchantId;
+
+        $table = app(TableList::class)
+            ->setModel(Schedule::class)
+            ->setRowsNumber(10)
+            ->enableRowsNumberSelector()
+            ->setRoutes([
+                'index' => ['alias' => 'admin.merchant_payments.summary', 'parameters' => []],
+            ])->addQueryInstructions(function ($query) {
+                $query->select('merchants.id as merchant_id','merchants.name as merchant_name','days.date as date','booking_payments.method as payment_method',
+                    \DB::raw('sum(booking_payments.amount) as price'))
+                    ->join('bookings','bookings.schedule_id','=','schedules.id')
+                    ->join('buses','buses.id','=','schedules.bus_id')
+                    ->join('merchants','merchants.id','=','buses.merchant_id')
+                    ->join('days','days.id','=','schedules.day_id')
+                    ->join('tickets','tickets.booking_id','=','bookings.id')
+                    ->join('booking_payments','booking_payments.booking_id','=','bookings.id')
+                    ->where('merchants.id','=', $this->merchantId);
+            });
+
+        $table = $this->setMerchantReportColumns($table);
 
         return $table;
     }
