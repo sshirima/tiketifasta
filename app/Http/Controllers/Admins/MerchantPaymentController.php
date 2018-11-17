@@ -68,7 +68,6 @@ class MerchantPaymentController extends BaseController
                     ->join('days','days.id','=','schedules.day_id')
                     ->join('tickets','tickets.booking_id','=','bookings.id')
                     ->join('booking_payments','booking_payments.booking_id','=','bookings.id')
-                    ->where('days.date','=','2018-09-07')
                     ->groupBy('days.date','merchants.id','booking_payments.method');
             });
 
