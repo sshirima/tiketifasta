@@ -149,7 +149,7 @@ class MerchantPaymentController extends BaseController
      */
     private function setMerchantReportColumns($table)
     {
-        $table->addColumn('date')->setTitle('Date')->isSearchable()->sortByDefault()->setCustomTable('days')->isCustomHtmlElement(function($entity, $column){
+        $table->addColumn('date')->setTitle('Date')->isSearchable()->sortByDefault('desc')->setCustomTable('days')->isCustomHtmlElement(function($entity, $column){
             return '<a href="'.route('admin.merchant_payments.merchant_report', $entity['merchant_id']).'">'.$entity['date'].'</a>';
         });
 
