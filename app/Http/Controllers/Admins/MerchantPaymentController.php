@@ -104,7 +104,8 @@ class MerchantPaymentController extends BaseController
             ->setRoutes([
                 'index' => ['alias' => 'admin.merchant_payments.summary', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {
-                $query->select('merchants.id as merchant_id','merchants.name as merchant_name','days.date as date',
+                $query->select('merchants.id as merchant_id','bookings.firstname as firstname','bookings.lastname as lastname'
+                    ,'merchants.name as merchant_name','days.date as date',
                     'booking_payments.method as payment_method','booking_payments.amount as price')
                     ->join('bookings','bookings.schedule_id','=','schedules.id')
                     ->join('buses','buses.id','=','schedules.bus_id')
@@ -126,11 +127,11 @@ class MerchantPaymentController extends BaseController
      */
     private function setSummaryReportColumns($table)
     {
-        $table->addColumn('date')->setTitle('Date')->isSearchable()->sortByDefault()->setCustomTable('days')->isCustomHtmlElement(function($entity, $column){
-            return '<a href="'.route('admin.merchant_payments.merchant_report', $entity['merchant_id']).'">'.$entity['date'].'</a>';
+        $table->addColumn('date')->setTitle('Date')->isSearchable()->sortByDefault('desc')->setCustomTable('days')->isCustomHtmlElement(function($entity, $column){
+            return $entity['date'];
         });
-        $table->addColumn('name')->setTitle('Date')->isSearchable()->setCustomTable('merchants')->isCustomHtmlElement(function($entity, $column){
-            return $entity['merchant_name'];
+        $table->addColumn('name')->setTitle('Merchant name')->isSearchable()->setCustomTable('merchants')->isCustomHtmlElement(function($entity, $column){
+            return '<a href="'.route('admin.merchant_payments.merchant_report', $entity['merchant_id']).'">'.$entity['merchant_name'].'</a>';
         });
         $table->addColumn('method')->setTitle('Payment via')->isSortable()->isSearchable()->setCustomTable('booking_payments')->isCustomHtmlElement(function($entity, $column){
             return $entity['payment_method'];
