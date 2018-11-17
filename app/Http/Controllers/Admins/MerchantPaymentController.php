@@ -105,7 +105,7 @@ class MerchantPaymentController extends BaseController
                 'index' => ['alias' => 'admin.merchant_payments.summary', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {
                 $query->select('merchants.id as merchant_id','bookings.firstname as firstname','bookings.lastname as lastname'
-                    ,'merchants.name as merchant_name','days.date as date','tickets.ticket_ref as tickets_ref',
+                    ,'merchants.name as merchant_name','days.date as date','tickets.ticket_ref as ticket_ref',
                     'booking_payments.method as payment_method','booking_payments.amount as price')
                     ->join('bookings','bookings.schedule_id','=','schedules.id')
                     ->join('buses','buses.id','=','schedules.bus_id')
@@ -153,10 +153,10 @@ class MerchantPaymentController extends BaseController
             return '<a href="'.route('admin.merchant_payments.merchant_report', $entity['merchant_id']).'">'.$entity['date'].'</a>';
         });
 
-        $table->addColumn('ticket_ref')->setTitle('Name')->isSearchable()->setCustomTable('tickets')->isCustomHtmlElement(function($entity, $column){
+        $table->addColumn('ticket_ref')->setTitle('Ticket Ref#')->isSearchable()->setCustomTable('tickets')->isCustomHtmlElement(function($entity, $column){
             return $entity['ticket_ref'];
         });
-        
+
         $table->addColumn('firstname')->setTitle('Name')->isSearchable()->setCustomTable('bookings')->isCustomHtmlElement(function($entity, $column){
             return $entity['firstname'].' '.$entity['lastname'];
         });
