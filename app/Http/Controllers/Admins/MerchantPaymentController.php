@@ -104,7 +104,7 @@ class MerchantPaymentController extends BaseController
             ->setRoutes([
                 'index' => ['alias' => 'admin.merchant_payments.summary', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {
-                $query->select('merchants.id as merchant_id','merchants.name as merchant_name','days.date as date','booking_payments.method as payment_method',
+                $query->select('merchants.id as merchant_id','days.date as date','booking_payments.method as payment_method',
                     \DB::raw('sum(booking_payments.amount) as price'))
                     ->join('bookings','bookings.schedule_id','=','schedules.id')
                     ->join('buses','buses.id','=','schedules.bus_id')
