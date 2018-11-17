@@ -74,7 +74,7 @@ class MerchantPaymentController extends BaseController
             ->setRoutes([
                 'index' => ['alias' => 'admin.merchant_payments.summary', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {
-                $query->select('merchants.id as merchant_id','days.date as date','booking_payments.method as payment_method',
+                $query->select('merchants.id as merchant_id','merchants.name as merchant_name','days.date as date','booking_payments.method as payment_method',
                     \DB::raw('sum(booking_payments.amount) as price'))
                     ->join('bookings','bookings.schedule_id','=','schedules.id')
                     ->join('buses','buses.id','=','schedules.bus_id')
@@ -82,7 +82,7 @@ class MerchantPaymentController extends BaseController
                     ->join('days','days.id','=','schedules.day_id')
                     ->join('tickets','tickets.booking_id','=','bookings.id')
                     ->join('booking_payments','booking_payments.booking_id','=','bookings.id')
-                    ->groupBy('days.date','merchants.id','booking_payments.method');
+                    ->groupBy('days.date','merchants.id','merchants.name','booking_payments.method');
             });
 
         $table = $this->setSummaryReportColumns($table);
@@ -104,7 +104,8 @@ class MerchantPaymentController extends BaseController
             ->setRoutes([
                 'index' => ['alias' => 'admin.merchant_payments.summary', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {
-                $query->select('merchants.id as merchant_id','merchants.name as merchant_name','days.date as date','booking_payments.method as payment_method')
+                $query->select('merchants.id as merchant_id','merchants.name as merchant_name','days.date as date',
+                    'booking_payments.method as payment_method','booking_payments.amount as price')
                     ->join('bookings','bookings.schedule_id','=','schedules.id')
                     ->join('buses','buses.id','=','schedules.bus_id')
                     ->join('merchants','merchants.id','=','buses.merchant_id')
