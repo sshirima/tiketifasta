@@ -10,7 +10,9 @@ namespace App\Http\Controllers\Admins;
 
 use App\Models\BookingPayment;
 use App\Models\Merchant;
+use App\Models\Ticket;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Okipa\LaravelBootstrapTableList\TableList;
 
 class MerchantPaymentController extends BaseController
@@ -23,10 +25,18 @@ class MerchantPaymentController extends BaseController
 
     public function index(Request $request){
 
-        return Merchant::with(['buses','buses.schedules','buses.schedules.bookings','buses.schedules.bookings.ticket'=> function ($query) {
-            $query->whereDate('created_at','2018-11-14');
-        },
-            'buses.schedules.bookings.ticket.bookingPayment'])->get();
+        $report = \DB::table('schedules')->select('merchants.id as merchant_id','days.date as date','booking_payments.method as payment_method',
+            \DB::raw('sum(booking_payments.amount) as price'))
+            ->join('bookings','bookings.schedule_id','=','schedules.id')
+            ->join('buses','buses.id','=','schedules.bus_id')
+            ->join('merchants','merchants.id','=','buses.merchant_id')
+            ->join('days','days.id','=','schedules.day_id')
+            ->join('tickets','tickets.booking_id','=','bookings.id')
+            ->join('booking_payments','booking_payments.booking_id','=','bookings.id')
+            ->where('days.date','=','2018-09-07')
+            ->groupBy('days.date','merchant_id','payment_method')->get();
+
+        return $report;
         //'created_at'=>date('Y-m-d')
         //$table = $this->createBookingTable();
 
