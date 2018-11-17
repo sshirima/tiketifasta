@@ -34,7 +34,7 @@ class MerchantPaymentController extends BaseController
             ->join('tickets','tickets.booking_id','=','bookings.id')
             ->join('booking_payments','booking_payments.booking_id','=','bookings.id')
             ->where('days.date','=','2018-09-07')
-            ->groupBy('days.date','merchant_id','payment_method')->get();
+            ->groupBy('days.date','merchants.id','booking_payments.method')->get();
 
         return $report;
         //'created_at'=>date('Y-m-d')
