@@ -30,6 +30,10 @@
                     {!! $summaryReportTable->render() !!}
                 @endif
 
+                    @if(isset($merchantReportTable))
+                        {!! $merchantReportTable->render() !!}
+                    @endif
+
             </div>
         </div>
     </section>

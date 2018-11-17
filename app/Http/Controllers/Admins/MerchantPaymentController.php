@@ -15,11 +15,17 @@ use Okipa\LaravelBootstrapTableList\TableList;
 class MerchantPaymentController extends BaseController
 {
 
+    private $merchantId;
+
     public function __construct()
     {
         parent::__construct();
     }
 
+    /**
+     * @param Request $request
+     * @return $this
+     */
     public function summaryReport(Request $request){
 
         /*$report = \DB::table('schedules')->select('merchants.id as merchant_id','days.date as date','booking_payments.method as payment_method',
@@ -40,12 +46,50 @@ class MerchantPaymentController extends BaseController
         return view('admins.pages.payments.merchant_payments')->with(['summaryReportTable'=>$table]);
     }
 
-    public function merchantReport(){
+    /**
+     * @param Request $request
+     * @param $id
+     * @return $this
+     */
+    public function merchantReport(Request $request, $id){
 
+        $table = $this->merchantReportTable($id);
+
+        return view('admins.pages.payments.merchant_payments')->with(['merchantReportTable'=>$table]);
     }
 
     public function busReport(){
 
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function merchantReportTable($merchantId)
+    {
+        $this->merchantId = $merchantId;
+
+        $table = app(TableList::class)
+            ->setModel(Schedule::class)
+            ->setRowsNumber(10)
+            ->enableRowsNumberSelector()
+            ->setRoutes([
+                'index' => ['alias' => 'admin.merchant_payments.summary', 'parameters' => []],
+            ])->addQueryInstructions(function ($query) {
+                $query->select('merchants.id as merchant_id','merchants.name as merchant_name','days.date as date','booking_payments.method as payment_method',
+                    \DB::raw('sum(booking_payments.amount) as price'))
+                    ->join('bookings','bookings.schedule_id','=','schedules.id')
+                    ->join('buses','buses.id','=','schedules.bus_id')
+                    ->join('merchants','merchants.id','=','buses.merchant_id')
+                    ->join('days','days.id','=','schedules.day_id')
+                    ->join('tickets','tickets.booking_id','=','bookings.id')
+                    ->join('booking_payments','booking_payments.booking_id','=','bookings.id')
+                    ->where('merchant.id','=', $this->merchantId);
+            });
+
+        $table = $this->setSummaryReportColumns($table);
+
+        return $table;
     }
 
     /**
@@ -60,7 +104,7 @@ class MerchantPaymentController extends BaseController
             ->setRoutes([
                 'index' => ['alias' => 'admin.merchant_payments.summary', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {
-                $query->select('merchants.id as merchant_id','days.date as date','booking_payments.method as payment_method',
+                $query->select('merchants.id as merchant_id','merchants.name as merchant_name','days.date as date','booking_payments.method as payment_method',
                     \DB::raw('sum(booking_payments.amount) as price'))
                     ->join('bookings','bookings.schedule_id','=','schedules.id')
                     ->join('buses','buses.id','=','schedules.bus_id')
@@ -71,7 +115,7 @@ class MerchantPaymentController extends BaseController
                     ->groupBy('days.date','merchants.id','booking_payments.method');
             });
 
-        $table = $this->setSummaryReportColumns($table);
+        $table = $this->setMerchantReportColumns($table);
 
         return $table;
     }
@@ -82,8 +126,40 @@ class MerchantPaymentController extends BaseController
      */
     private function setSummaryReportColumns($table)
     {
-        $table->addColumn('date')->setTitle('Date')->isSearchable()->sortByDefault()->setCustomTable('days');
-        $table->addColumn('method')->setTitle('Payment via')->isSearchable()->setCustomTable('booking_payments')->isCustomHtmlElement(function($entity, $column){
+        $table->addColumn('date')->setTitle('Date')->isSearchable()->sortByDefault()->setCustomTable('days')->isCustomHtmlElement(function($entity, $column){
+            return '<a href="'.route('admin.merchant_payments.merchant_report', $entity['merchant_id']).'">'.$entity['date'].'</a>';
+        });
+        $table->addColumn('name')->setTitle('Date')->isSearchable()->setCustomTable('merchants')->isCustomHtmlElement(function($entity, $column){
+            return $entity['merchant_name'];
+        });
+        $table->addColumn('method')->setTitle('Payment via')->isSortable()->isSearchable()->setCustomTable('booking_payments')->isCustomHtmlElement(function($entity, $column){
+            return $entity['payment_method'];
+        });
+        $table->addColumn('amount')->setTitle('Amount')->isSearchable()->setCustomTable('booking_payments')->isCustomHtmlElement(function($entity, $column){
+            return $entity['price'];
+        });
+
+        return $table;
+    }
+
+    /**
+     * @param $table
+     * @return mixed
+     */
+    private function setMerchantReportColumns($table)
+    {
+        $table->addColumn('date')->setTitle('Date')->isSearchable()->sortByDefault()->setCustomTable('days')->isCustomHtmlElement(function($entity, $column){
+            return '<a href="'.route('admin.merchant_payments.merchant_report', $entity['merchant_id']).'">'.$entity['date'].'</a>';
+        });
+
+        $table->addColumn('firstname')->setTitle('Name')->isSearchable()->sortByDefault()->setCustomTable('bookings')->isCustomHtmlElement(function($entity, $column){
+            return $entity['firstname'].' '.$entity['lastname'];
+        });
+
+        $table->addColumn('name')->setTitle('Merchant name')->isSearchable()->setCustomTable('merchants')->isCustomHtmlElement(function($entity, $column){
+            return $entity['merchant_name'];
+        });
+        $table->addColumn('method')->setTitle('Payment via')->isSortable()->isSearchable()->setCustomTable('booking_payments')->isCustomHtmlElement(function($entity, $column){
             return $entity['payment_method'];
         });
         $table->addColumn('amount')->setTitle('Amount')->isSearchable()->setCustomTable('booking_payments')->isCustomHtmlElement(function($entity, $column){
