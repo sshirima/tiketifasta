@@ -52,6 +52,7 @@ class AdminComposerSP extends ServiceProvider
                 'admins.pages.sms.send_sms',
                 'admins.pages.buses.prices',
                 'admins.pages.staff.index',
+                'admins.pages.payments.merchant_payments',
             ],
             AdminComposer::class
         );

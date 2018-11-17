@@ -37,9 +37,10 @@
                 </a>
                 <ul class="treeview-menu" style="display: block;">
                     <li class="{{Request::is('admin/booking-payments') ? 'active' : ''}}"><a href="{{route('admin.booking_payments.index')}}"><i class="fas fa-link"></i> Booking Payments </a></li>
+                    <li class="{{Request::is('admin/merchant-payments*') ? 'active' : ''}}"><a href="{{route('admin.merchant_payments.summary')}}"><i class="fas fa-link"></i> Merchant payments </a></li>
                     <li class="{{Request::is('admin/customer-payments/mpesa') ? 'active' : ''}}"><a href="{{route('admin.mpesac2b.index')}}"><i class="fas fa-link"></i> Mpesa C2B </a></li>
-                    <li class="{{Request::is('admin/customer-payments/tigopesa') ? 'active' : ''}}"><a href="{{route('admin.tigosecurec2b.index')}}"><i class="fas fa-link"></i> Tigopesa C2B </a></li>
                     <li class="{{Request::is('admin/merchants-payments/mpesa') ? 'active' : ''}}"><a href="{{route('admin.mpesab2c.index')}}"><i class="fas fa-link"></i> Mpesa B2C </a></li>
+                    <li class="{{Request::is('admin/customer-payments/tigopesa') ? 'active' : ''}}"><a href="{{route('admin.tigosecurec2b.index')}}"><i class="fas fa-link"></i> Tigopesa C2B </a></li>
                     <li class="{{Request::is('admin/merchant-payments/tigopesa') ? 'active' : ''}}"><a href="{{route('admin.tigob2c.index')}}"><i class="fas fa-link"></i> Tigopesa B2C </a></li>
                 </ul>
             </li>

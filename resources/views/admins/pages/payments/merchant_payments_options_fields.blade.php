@@ -1,0 +1,1 @@
+<li class="{{Request::is('admin/merchant-payments*') ? 'active' : ''}}"><a href="{{route('admin.merchant_payments.summary')}}" >Summary</a></li>

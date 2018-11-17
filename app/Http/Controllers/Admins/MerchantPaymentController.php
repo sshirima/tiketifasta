@@ -8,11 +8,8 @@
 
 namespace App\Http\Controllers\Admins;
 
-use App\Models\BookingPayment;
-use App\Models\Merchant;
-use App\Models\Ticket;
+use App\Models\Schedule;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Okipa\LaravelBootstrapTableList\TableList;
 
 class MerchantPaymentController extends BaseController
@@ -23,9 +20,9 @@ class MerchantPaymentController extends BaseController
         parent::__construct();
     }
 
-    public function index(Request $request){
+    public function summaryReport(Request $request){
 
-        $report = \DB::table('schedules')->select('merchants.id as merchant_id','days.date as date','booking_payments.method as payment_method',
+        /*$report = \DB::table('schedules')->select('merchants.id as merchant_id','days.date as date','booking_payments.method as payment_method',
             \DB::raw('sum(booking_payments.amount) as price'))
             ->join('bookings','bookings.schedule_id','=','schedules.id')
             ->join('buses','buses.id','=','schedules.bus_id')
@@ -33,35 +30,49 @@ class MerchantPaymentController extends BaseController
             ->join('days','days.id','=','schedules.day_id')
             ->join('tickets','tickets.booking_id','=','bookings.id')
             ->join('booking_payments','booking_payments.booking_id','=','bookings.id')
-            ->where('days.date','=','2018-09-07')
+            ->where('days.date','=',date('Y-m-d'))
             ->groupBy('days.date','merchants.id','booking_payments.method')->get();
 
-        return $report;
+        return $report;*/
         //'created_at'=>date('Y-m-d')
-        //$table = $this->createBookingTable();
+        $table = $this->summaryReportTable();
 
-        //return view('admins.pages.payments.index_booking_payments')->with(['table'=>$table]);
+        return view('admins.pages.payments.merchant_payments')->with(['summaryReportTable'=>$table]);
+    }
+
+    public function merchantReport(){
+
+    }
+
+    public function busReport(){
+
     }
 
     /**
      * @return mixed
      */
-    protected function createBookingTable()
+    protected function summaryReportTable()
     {
         $table = app(TableList::class)
-            ->setModel(BookingPayment::class)
+            ->setModel(Schedule::class)
             ->setRowsNumber(10)
             ->enableRowsNumberSelector()
             ->setRoutes([
-                'index' => ['alias' => 'admin.booking_payments.index', 'parameters' => []],
+                'index' => ['alias' => 'admin.merchant_payments.summary', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {
-                $query->select('booking_payments.id as id','booking_payments.payment_ref as payment_ref','booking_payments.booking_id as booking_id',
-                    'booking_payments.amount as amount','booking_payments.method as method','booking_payments.phone_number as phone_number'
-                    ,'booking_payments.created_at as created_at','booking_payments.updated_at as updated_at')
-                    ->join('bookings', 'bookings.id', '=', 'booking_payments.booking_id');
+                $query->select('merchants.id as merchant_id','days.date as date','booking_payments.method as payment_method',
+                    \DB::raw('sum(booking_payments.amount) as price'))
+                    ->join('bookings','bookings.schedule_id','=','schedules.id')
+                    ->join('buses','buses.id','=','schedules.bus_id')
+                    ->join('merchants','merchants.id','=','buses.merchant_id')
+                    ->join('days','days.id','=','schedules.day_id')
+                    ->join('tickets','tickets.booking_id','=','bookings.id')
+                    ->join('booking_payments','booking_payments.booking_id','=','bookings.id')
+                    ->where('days.date','=','2018-09-07')
+                    ->groupBy('days.date','merchants.id','booking_payments.method');
             });
 
-        $table = $this->setTableColumns($table);
+        $table = $this->setSummaryReportColumns($table);
 
         return $table;
     }
@@ -70,12 +81,11 @@ class MerchantPaymentController extends BaseController
      * @param $table
      * @return mixed
      */
-    private function setTableColumns($table)
+    private function setSummaryReportColumns($table)
     {
-        $table->addColumn('payment_ref')->setTitle('Reference')->isSearchable()->sortByDefault();
-        $table->addColumn('amount')->setTitle('Amount')->isSearchable();
-        $table->addColumn('created_at')->setTitle('Created')->isSearchable();
-        $table->addColumn('updated_at')->setTitle('Updated')->isSearchable();
+        $table->addColumn('date')->setTitle('Date')->isSearchable()->sortByDefault()->setCustomTable('days');
+        $table->addColumn('method')->setTitle('Payment via')->isSearchable()->setCustomTable('booking_payments');
+        $table->addColumn('amount')->setTitle('Amount')->isSearchable()->setCustomTable('booking_payments');
 
         return $table;
     }
