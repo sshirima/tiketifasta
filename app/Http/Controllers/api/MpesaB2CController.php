@@ -45,6 +45,6 @@ class MpesaB2CController extends Controller
         } catch (\Exception $exception){
             return 'Error:'.$exception->getMessage();
         }
-        return $response?json_encode('Success'):'Error';
+        return $response;//?json_encode('Success'):'Error';
     }
 }
