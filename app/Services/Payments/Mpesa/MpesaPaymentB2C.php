@@ -166,8 +166,7 @@ trait MpesaPaymentB2C
         $parser = new Parser();
         $input = $parser->xml($request->getContent());
 
-        return $input;
-        /*$resType = $input['ns3:resultType'];
+        $resType = $input['ns3:resultType'];
         $resCode = $input['ns3:resultCode'];
         $resDesc = $input['ns3:resultDesc'];
         $orgConvId = $input['ns3:originatorConversationID'];
@@ -212,8 +211,8 @@ trait MpesaPaymentB2C
             if ($key == 'Amount'){
 
             }
-        }
-        return true;*/
+        }*/
+        return true;
     }
 
     /**
