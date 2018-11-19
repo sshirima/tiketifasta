@@ -20,23 +20,28 @@
 @endsection
 
 @section('content-body')
+
     <section class="content container-fluid">
             <div class="box box-primary">
                 <div class="box-header">
-                    <section class="content-header">
-                        <h5 class="pull-left">Merchants</h5>
-                        <h5 class="pull-right">
-                            <a class="btn btn-primary pull-right"
-                               href="{{route('admin.merchant.create')}}">Add merchant</a>
-                        </h5>
-                    </section>
+                    <h6 class="pull-right">
+                        <a class="btn btn-primary pull-right"
+                           href="{{route('admin.merchant.create')}}">Add merchant</a>
+                    </h6>
                 </div>
                 <div class="box-body">
-                    @if(count($merchants) <=0)
-                        No records
-                    @else
-                        @include('admins.pages.merchants.table')
-                    @endif
+                    <div class="nav-tabs-custom">
+                        <div class="nav nav-tabs">
+                            @include('admins.pages.payment_accounts.merchant_payment_account_options_filed')
+                        </div>
+                        <div class="tab-content">
+                            @if(count($merchants) <=0)
+                                No records
+                            @else
+                                @include('admins.pages.merchants.table')
+                            @endif
+                        </div>
+                    </div>
                 </div>
             </div>
     </section>

@@ -143,6 +143,11 @@ Route::prefix('admin')->group(function () {
     Route::get('merchant-payments/summary', 'Admins\MerchantPaymentController@summaryReport')->name('admin.merchant_payments.summary');
     Route::get('merchant-payments/{id}/merchant-report', 'Admins\MerchantPaymentController@merchantReport')->name('admin.merchant_payments.merchant_report');
     Route::get('merchant-payments/{id}/bus-report', 'Admins\MerchantPaymentController@busReport')->name('admin.merchant_payments.bus_report');
+    Route::get('merchant-payments-accounts/index', 'Admins\MerchantPaymentAccountController@index')->name('admin.merchant_payment_accounts.index');
+    Route::get('merchant-payments-accounts/create', 'Admins\MerchantPaymentAccountController@create')->name('admin.merchant_payment_accounts.create');
+    Route::post('merchant-payments-accounts/store', 'Admins\MerchantPaymentAccountController@store')->name('admin.merchant_payment_accounts.store');
+    Route::get('merchant-payments-accounts/edit', 'Admins\MerchantPaymentAccountController@edit')->name('admin.merchant_payment_accounts.edit');
+    Route::put('merchant-payments-accounts/update', 'Admins\MerchantPaymentAccountController@update')->name('admin.merchant_payment_accounts.update');
 
     Route::get('payments/tigopesa/c2b', 'Admins\TigoSecureC2BController@index')->name('admin.tigoonline_c2b.index');
     Route::get('payments/tigopesa/b2c', 'Admins\TigoB2CController@index')->name('admin.tigo_b2c.index');

@@ -33,6 +33,9 @@ trait MpesaPaymentB2C
             'transaction_date'=>PaymentManager::getCurrentTimestamp(),
             'transaction_id'=>strtoupper(PaymentManager::random_code(10)),
         ]);
+
+        \Log::channel('mpesab2c')->error('Mpesa B2C transaction initiated: transactionID='.$mpesaB2C->transaction_id . PHP_EOL);
+
         try{
             $requestBody = $this->getMpesaB2CInitializationParameter($mpesaB2C);
 
@@ -153,7 +156,7 @@ trait MpesaPaymentB2C
         $mpesaReceipt =$input['ns3:mpesaReceipt'];
         $resultParams =$input['ns3:resultParameters']['ns3:parameter'];
 
-        \Log::channel('mpesab2c')->error('Confirmation request received: Transaction ID='.$trID . PHP_EOL);
+        \Log::channel('mpesab2c')->error('Confirmation request received: transactionID='.$trID .', response='.$input. PHP_EOL);
 
         $mpesaB2C = MpesaB2C::where(['transaction_id'=>$trID])->first();
 

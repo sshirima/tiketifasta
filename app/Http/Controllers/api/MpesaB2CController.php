@@ -24,7 +24,7 @@ class MpesaB2CController extends Controller
     }
     public function initiateB2CTransaction(){
 
-        $response = $this->initializeMpesaB2CTransaction('0754710618','100');
+        $response = $this->initializeMpesaB2CTransaction('255754710618','500');
 
         if($response['status']){
             return 'Success : '.json_encode($response['response']);
