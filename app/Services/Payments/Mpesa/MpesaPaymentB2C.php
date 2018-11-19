@@ -175,7 +175,7 @@ trait MpesaPaymentB2C
         $mpesaReceipt =$input['ns3:mpesaReceipt'];
         $resultParams =$input['ns3:resultParameters']['ns3:parameter'];
 
-        \Log::channel('mpesab2c')->info('Confirmation request received: transactionID='.$trID .', response='.$input. PHP_EOL);
+        \Log::channel('mpesab2c')->info('Confirmation request received: transactionID='.$trID .', response='.json_encode($input). PHP_EOL);
 
         $mpesaB2C = MpesaB2C::where(['transaction_id'=>$trID])->first();
 
