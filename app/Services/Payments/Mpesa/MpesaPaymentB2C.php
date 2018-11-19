@@ -194,6 +194,7 @@ trait MpesaPaymentB2C
             $mpesaB2C->status = MpesaB2C::STATUS_LEVEL[2];
         } else {
             $mpesaB2C->status = MpesaB2C::STATUS_LEVEL[3];
+            $mpesaB2C->mpesa_receipt = $mpesaReceipt;
             Log::channel('mpesab2c')->error('Result code error: response='.json_encode($input) . PHP_EOL);
         }
 
