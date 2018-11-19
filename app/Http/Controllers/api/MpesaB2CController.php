@@ -43,7 +43,7 @@ class MpesaB2CController extends Controller
             $input = $parser->xml($request->getContent());*/
             $response = $this->confirmMpesaB2CTransaction($request);
         } catch (\Exception $exception){
-            return 'Error:'.$exception->getMessage();
+            return 'Error:'.$exception->getTraceAsString();
         }
         return $response;//?json_encode('Success'):'Error';
     }
