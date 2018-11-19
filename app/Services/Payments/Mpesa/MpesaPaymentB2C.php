@@ -21,6 +21,11 @@ trait MpesaPaymentB2C
 
     use MpesaB2CData;
 
+    /**
+     * @param $receipt
+     * @param $amount
+     * @return array|null
+     */
     public function initializeMpesaB2CTransaction($receipt, $amount){
         $reply = null;
         $ch = curl_init();
@@ -34,10 +39,12 @@ trait MpesaPaymentB2C
             'transaction_id'=>strtoupper(PaymentManager::random_code(10)),
         ]);
 
-        //\Log::channel('mpesab2c')->error('Mpesa B2C transaction initiated: transactionID='.$mpesaB2C->transaction_id . PHP_EOL);
+        //Log::channel('mpesab2c')->error('Mpesa B2C transaction initiated: transactionID='.$mpesaB2C->transaction_id . PHP_EOL);
 
         try{
             $requestBody = $this->getMpesaB2CInitializationParameter($mpesaB2C);
+
+            Log::channel('mpesab2c')->info('Request='.$requestBody . PHP_EOL);
 
             $url = config('payments.mpesa.b2c.url_initiate');
 
@@ -61,7 +68,7 @@ trait MpesaPaymentB2C
             if ($response === false) {
                 $info = curl_getinfo($ch);
                 if ($info['http_code'] === 0) {
-                    Log::channel('mpesab2c')->error('Connection timeout:' . PHP_EOL);
+                    Log::channel('mpesab2c')->error('Connection timeout: transactionID='.$mpesaB2C->transaction_id . PHP_EOL);
                     $this->setMpesaB2CTransactionTimeout($mpesaB2C);
                 }
             }
@@ -72,7 +79,7 @@ trait MpesaPaymentB2C
                 {
                     case 200:
                         //Confirm the transaction, set booking and ticket  confirmed send notification to user
-                        Log::channel('mpesab2c')->info('B2C transaction initiated' . PHP_EOL);
+                        Log::channel('mpesab2c')->info('B2C transaction initiated: transactionID='.$mpesaB2C->transaction_id . PHP_EOL);
                         $parser = new Parser();
                         $res = $parser->xml($response);
 
@@ -96,10 +103,18 @@ trait MpesaPaymentB2C
         return $reply;
     }
 
+    /**
+     * @param $values
+     * @return mixed
+     */
     public function createMpesaB2CTransaction($values){
         return MpesaB2C::create($values);
     }
 
+    /**
+     * @param $mpesaB2C
+     * @return mixed
+     */
     private function getMpesaB2CInitializationParameter($mpesaB2C){
         $mpesa = new Mpesa();
         $timestamp = PaymentManager::getCurrentTimestamp();
@@ -143,6 +158,10 @@ trait MpesaPaymentB2C
         return $res;
     }
 
+    /**
+     * @param Request $request
+     * @return bool
+     */
     protected function confirmMpesaB2CTransaction(Request $request){
         $parser = new Parser();
         $input = $parser->xml($request->getContent());
@@ -161,12 +180,12 @@ trait MpesaPaymentB2C
         $mpesaB2C = MpesaB2C::where(['transaction_id'=>$trID])->first();
 
         if(!isset($mpesaB2C)){
-            Log::channel('mpesab2c')->error('Mpesa B2C transaction not found: ID='.$trID . PHP_EOL);
+            Log::channel('mpesab2c')->error('Mpesa B2C transaction not found: transactionID='.$trID . PHP_EOL);
             return false;
         }
 
         if(!($mpesaB2C->og_conversation_id == $orgConvId)){
-            Log::channel('mpesab2c')->error('Original conversation ID do not match: TransactionID='.$trID . PHP_EOL);
+            Log::channel('mpesab2c')->error('Original conversation ID do not match: transactionID='.$trID . PHP_EOL);
             return false;
         }
         if ($resCode == '0'){
