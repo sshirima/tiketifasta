@@ -24,12 +24,16 @@ class MpesaB2CController extends Controller
     }
     public function initiateB2CTransaction(){
 
-        $response = $this->initializeMpesaB2CTransaction('255754710618','500');
+        try{
+            $response = $this->initializeMpesaB2CTransaction('255754710618','500');
 
-        if($response['status']){
-            return 'Success : '.json_encode($response['response']);
-        } else {
-            return 'Error: '.$response['error'];
+            if($response['status']){
+                return 'Success : '.json_encode($response['response']);
+            } else {
+                return 'Error: '.$response['error'];
+            }
+        }catch (\Exception $exception){
+            return 'Error: '.$exception->getMessage();
         }
     }
 
@@ -39,12 +43,10 @@ class MpesaB2CController extends Controller
      */
     public function confirmB2CTransaction(Request $request){
         try{
-            /*$parser = new Parser();
-            $input = $parser->xml($request->getContent());*/
             $response = $this->confirmMpesaB2CTransaction($request);
         } catch (\Exception $exception){
-            return 'Error:'.$exception->getTraceAsString();
+            return 'Error:'.$exception->getMessage();
         }
-        return json_encode($response);//?json_encode('Success'):'Error';
+        return $response?json_encode('Success'):'Error';
     }
 }

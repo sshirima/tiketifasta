@@ -160,7 +160,7 @@ trait MpesaPaymentB2C
 
     /**
      * @param Request $request
-     * @return bool
+     * @return array|bool
      */
     protected function confirmMpesaB2CTransaction(Request $request){
         $parser = new Parser();
