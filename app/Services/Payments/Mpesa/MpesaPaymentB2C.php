@@ -156,7 +156,7 @@ trait MpesaPaymentB2C
         $mpesaReceipt =$input['ns3:mpesaReceipt'];
         $resultParams =$input['ns3:resultParameters']['ns3:parameter'];
 
-        \Log::channel('mpesab2c')->error('Confirmation request received: transactionID='.$trID .', response='.$input. PHP_EOL);
+        \Log::channel('mpesab2c')->info('Confirmation request received: transactionID='.$trID .', response='.$input. PHP_EOL);
 
         $mpesaB2C = MpesaB2C::where(['transaction_id'=>$trID])->first();
 
@@ -202,6 +202,8 @@ trait MpesaPaymentB2C
     protected function setMpesaB2CTransactionTimeout($mpesaB2C): void
     {
         $mpesaB2C->status = MpesaB2C::STATUS_LEVEL[1];
+        $mpesaB2C->result_code = MpesaB2C::ERROR_CODE_001;
+        $mpesaB2C->result_desc = MpesaB2C::ERROR_DESC_001;
         $mpesaB2C->init_code = MpesaB2C::ERROR_CODE_001;
         $mpesaB2C->init_desc = MpesaB2C::ERROR_DESC_001;
         $mpesaB2C->update();
