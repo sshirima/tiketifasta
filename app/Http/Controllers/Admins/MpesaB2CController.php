@@ -66,8 +66,8 @@ class MpesaB2CController extends BaseController
         $table->addColumn('result_code')->setTitle('Result code')->isSearchable();
         $table->addColumn('result_desc')->setTitle('Result Desc')->isSearchable();
         $table->addColumn('status')->setTitle('Status')->isSearchable();
-        $table->addColumn('created_at')->isSortable()->setTitle('Created at');
-        $table->addColumn('updated_at')->isSortable()->setTitle('Updated at')->sortByDefault('desc');
+        $table->addColumn('created_at')->isSortable()->setTitle('Created at')->sortByDefault('desc');
+        $table->addColumn('updated_at')->isSortable()->setTitle('Updated at');
         return $table;
     }
 }
