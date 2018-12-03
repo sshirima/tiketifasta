@@ -52,7 +52,7 @@ trait AddBookingService
 
             //Create bookingPayment
             $bookingPayment = BookingPayment::create([
-                'payment_ref'=>strtoupper(PaymentManager::random_code(12)),
+                'payment_ref'=>strtoupper(PaymentManager::random_code(8)),
                 'amount'=>$booking->price,
                 'booking_id'=>$booking->id,
                 'method'=>$payment,
@@ -73,7 +73,7 @@ trait AddBookingService
             } else
                 if ($payment == 'tigopesa') {
                     $tigoOnlineC2B = $this->paymentManager->initialiazeTigoSecureC2B(array(
-                        TigoOnlineC2B::COLUMN_REFERENCE => strtoupper(PaymentManager::random_code(12)),
+                        TigoOnlineC2B::COLUMN_REFERENCE => $bookingPayment->payment_ref,//strtoupper(PaymentManager::random_code(12)),
                         TigoOnlineC2B::COLUMN_PHONE_NUMBER => $booking->phonenumber,
                         TigoOnlineC2B::COLUMN_FIRST_NAME =>$booking->firstname,
                         TigoOnlineC2B::COLUMN_LAST_NAME => $booking->lastname,
