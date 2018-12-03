@@ -147,10 +147,9 @@ trait TigoTransactionC2B
      * @param Request $request
      * @return array
      */
-    protected function confirmTigoSecureC2BTransaction(Request $request)
+    public function confirmTigoSecureC2BTransaction(Request $request)
     {
         $transaction = null;
-        $response = array('status'=>false);
 
         try {
             $input = $request->all();
