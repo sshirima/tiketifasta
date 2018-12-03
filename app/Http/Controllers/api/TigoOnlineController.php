@@ -12,6 +12,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\TigoOnlineC2B;
+use App\Services\Bookings\AuthorizeBooking;
 use App\Services\DateTime\DatesOperations;
 use App\Services\Payments\PaymentManager;
 use App\Services\Payments\Tigosecure\TigoOnline;
@@ -24,7 +25,7 @@ use Log;
 
 class TigoOnlineController extends Controller
 {
-    use DatesOperations, TicketManager, SendSMS;
+    use DatesOperations, TicketManager, SendSMS, AuthorizeBooking;
 
     private $tigoOnline;
 
@@ -34,159 +35,25 @@ class TigoOnlineController extends Controller
     }
 
     /**
-     * @return null
-     */
-    public function generateAccessToken()
-    {
-
-        $accessToken = $this->tigoOnline->getAccessToken();
-
-        return $accessToken;
-
-    }
-
-    /**
-     * @return string
-     */
-    public function serverStatus()
-    {
-
-        try {
-            $serverStatus = $this->tigoOnline->getServerStatus();
-        } catch (Exception $exception) {
-            return $exception->getMessage();
-        }
-
-        return json_encode($serverStatus);
-    }
-
-    /**
-     * @return string
-     */
-    public function validateAccount(Request $request)
-    {
-
-        try {
-            $input = $request->all();
-
-            $tigoOnline = TigoOnlineC2B::where(['reference'=>$input['reference']])->first();
-
-            if (isset($tigoOnline)){
-                $response = $this->tigoOnline->validateMFSAccount($tigoOnline->reference, $tigoOnline->phone_number, $tigoOnline->firstname, $tigoOnline->lastname);
-            } else {
-                $response = 'Transaction not found: Id='.$input['reference'];
-            }
-        } catch (Exception $exception) {
-            return $exception->getMessage();
-        };
-        return json_encode($response);
-    }
-
-    /**
-     * @param Request $request
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|string
-     */
-    public function authorizePayment(Request $request)
-    {
-        try {
-            $input = $request->all();
-            $tigoOnlineC2B = TigoOnlineC2B::create([
-                TigoOnlineC2B::COLUMN_REFERENCE => strtoupper(PaymentManager::random_code(12)),
-                TigoOnlineC2B::COLUMN_PHONE_NUMBER => $input['msisdn'],
-                TigoOnlineC2B::COLUMN_FIRST_NAME => $input['firstname'],
-                TigoOnlineC2B::COLUMN_LAST_NAME => $input['lastname'],
-                TigoOnlineC2B::COLUMN_TAX =>'0',
-                TigoOnlineC2B::COLUMN_FEE => '0',
-                TigoOnlineC2B::COLUMN_AMOUNT => $input['amount'],
-            ]);
-
-            $response = $this->tigoOnline->paymentAuthorization($tigoOnlineC2B);
-
-            if ($response['status_code'] == 200) {
-                $res = json_decode($response['response']);
-                if (isset($res->authCode)) {
-                    $tigoOnlineC2B->auth_code = $res->authCode;
-                    $tigoOnlineC2B->authorized_at = $this->convertDate($tigoOnlineC2B->creationDateTime,'Y-m-d H:i:s');
-                    $tigoOnlineC2B->update();
-                    return redirect($res->redirectUrl);
-                } else {
-                    //Log auth code not found
-                    Log::channel('tigosecurec2b')->error('Auth code not found[' . 'Response:' . $response['response'] . ']' . PHP_EOL);
-                    return '';
-                }
-
-            } else {
-                //Log Payment authorization failed
-                Log::channel('tigosecurec2b')->error('Authorization failed[' . 'StatusCode:' . $response['status_code'] . ']' . PHP_EOL);
-                return json_encode($response);
-            }
-        } catch (Exception $exception) {
-            Log::error($exception->getTraceAsString());
-            return $exception->getMessage();
-        }
-    }
-
-    /**
      * @param Request $request
      * @return string
      */
     public function confirmPayment(Request $request)
     {
-        $transaction = null;
-        try {
-            $input = $request->all();
+        $response = $this->tigoOnline->confirmTigoSecureC2BTransaction($request);
 
-            if($input['trans_status'] == 'success'){
-                $transactionId = $input['transaction_ref_id'];
-
-                $transaction = TigoOnlineC2B::with(['bookingPayment','bookingPayment.booking','bookingPayment.booking.schedule.day',
-                    'bookingPayment.booking.trip','bookingPayment.booking.trip.bus','bookingPayment.booking.trip.bus.merchant',
-                    'bookingPayment.booking.trip.bus','bookingPayment.booking.seat'])->where(['reference'=>$transactionId])->first();
-
-                if (isset($transaction)) {
-                    if ($transaction->access_token == $input['verification_code']) {
-
-                        $this->tigoOnline->confirmTigoSecurePaymentC2B($transaction, $request);
-
-                        $booking = $transaction->bookingPayment->booking;
-
-                        $bookingPayment = $transaction->bookingPayment;
-
-                        $ticket = $this->createTicket($bookingPayment);
-
-                        $booking->confirmBooking();
-
-                        $this->confirmTicket($ticket);
-
-                        $message = $this->generateTicketMessage($ticket, $transaction);
-
-                        $phoneNumber = $ticket->booking->phonenumber;
-
-                        $this->sendTicketReference($ticket->booking->payment, $phoneNumber, $message);
-
-                        return view('users.pages.bookings.booking_confirmation')->with(['ticket'=>$ticket,'transaction'=>$transaction,'bookingPayment' => $bookingPayment, 'booking' => $booking]);
-
-                    } else {
-                        $error = 'Access code and verification code mismatch';
-                        return view('users.pages.bookings.booking_confirmation')->with(['error' => $error]);
-                    }
-                } else {
-                    $error = 'Transaction not found with given Id';
-                    return view('users.pages.bookings.booking_confirmation')->with(['error' => $error]);
-                }
-
-            } else {
-                Log::channel('tigosecurec2b')->error('Transaction confirmation failed[' . 'TransactionRef:' .
-                    $input['transaction_ref_id'] . ', ErrorCode:'.$input['error_code'].']' . PHP_EOL);
-
-                $error = 'Transaction failed : '.$this->tigoOnline->errorCategory($input['error_code']);
-
-                return view('users.pages.bookings.booking_confirmation')->with(['error' => $error]);
-                //return $this->tigoOnline->errorCategory($input['error_code']);
-            }
-        } catch (Exception $ex) {
-            //return $transaction;
-            return $ex->getMessage();
+        if(!$response['status']){
+            return view('users.pages.bookings.booking_confirmation')->with(['error' => $response['error']]);
         }
+
+        $tigoC2B = $response['model'];
+
+        $this->setBookingConfirmed($tigoC2B->bookingPayment->booking);
+
+        $ticket = $this->processTicket($tigoC2B);
+
+        return view('users.pages.bookings.booking_confirmation')->with(['ticket' => $ticket, 'transaction' => $tigoC2B,
+            'bookingPayment' => $tigoC2B->bookingPayment, 'booking' => $ticket->booking]);
     }
+
 }

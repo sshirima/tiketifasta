@@ -11,35 +11,16 @@ namespace App\Services\SMS;
 
 use App\Models\SentSMS;
 use App\Models\Ticket;
+use App\Models\TigoOnlineC2B;
 
 trait SendSMS
 {
-    /**
-     * @param $operator
-     * @param $phoneNumber
-     * @param $message
-     * @return array|bool
-     */
-    public function sendOneSMS($operator, $phoneNumber, $message){
+    public function sendConfirmationMessageToCustomer($ticket, $transaction){
 
-        $numCheck = $this->checkNumber($phoneNumber);
+        $message = $this->generateTicketMessage($ticket, $transaction);
 
-        if ($numCheck['status'] == false){
-            \Log::channel('sms_logs')->error($numCheck['error'] . PHP_EOL);
-            return ['status'=>false,'error'=>$numCheck['error']];
-        }
-
-        $sendSMS = $this->sendMessage($operator, $numCheck['number'], $message);
-
-        if($sendSMS['status']){
-            return ['status'=>true];
-        } else {
-            return ['status'=>false,'error'=>$sendSMS['error']];
-        }
-    }
-
-
-    public function sendTicketReference($operator, $phoneNumber, $message){
+        $operator = $ticket->booking->payment;
+        $phoneNumber = $ticket->booking->phonenumber;
 
         $numCheck = $this->checkNumber($phoneNumber);
 
@@ -55,6 +36,27 @@ trait SendSMS
         } else {
             return ['status'=>false,'error'=>$isSent['error']];
         }
+    }
+
+    public function generateTicketMessage(Ticket $ticket, $transaction){
+
+        $format = config('smsc.format');
+
+        $customerName = $ticket->booking->firstname;
+        $busRegNumber = $transaction->bookingPayment->booking->trip->bus->reg_number;
+
+        $date = $transaction->bookingPayment->booking->schedule->day->date;
+        $time = $transaction->bookingPayment->booking->trip->depart_time;
+        $formattedDate = date('Y:m:d G:i', strtotime($date.' '.$time));
+        //$formattedDate = \DateTime::createFromFormat('Y-m-d G:i', $date.' '.$time)->format('Y:m:d G:i');
+
+        $from = $transaction->bookingPayment->booking->trip->from->name;
+        $to = $transaction->bookingPayment->booking->trip->to->name;
+        $ticketRef = $ticket->ticket_ref;
+
+        $message = sprintf($format,$customerName, $busRegNumber,  $from, $to, $formattedDate, strtoupper($ticketRef));
+
+        return $message;
     }
 
     private function checkNumber($phoneNumber){
@@ -81,6 +83,30 @@ trait SendSMS
     {
         $len = strlen($startString);
         return (substr($string, 0, $len) === $startString);
+    }
+
+    /**
+     * @param $operator
+     * @param $phoneNumber
+     * @param $message
+     * @return array|bool
+     */
+    public function sendOneSMS($operator, $phoneNumber, $message){
+
+        $numCheck = $this->checkNumber($phoneNumber);
+
+        if ($numCheck['status'] == false){
+            \Log::channel('sms_logs')->error($numCheck['error'] . PHP_EOL);
+            return ['status'=>false,'error'=>$numCheck['error']];
+        }
+
+        $sendSMS = $this->sendMessage($operator, $numCheck['number'], $message);
+
+        if($sendSMS['status']){
+            return ['status'=>true];
+        } else {
+            return ['status'=>false,'error'=>$sendSMS['error']];
+        }
     }
 
     /**

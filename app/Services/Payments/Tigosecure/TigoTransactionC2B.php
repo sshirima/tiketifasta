@@ -9,6 +9,9 @@
 namespace App\Services\Payments\Tigosecure;
 
 use App\Models\TigoOnlineC2B;
+use App\Services\DateTime\DatesOperations;
+use App\Services\SMS\SendSMS;
+use App\Services\Tickets\TicketManager;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,7 +19,7 @@ use Log;
 
 trait TigoTransactionC2B
 {
-    use TigoTransactionC2BRequests;
+    use TigoTransactionC2BRequests, DatesOperations, TicketManager, SendSMS;
 
     public function serverStatus()
     {
@@ -37,7 +40,6 @@ trait TigoTransactionC2B
                 $serverStatus =  json_decode($response->getBody());
             } else {
                 //Log error: Failed to retrieve server status
-
             }
 
         } else {
@@ -47,6 +49,10 @@ trait TigoTransactionC2B
         return $serverStatus;
     }
 
+    /**
+     * @param TigoOnlineC2B $tigoOnlineC2B
+     * @return array|null
+     */
     public function paymentAuthorization(TigoOnlineC2B $tigoOnlineC2B)
     {
 
@@ -86,6 +92,13 @@ trait TigoTransactionC2B
         return $payment;
     }
 
+    /**
+     * @param $transactionId
+     * @param $msisdn
+     * @param $firstname
+     * @param $lastname
+     * @return array|null
+     */
     public function validateMFSAccount($transactionId, $msisdn, $firstname, $lastname){
 
         $accountStatus = null;
@@ -131,6 +144,64 @@ trait TigoTransactionC2B
     }
 
     /**
+     * @param Request $request
+     * @return array
+     */
+    protected function confirmTigoSecureC2BTransaction(Request $request)
+    {
+        $transaction = null;
+        $response = array('status'=>false);
+
+        try {
+            $input = $request->all();
+
+            //Check if successful
+            $transactionId = $input['transaction_ref_id'];
+            $transaction = TigoOnlineC2B::with(['bookingPayment', 'bookingPayment.booking', 'bookingPayment.booking.schedule.day',
+                'bookingPayment.booking.trip', 'bookingPayment.booking.trip.bus', 'bookingPayment.booking.trip.bus.merchant',
+                'bookingPayment.booking.trip.bus', 'bookingPayment.booking.seat'])->where(['reference' => $transactionId])->first();
+
+            if (!isset($transaction)) {
+                $error = 'Transaction not found with ID=' . $transactionId;
+                Log::channel('tigosecurec2b')->error($error . PHP_EOL);
+
+                return ['status'=>false, 'error'=>$error];
+            }
+
+            if (!$input['trans_status'] == 'success') {
+
+                $error = 'Transaction failed with errorCode:'.$input['error_code'];
+                Log::channel('tigosecurec2b')->error($error . PHP_EOL);
+
+                $transaction->status = TigoOnlineC2B::STATUS_FAIL;
+                $transaction->error_code = $input['error_code'];
+                $transaction->update();
+
+
+                return ['status'=>false, 'error'=>$error];
+
+            }
+
+            if (!$transaction->access_token == $input['verification_code']) {
+                $error = 'Access code and verification code mismatch';
+                Log::channel('tigosecurec2b')->error($error . PHP_EOL);
+
+                return ['status'=>false, 'error'=>$error];
+            }
+
+            $this->updateMfsParameters($transaction, $request);
+
+            return ['status'=>true, 'model'=>$transaction];
+
+        } catch (\Exception $ex) {
+            //return $transaction;
+            $error = 'An exception was thrown on TigoTransactionC2B:confirmTigoSecureB2CTransaction, message='.$ex->getMessage();
+            Log::channel('tigosecurec2b')->error($error . PHP_EOL);
+            return ['status'=>false, 'error'=>'Something went wrong during processing'];
+        }
+    }
+
+    /**
      * @param TigoOnlineC2B $tigoOnlineC2B
      * @param $accessToken
      */
@@ -154,7 +225,7 @@ trait TigoTransactionC2B
      * @param TigoOnlineC2B $tigoOnlineC2B
      * @param Request $request
      */
-    public function confirmTigoSecurePaymentC2B(TigoOnlineC2B $tigoOnlineC2B, Request $request){
+    public function updateMfsParameters(TigoOnlineC2B $tigoOnlineC2B, Request $request){
         $input = $request->all();
 
         if($request->has('mfs_id')){

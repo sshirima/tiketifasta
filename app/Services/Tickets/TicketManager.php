@@ -8,36 +8,44 @@
 
 namespace App\Services\Tickets;
 
-
 use App\Models\BookingPayment;
 use App\Models\Ticket;
-use App\Models\TigoOnlineC2B;
 
 trait TicketManager
 {
 
+    public function processTicket($transaction){
+
+        $bookingPayment = $transaction->bookingPayment;
+
+        $ticket = $this->createTicket($bookingPayment);
+
+        //$this->confirmTicket($ticket);
+
+        $this->sendConfirmationMessageToCustomer($ticket, $transaction);
+
+        return $ticket;
+    }
+
     /**
      * @param BookingPayment $bookingPayment
-     * @return \Illuminate\Database\Eloquent\Model|null|object|static
+     * @return mixed
      */
     public function createTicket(BookingPayment $bookingPayment){
 
         $booking = $bookingPayment->booking()->first();
 
-        $ticket = $bookingPayment->ticket()->first();
-
-        if (isset($ticket)){
-            return $ticket;
-        } else {
-            return Ticket::create([
-                Ticket::COLUMN_TICKET_REFERENCE => strtoupper($this->generateTicketRef(6)),
-                Ticket::COLUMN_BOOKING_ID => $booking->id,
-                Ticket::COLUMN_PAYMENT_ID => $bookingPayment->id,
-                Ticket::COLUMN_PRICE => $bookingPayment->amount,
-                Ticket::COLUMN_STATUS => Ticket::STATUS_VALID,
-            ]);
-        }
+        return Ticket::createOrUpdate([
+            Ticket::COLUMN_BOOKING_ID => $booking->id,
+            Ticket::COLUMN_PAYMENT_ID => $bookingPayment->id,
+        ],[
+            Ticket::COLUMN_TICKET_REFERENCE => strtoupper($this->generateTicketRef(6)),
+            Ticket::COLUMN_PRICE => $bookingPayment->amount,
+            Ticket::COLUMN_STATUS => Ticket::STATUS_CONFIRMED,
+        ]);
     }
+
+
 
     /**
      * @param Ticket $ticket
@@ -46,28 +54,6 @@ trait TicketManager
     public function confirmTicket(Ticket $ticket){
         $ticket->status = Ticket::STATUS_CONFIRMED;
         return $ticket->update();
-    }
-
-
-    public function generateTicketMessage(Ticket $ticket, TigoOnlineC2B $tigoOnlineC2B){
-
-        $format = config('smsc.format');
-
-        $customerName = $ticket->booking->firstname;
-        $busRegNumber = $tigoOnlineC2B->bookingPayment->booking->trip->bus->reg_number;
-
-        $date = $tigoOnlineC2B->bookingPayment->booking->schedule->day->date;
-        $time = $tigoOnlineC2B->bookingPayment->booking->trip->depart_time;
-        $formattedDate = date('Y:m:d G:i', strtotime($date.' '.$time));
-        //$formattedDate = \DateTime::createFromFormat('Y-m-d G:i', $date.' '.$time)->format('Y:m:d G:i');
-
-        $from = $tigoOnlineC2B->bookingPayment->booking->trip->from->name;
-        $to = $tigoOnlineC2B->bookingPayment->booking->trip->to->name;
-        $ticketRef = $ticket->ticket_ref;
-
-        $message = sprintf($format,$customerName, $busRegNumber,  $from, $to, $formattedDate, strtoupper($ticketRef));
-
-        return $message;
     }
 
     /**

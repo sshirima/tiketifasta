@@ -50,7 +50,7 @@ class MpesaC2BTransactionProcessor implements ShouldQueue
 
                 $booking = $bookingPayment->booking()->first();
 
-                $this->authorizeBooking($booking);
+                $this->setBookingConfirmed($booking);
 
                 $ticket = $this->createTicket($bookingPayment);
 

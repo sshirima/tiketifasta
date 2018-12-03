@@ -14,21 +14,38 @@ trait AuthorizeBooking
 {
 
 
+    public function setBookingCancelled(Booking $booking){
+        $this->updateBookingStatus($booking, Booking::STATUS_CANCELLED);
+    }
+
     /**
      * @param Booking $booking
      */
     public function setBookingExpired(Booking $booking){
-        $booking->status = 'EXPIRED';
-        $booking->update();
+        $this->updateBookingStatus($booking, Booking::STATUS_EXPIRED);
 
     }
 
     /**
      * @param Booking $booking
      */
-    public function authorizeBooking(Booking $booking){
-        $booking->status = 'AUTHORIZED';
-        $booking->update();
+    public function setBookingConfirmed(Booking $booking){
+        $this->updateBookingStatus($booking, Booking::STATUS_CONFIRMED);
+    }
 
+    /**
+     * @param Booking $booking
+     */
+    public function setBookingPending(Booking $booking){
+        $this->updateBookingStatus($booking, Booking::STATUS_PENDING);
+    }
+
+    /**
+     * @param Booking $booking
+     * @param $status
+     */
+    private function updateBookingStatus(Booking $booking, $status){
+        $booking->status = $status;
+        $booking->update();
     }
 }

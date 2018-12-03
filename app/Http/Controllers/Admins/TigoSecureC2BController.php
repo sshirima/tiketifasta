@@ -61,15 +61,32 @@ class TigoSecureC2BController extends BaseController
             return $entity['firstname'].' '.$entity['lastname'];
         });
         $table->addColumn('email')->setTitle('Email')->isSearchable();*/
-        $table->addColumn('status')->setTitle('Status')->isCustomHtmlElement(function($entity, $column){
+        /*$table->addColumn('status')->setTitle('Status')->isCustomHtmlElement(function($entity, $column){
             return $entity['status'];
-        });
+        });*/
         //$table->addColumn('updated_at')->setTitle('Updated at')->isSearchable();
         $table->addColumn('created_at')->setTitle('Transaction date')->isSearchable()->sortByDefault();
 
         $table->addColumn('status')->setTitle('Status')->isCustomHtmlElement(function($entity, $column){
-            return $entity['status'];
+            return $this->getTransactionLabelByStatus($entity['status']);
         });
         return $table;
+    }
+
+    private function getTransactionLabelByStatus($status){
+
+        if ($status == 'success'){
+            return '<div class="label label-success">'.'Success'.'</div>';
+        }
+
+        if ($status == 'fail'){
+            return '<div class="label label-danger">'.'Failed'.'</div>';
+        }
+
+        if ($status == 'unauthorized'){
+            return '<div class="label label-warning">'.'Un-authorized'.'</div>';
+        }
+
+        return '<div class="label label-default">'.'Unknown'.'</div>';
     }
 }
