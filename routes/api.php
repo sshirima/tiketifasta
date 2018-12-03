@@ -19,7 +19,7 @@ Route::post('mpesa/b2c/confirm-transaction', 'api\MpesaB2CController@confirmB2CT
 Route::get('mpesa/b2c/initiate-transaction', 'api\MpesaB2CController@initiateB2CTransaction')->name('api.mpesa_b2c.initialize_payment');
 Route::post('mpesa/validate-payment', 'api\MpesaC2BController@validatePaymentC2B')->name('api.mpesa.validate_payment');
 Route::get('mpesa/confirm-payment', 'api\MpesaC2BController@confirmPaymentC2B')->name('api.mpesa.confirm_payment');
-Route::post('tiketifasta/C2B-request-url', 'api\MpesaC2BController@validatePaymentC2B')->name('api.mpesa.confirm_payment');
+Route::post('tiketifasta/C2B-request-url', 'api\MpesaC2BController@validateMpesaC2BTransaction')->name('api.mpesa.confirm_payment');
 
 Route::get('tigo-secure/confirm-payment', 'api\TigoOnlineController@confirmPayment')->name('api.tigo_secure.confirm_payment');
 Route::get('tigo-secure/generate-token', 'api\TigoOnlineController@generateAccessToken')->name('api.tigo_secure.generate_token');
