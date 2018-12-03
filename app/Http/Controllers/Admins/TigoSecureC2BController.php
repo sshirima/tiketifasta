@@ -72,7 +72,7 @@ class TigoSecureC2BController extends BaseController
         });
 
         $table->addColumn('error_code')->setTitle('Error code')->isCustomHtmlElement(function($entity, $column){
-            return $this->getTransactionLabelByStatus($entity['error_code']);
+            return $entity['error_code'];
         });
         return $table;
     }
