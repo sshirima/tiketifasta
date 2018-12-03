@@ -41,7 +41,7 @@ class TigoSecureC2BController extends BaseController
             ])->addQueryInstructions(function ($query) {
                 $query->select('tigoonline_c2b.id as id','tigoonline_c2b.phone_number as phone_number','tigoonline_c2b.amount as amount',
                     'tigoonline_c2b.reference as reference','tigoonline_c2b.created_at as created_at','tigoonline_c2b.updated_at as updated_at',
-                    'tigoonline_c2b.status as status')
+                    'tigoonline_c2b.status as status','tigoonline_c2b.error_code as error_code')
                     ->join('booking_payments', 'booking_payments.id', '=', 'tigoonline_c2b.booking_payment_id');
             });
         $table = $this->setTableColumns($table);
@@ -69,6 +69,10 @@ class TigoSecureC2BController extends BaseController
 
         $table->addColumn('status')->setTitle('Status')->isCustomHtmlElement(function($entity, $column){
             return $this->getTransactionLabelByStatus($entity['status']);
+        });
+
+        $table->addColumn('error_code')->setTitle('Error code')->isCustomHtmlElement(function($entity, $column){
+            return $this->getTransactionLabelByStatus($entity['error_code']);
         });
         return $table;
     }
