@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Notifications\MerchantResetPasswordNotification;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -41,6 +42,17 @@ class Staff extends Authenticatable
         self::COLUMN_EMAIL => 'required|string|email|max:255|unique:users',
         self::COLUMN_PASSWORD => 'required|string|min:6|confirmed'
     ];
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new MerchantResetPasswordNotification($token));
+    }
 
     public function merchant(){
         return $this->belongsTo(Merchant::class, self::COLUMN_MERCHANT_ID,Merchant::COLUMN_ID);

@@ -8,6 +8,7 @@ return [
     'option_schedules' => 'Schedules',
     'option_bookings' => 'Bookings',
     'option_tickets' => 'Tickets',
+    'option_scheduled_tasks' => 'Tasks',
     'option_sent_sms' => 'SMS sent',
     'option_approvals' => 'Approvals',
     'option_buses' => 'Buses',

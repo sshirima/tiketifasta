@@ -8572,7 +8572,7 @@ var TaskQueue = /** @class */ (function () {
         } while (this.canRunNext());
         this.trigger('stop'); // not really a 'stop' ... more of a 'drained'
         this.isRunning = false;
-        // if 'stop' handler added more tasks.... TODO: write test for this
+        // if 'stop' handler added more scheduled_tasks.... TODO: write test for this
         this.tryStart();
     };
     TaskQueue.prototype.runTask = function (task) {
@@ -8652,11 +8652,11 @@ var RenderQueue = /** @class */ (function (_super) {
         if (!_super.prototype.canRunNext.call(this)) {
             return false;
         }
-        // waiting for a certain namespace to stop receiving tasks?
+        // waiting for a certain namespace to stop receiving scheduled_tasks?
         if (this.waitNamespace) {
             var q = this.q;
             // if there was a different namespace task in the meantime,
-            // that forces all previously-waiting tasks to suddenly execute.
+            // that forces all previously-waiting scheduled_tasks to suddenly execute.
             // TODO: find a way to do this in constant time.
             for (var i = 0; i < q.length; i++) {
                 if (q[i].namespace !== this.waitNamespace) {
@@ -9308,7 +9308,7 @@ var EventSource_1 = __webpack_require__(6);
 var ThemeRegistry_1 = __webpack_require__(51);
 var Calendar = /** @class */ (function () {
     function Calendar(el, overrides) {
-        this.loadingLevel = 0; // number of simultaneous loading tasks
+        this.loadingLevel = 0; // number of simultaneous loading scheduled_tasks
         this.ignoreUpdateViewSize = 0;
         this.freezeContentHeightDepth = 0;
         // declare the current calendar instance relies on GlobalEmitter. needed for garbage collection.

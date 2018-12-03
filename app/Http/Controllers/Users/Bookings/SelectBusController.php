@@ -11,12 +11,8 @@ namespace App\Http\Controllers\Users\Bookings;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\CreateBookingRequest;
-use App\Jobs\ConfirmBookingPayment;
-use App\Models\Booking;
-use App\Models\ScheduleSeat;
+use App\Models\Bus;
 use App\Models\Seat;
-use App\Models\TigoOnlineC2B;
-use App\Models\Trip;
 use App\Services\Bookings\BookingManager;
 use App\Services\DateTime\DatesOperations;
 use App\Services\DateTimeService;
@@ -53,8 +49,11 @@ class SelectBusController extends Controller
         $input = $request->all();
 
         if ($request->has('date')) {
+
             $dateIsValid = $this->compareTime($input['date'], date('Y-m-d'));
+
             $date = DateTimeService::convertDate($input['date'], 'Y-m-d');
+
         } else {
             $dateIsValid = 1;
             $input['date'] = date('Y-m-d');
@@ -63,12 +62,14 @@ class SelectBusController extends Controller
 
 
         if ($dateIsValid) {
+
             $trips = $this->tripsManager->findTripForBookings($date, $input['from'], $input['to']);
+
             return view('users.pages.bookings.select_bus')->with(['trips' => $trips]);
+
         } else {
             return view('users.pages.bookings.select_bus')->with(['date_error' => 1]);
         }
-        /*return view('users.pages.bookings.select_bus')->with(['trips' => $trips]);*/
     }
 
     /**
@@ -99,7 +100,9 @@ class SelectBusController extends Controller
     {
         $trip = $this->tripsManager->getSelectedTripDetails($scheduleId, $tripId, $request->all()['seat']);
 
-        return view('users.pages.bookings.booking_details')->with(['trip' => $trip]);
+        $payOptions = $this->getPaymentOptions($busId);
+
+        return view('users.pages.bookings.booking_details')->with(['trip' => $trip,'paymentOptions'=>$payOptions]);
     }
 
     /**
@@ -123,6 +126,7 @@ class SelectBusController extends Controller
             $booking = $res['booking'];
 
             if (isset($res['booking']) && isset($res['paymentModel'])){
+
                 if ($booking->payment == 'mpesa') {
                     $trip = $this->tripsManager->getSelectedTripDetails($scheduleId, $tripId, $request->all()['seat']);
                     $bookingPayment = $booking->bookingPayment;
@@ -130,8 +134,11 @@ class SelectBusController extends Controller
                 }
 
                 if ($booking->payment == 'tigopesa') {
+
                     $tigoOnlineC2B = $res['paymentModel'];
+
                     $tigo = new TigoOnline();
+
                     $response = $tigo->paymentAuthorization($tigoOnlineC2B);
 
                     if ($response['status_code'] == 200) {
@@ -201,6 +208,41 @@ class SelectBusController extends Controller
             $array[$busSeats[$key]['index']] = $seat;
         }
         return $array;
+    }
+
+    /**
+     * @param $paymentMode
+     * @return string
+     */
+    private function getPaymentModeDisplayLabel($paymentMode){
+        if($paymentMode == 'tigopesa'){
+            return 'Tigo pesa';
+        }
+
+        if($paymentMode == 'mpesa'){
+            return 'M-pesa';
+        }
+
+        if($paymentMode == 'airtel'){
+            return 'Airtel money';
+        }
+
+        return 'Unknown';
+    }
+
+    /**
+     * @param $busId
+     * @return array
+     */
+    protected function getPaymentOptions($busId): array
+    {
+        $bus = Bus::with(['merchant', 'merchant.paymentAccounts:merchant_id,payment_mode,account_number'])->select('buses.merchant_id')->find($busId);
+
+        $payOptions = ['Select payment method'];
+        foreach ($bus->merchant->paymentAccounts as $account) {
+            $payOptions[$account->payment_mode] = $this->getPaymentModeDisplayLabel($account->payment_mode);
+        }
+        return $payOptions;
     }
 
 }

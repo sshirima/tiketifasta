@@ -80,7 +80,6 @@ class BusController extends BaseController
         $table = app(TableList::class)
             ->setModel(Bus::class)
             ->setRowsNumber(10)
-            ->enableRowsNumberSelector()
             ->setRoutes([
                 'index' => ['alias' => 'merchant.buses.index', 'parameters' => []],
                 'edit' => ['alias' => 'merchant.buses.edit', 'parameters' => ['id']],

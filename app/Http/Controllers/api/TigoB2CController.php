@@ -10,12 +10,12 @@ namespace App\Http\Controllers\api;
 
 
 use App\Http\Controllers\Controller;
-use App\Services\Payments\Mpesa\MpesaPaymentB2C;
-use App\Services\Payments\TigoUSSD\TigoPaymentB2C;
+use App\Services\Payments\Mpesa\MpesaTransactionB2C;
+use App\Services\Payments\TigoUSSD\TigoTransactionB2C;
 
 class TigoB2CController extends Controller
 {
-    use TigoPaymentB2C;
+    use TigoTransactionB2C;
 
     public function initiateTransaction(){
 

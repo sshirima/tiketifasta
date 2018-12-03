@@ -30,10 +30,9 @@ trait TicketManager
             return $ticket;
         } else {
             return Ticket::create([
-                Ticket::COLUMN_TICKET_REFERENCE => strtoupper($this->generateTicketRef()),
+                Ticket::COLUMN_TICKET_REFERENCE => strtoupper($this->generateTicketRef(6)),
                 Ticket::COLUMN_BOOKING_ID => $booking->id,
                 Ticket::COLUMN_PAYMENT_ID => $bookingPayment->id,
-                Ticket::COLUMN_PRICE => $bookingPayment->price,
                 Ticket::COLUMN_PRICE => $bookingPayment->amount,
                 Ticket::COLUMN_STATUS => Ticket::STATUS_VALID,
             ]);
@@ -70,10 +69,12 @@ trait TicketManager
 
         return $message;
     }
+
     /**
+     * @param int $limit
      * @return bool|string
      */
-    private function generateTicketRef(){
-        return substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 5);
+    private function generateTicketRef($limit=6){
+        return substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, $limit);
     }
 }

@@ -2,11 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Services\Payments\MerchantPayments\MerchantPaymentProcessor;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ExampleTest extends TestCase
 {
+    use MerchantPaymentProcessor;
+
     /**
      * A basic test example.
      *
@@ -14,8 +16,13 @@ class ExampleTest extends TestCase
      */
     public function testBasicTest()
     {
-        $response = $this->get('/');
+        //Given
+        $actual = 1000;
 
-        $response->assertStatus(200);
+        //When
+        $commission = $this->calculateCommissionedAmount($actual);
+
+        //Result
+        $this->assertEquals(100, $commission);
     }
 }

@@ -28,11 +28,10 @@ trait BusBaseRepository
 
     /**
      * @param $bus
-     * @param $seatRepository
      */
-    public function createBusSeats($bus, $seatRepository){
+    public function createBusSeats($bus){
         if ($bus->seats()->count() == 0){
-            Seat::createBusSeats($bus[Bus::COLUMN_ID],$bus[Bus::COLUMN_BUSTYPE_ID], $seatRepository);
+            Seat::createBusSeats($bus[Bus::COLUMN_ID],$bus[Bus::COLUMN_BUSTYPE_ID]);
         }
     }
 

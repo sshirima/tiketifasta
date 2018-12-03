@@ -19,6 +19,7 @@ class BookingPayment extends Model
     const COLUMN_AMOUNT = 'amount';
     const COLUMN_BOOKING_ID = 'booking_id';
     const COLUMN_PAYMENT_METHOD = 'method';
+    const COLUMN_MERCHANT_PAY_ID = 'merchant_payment_id';
     const COLUMN_PHONE_NUMBER = 'phone_number';
 
     const TABLE = 'booking_payments';

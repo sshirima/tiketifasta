@@ -13,7 +13,7 @@ use Log;
 class Mpesa
 {
 
-    use MpesaPaymentC2B;
+    use MpesaTransactionC2B;
 
     /*protected function encryptServiceProviderPassword($spId, $password, $timestamp){
         //$timestamp = date('YmdHis');

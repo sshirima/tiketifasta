@@ -25,11 +25,14 @@ class LocationController extends BaseController
     }
 
     public function index(){
-        $staff_table = app(TableList::class)->setModel(Location::class)->setRoutes([
+
+        $staff_table = app(TableList::class)
+            ->setModel(Location::class)
+            ->setRoutes([
             'index' => ['alias'=>'admin.location.index','parameters' => []],
             'create'=> ['alias' => 'admin.location.create', 'parameters' => []],
             'destroy'=> ['alias' => 'admin.location.remove', 'parameters' => []],
-        ])->setRowsNumber(10)->enableRowsNumberSelector();
+        ])->enableRowsNumberSelector();
 
         $staff_table->addColumn('name')->setTitle(__('admin_pages.page_locations_table_head_location_name'))->isSortable()->sortByDefault()->isSearchable()->useForDestroyConfirmation();
 

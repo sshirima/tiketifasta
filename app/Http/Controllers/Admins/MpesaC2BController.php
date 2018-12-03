@@ -35,7 +35,6 @@ class MpesaC2BController extends BaseController
         $table = app(TableList::class)
             ->setModel(MpesaC2B::class)
             ->setRowsNumber(10)
-            ->enableRowsNumberSelector()
             ->setRoutes([
                 'index' => ['alias' => 'admin.mpesac2b.index', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {

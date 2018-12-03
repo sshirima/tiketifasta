@@ -21,16 +21,31 @@
 
 @section('content-body')
     <section class="content container-fluid">
-        <div class="box box-primary">
-            <div class="box-header ">
-                Account information
-            </div>
-            <div class="box-body">
-                <div class="row">
-                    <div class="container col-md-6 col-md-offset-1">
-                        <form class="form-horizontal" role="form" method="post" action="{{route('admin.payments-accounts.store')}}" accept-charset="UTF-8" style="padding: 20px">
-                            @include('admins.pages.payment_accounts.fields')
-                        </form>
+        <div class="box-body">
+            <div class="nav-tabs-custom">
+                <div class="nav nav-tabs">
+                    @include('admins.pages.payment_accounts.merchant_payment_account_options_filed')
+                </div>
+                <div class="tab-content">
+                    <div class="row">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-6">
+                            @if(isset($account))
+                                <form class="form-horizontal" role="form" method="post" action="{{route('admin.merchant_payment_accounts.update',$account->id)}}" accept-charset="UTF-8" style="padding: 20px">
+                                    <input name="_method" type="hidden" value="PUT">
+                                    @include('admins.pages.payment_accounts.fields')
+                                </form>
+                            @else
+                                @if(isset($accountId))
+                                    <div class="alert alert-warning"> Account not found with the given Id</div>
+                                @else
+                                    <form class="form-horizontal" role="form" method="post" action="{{route('admin.merchant_payment_accounts.store')}}" accept-charset="UTF-8" style="padding: 20px">
+                                        @include('admins.pages.payment_accounts.fields')
+                                    </form>
+                                @endif
+                            @endif
+                        </div>
+                        <div class="col-md-5"></div>
                     </div>
                 </div>
             </div>

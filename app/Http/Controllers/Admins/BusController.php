@@ -55,7 +55,7 @@ class BusController extends BaseController
     {
         $bus = $this->busRepository->create($request->all());
 
-        $this->busRepository->createBusSeats($bus,$this->seatRepository);
+        $this->busRepository->createBusSeats($bus);
 
         $this->createFlashResponse($bus,__('admin_page_buses.create_success'),__('admin_page_buses.create_fail'));
 

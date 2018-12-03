@@ -36,28 +36,28 @@ return [
         ],
 
         'mpesac2b' => [
-            'driver' => 'single',
-            'path' => storage_path('logs/mpesac2b.log'),
+            'driver' => 'daily',
+            'path' => storage_path('logs/laravel.log'),
             'level' => 'debug',
         ],
         'mpesab2c' => [
-            'driver' => 'single',
-            'path' => storage_path('logs/mpesab2c.log'),
+            'driver' => 'daily',
+            'path' => storage_path('logs/laravel.log'),
             'level' => 'debug',
         ],
         'tigosecurec2b' => [
-            'driver' => 'single',
-            'path' => storage_path('logs/tigosecurec2b.log'),
+            'driver' => 'daily',
+            'path' => storage_path('logs/laravel.log'),
             'level' => 'debug',
         ],
         'tigoussdb2c' => [
-            'driver' => 'single',
-            'path' => storage_path('logs/tigoussdb2c.log'),
+            'driver' => 'daily',
+            'path' => storage_path('logs/laravel.log'),
             'level' => 'debug',
         ],
         'sms_logs' => [
-            'driver' => 'single',
-            'path' => storage_path('logs/sms_logs.log'),
+            'driver' => 'daily',
+            'path' => storage_path('logs/laravel.log'),
             'level' => 'debug',
         ],
 

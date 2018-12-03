@@ -30,7 +30,7 @@ class BusTypeController extends BaseController
             'index' => ['alias'=>'admin.bustype.index','parameters' => []],
             'create'=> ['alias' => 'admin.bustype.create', 'parameters' => []],
             'destroy'=> ['alias' => 'admin.bustype.remove', 'parameters' => ['id']],
-        ])->setRowsNumber(10)->enableRowsNumberSelector();
+        ])->setRowsNumber(10);
 
         $busType_table->addColumn('name')->setTitle(__('admin_pages.page_bustype_index_table_head_route_name'))->isSortable()->sortByDefault()->isSearchable()->useForDestroyConfirmation();
 

@@ -138,6 +138,7 @@ class TigoOnlineController extends Controller
 
             if($input['trans_status'] == 'success'){
                 $transactionId = $input['transaction_ref_id'];
+
                 $transaction = TigoOnlineC2B::with(['bookingPayment','bookingPayment.booking','bookingPayment.booking.schedule.day',
                     'bookingPayment.booking.trip','bookingPayment.booking.trip.bus','bookingPayment.booking.trip.bus.merchant',
                     'bookingPayment.booking.trip.bus','bookingPayment.booking.seat'])->where(['reference'=>$transactionId])->first();

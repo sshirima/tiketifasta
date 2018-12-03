@@ -43,6 +43,13 @@ class Merchant extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
+    public function paymentAccounts(){
+        return $this->hasMany(MerchantPaymentAccount::class,MerchantPaymentAccount::COLUMN_MERCHANT_ID, self::COLUMN_ID);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function buses(){
         return $this->hasMany(Bus::class,Bus::COLUMN_MERCHANT_ID,self::COLUMN_ID);
     }

@@ -45,7 +45,6 @@ class ScheduleController extends BaseController
         $table = app(TableList::class)
             ->setModel(Schedule::class)
             ->setRowsNumber(10)
-            ->enableRowsNumberSelector()
             ->setRoutes([
                 'index' => ['alias' => 'admin.schedules.index', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {
@@ -68,7 +67,7 @@ class ScheduleController extends BaseController
      */
     private function setTableColumns($table)
     {
-        $table->addColumn('date')->setTitle('Date')->isSearchable()->sortByDefault()->setCustomTable('days');
+        $table->addColumn('date')->setTitle('Date')->isSortable()->isSearchable()->sortByDefault()->setCustomTable('days');
 
         $table->addColumn('name')->setTitle('Company')->isSortable()->isSearchable()->setCustomTable('merchants');
 
@@ -77,7 +76,7 @@ class ScheduleController extends BaseController
         $table->addColumn('reg_number')->setTitle('Bus number')->isSortable()->isSearchable()->setCustomTable('buses');
 
         $table->addColumn('direction')->setTitle('Direction')->isCustomHtmlElement(function ($entity, $column) {
-            return $entity['direction'] == 'GO'?'<div class="label label-success"> Going </div>':'<div class="label label-info"> Return </div>';
+            return $entity['direction'] == 'GO'?'<div class="label label-default"> Going </div>':'<div class="label label-info"> Return </div>';
         });
 
         $table->addColumn('status')->setTitle('Status')->isCustomHtmlElement(function ($entity, $column) {

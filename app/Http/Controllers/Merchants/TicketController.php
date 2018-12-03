@@ -40,7 +40,6 @@ class TicketController extends BaseController
         $table = app(TableList::class)
             ->setModel(Ticket::class)
             ->setRowsNumber(10)
-            ->enableRowsNumberSelector()
             ->setRoutes([
                 'index' => ['alias' => 'merchant.tickets.index', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {

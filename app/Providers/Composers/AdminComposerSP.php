@@ -53,6 +53,12 @@ class AdminComposerSP extends ServiceProvider
                 'admins.pages.buses.prices',
                 'admins.pages.staff.index',
                 'admins.pages.payments.merchant_payments',
+                'admins.pages.payment_accounts.merchant_payment_account_index',
+                'admins.pages.payment_accounts.merchant_payment_account_delete',
+                'admins.pages.payments.merchant_scheduled_payments',
+                'admins.pages.payments.merchant_unpaid_transactions',
+                'admins.pages.scheduled_tasks.index',
+                'admins.pages.staff.email',
             ],
             AdminComposer::class
         );

@@ -10,6 +10,7 @@ namespace App\Services\Trips;
 
 
 
+use App\Models\Schedule;
 use App\Models\Trip;
 
 trait SearchTripsService
@@ -40,15 +41,17 @@ trait SearchTripsService
         }
 
         $conditions[] = ['schedules.status', '=', 1];
-        //$conditions[] = ['trips.status', '=', 0];
 
-        return Trip::with([
-            'bus', 'bus.merchant'
-        ])->select(['trips.id as trip_id', 'A.name as from', 'trips.price', 'B.name as to', 'trips.bus_id', 'days.date', 'trips.arrival_time', 'trips.depart_time', 'schedules.id as schedule_id'])
-            ->join('locations as A', 'A.id', '=', 'source')
-            ->join('locations as B', 'B.id', '=', 'destination')
-            ->join('schedules', 'schedules.direction', '=', 'trips.direction')
-            ->join('days', 'schedules.day_id', '=', 'days.id')
+
+        return Schedule::select('trips.id as trip_id', 'A.name as from', 'trips.price', 'B.name as to', 'trips.bus_id', 'days.date', 'trips.arrival_time', 'trips.depart_time', 'schedules.id as schedule_id')
+            ->join('days','days.id','=','schedules.day_id')
+            ->join('buses','buses.id','=','schedules.bus_id')
+            ->join('trips', function ($join){
+                $join->on('trips.bus_id','=','schedules.bus_id');
+                $join->on('trips.direction','=','schedules.direction');
+            })
+            ->join('locations as A', 'A.id', '=', 'trips.source')
+            ->join('locations as B', 'B.id', '=', 'trips.destination')
             ->where($conditions)->get();
     }
 

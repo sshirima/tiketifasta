@@ -44,6 +44,7 @@
                     <li class="{{Request::is('admin/merchant-payments/tigopesa') ? 'active' : ''}}"><a href="{{route('admin.tigob2c.index')}}"><i class="fas fa-link"></i> Tigopesa B2C </a></li>
                 </ul>
             </li>
+            <li class="{{Request::is('admin/scheduled-tasks') ? 'active' : ''}}"><a href="{{route('admin.scheduled_tasks.index')}}"><i class="fas fa-link"></i> <span> {{__('admin_side_bar_left.option_scheduled_tasks')}}</span></a></li>
             <li class="{{Request::is('admin/tickets') ? 'active' : ''}}"><a href="{{route('admin.tickets.index')}}"><i class="fas fa-link"></i> <span> {{__('admin_side_bar_left.option_tickets')}}</span></a></li>
             <li class="{{Request::is('admin/sms/sent') ? 'active' : ''}}"><a href="{{route('admin.sent_sms.index')}}"><i class="fas fa-link"></i> <span> {{__('admin_side_bar_left.option_sent_sms')}}</span></a></li>
             <li class="{{Request::is('admin/bookings') ? 'active' : ''}}"><a href="{{route('admin.bookings.index')}}"><i class="fas fa-link"></i> <span> {{__('admin_side_bar_left.option_bookings')}}</span></a></li>

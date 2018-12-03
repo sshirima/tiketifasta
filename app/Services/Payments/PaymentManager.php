@@ -11,11 +11,11 @@ namespace App\Services\Payments;
 
 use App\Services\Payments\Mpesa\Mpesa;
 use App\Services\Payments\Tigosecure\TigoOnline;
-use App\Services\Payments\Tigosecure\TigoOnlinePaymentC2B;
+use App\Services\Payments\Tigosecure\TigoTransactionC2B;
 
 class PaymentManager
 {
-    use TigoUSSDPaymentService, BookingPaymentService, TigoOnlinePaymentC2B;
+    use TigoTransactionC2B;
 
     private $mpesa;
     private $tigoOnline;
@@ -50,7 +50,7 @@ class PaymentManager
     }
 
     public static function getCurrentTimestamp(){
-        date_default_timezone_set('Africa/Nairobi');
+        date_default_timezone_set('Africa/Dar_es_Salaam');
         return date('YmdHis');
     }
 }

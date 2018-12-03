@@ -4,7 +4,7 @@
     {{ __('page_auth_reset.page_title') }}
 @endsection
 
-@section('contents')
+@section('content-body')
     <div class="container">
         <div class="row">
             <div class="col-md-6 col-md-offset-3">

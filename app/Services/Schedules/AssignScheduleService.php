@@ -11,6 +11,7 @@ namespace App\Services\Schedules;
 
 use App\Models\Bus;
 use App\Models\Day;
+use App\Models\Schedule;
 use App\Services\DateTime\DatesOperations;
 use App\Services\DateTimeService;
 
@@ -95,7 +96,17 @@ trait AssignScheduleService
         $todaySchedule = Day::updateOrCreate(['date' => $today]);
 
         //Assign day to the bus
-        $bus->scheduledDays()->attach($todaySchedule->id, ['direction' => $direction, 'status' => 1]);
+        //$bus->scheduledDays()->attach($todaySchedule->id, ['direction' => $direction, 'status' => 1]);
+
+        Schedule::updateOrCreate(
+            [
+                'bus_id'=>$bus->id,
+                'day_id'=>$todaySchedule->id,
+            ],
+            [
+                'direction' => $direction,
+                'status' => 1
+            ]);
 
         $this->returnData['status'] = 1;
         $this->returnData['reason'] = 'Schedule assigned successful';

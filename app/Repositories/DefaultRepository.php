@@ -57,7 +57,6 @@ trait DefaultRepository
         $table = app(TableList::class)
             ->setModel($this->model())
             ->setRowsNumber(10)
-            ->enableRowsNumberSelector()
             ->setRoutes($this->getTableRoutes());
         return $table;
     }

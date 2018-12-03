@@ -42,7 +42,7 @@ class ScheduleController extends BaseController
      */
     public function assignSchedule(AssignScheduleRequest $request, $busId){
 
-        $this->dispatch(new AssignSchedule($request->all(), $busId));
+        //$this->dispatch(new AssignSchedule($request->all(), $busId));
 
         return view();
     }
@@ -55,7 +55,6 @@ class ScheduleController extends BaseController
         $table = app(TableList::class)
             ->setModel(Schedule::class)
             ->setRowsNumber(10)
-            ->enableRowsNumberSelector()
             ->setRoutes([
                 'index' => ['alias' => 'merchant.schedules.index', 'parameters' => []],
                 'destroy' => ['alias' => 'merchant.schedules.remove', 'parameters' => ['id']],

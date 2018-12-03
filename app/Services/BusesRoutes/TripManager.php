@@ -24,6 +24,11 @@ trait TripManager
      */
     public function analyseTrips(array $trips){
 
+        $this->goingTrips = array();
+        $this->returnTrips = array();
+        $this->ignoredTrips = array();
+        $this->sortedTrips = array();
+
         $startLocation = $this->initializeStartLocation($trips);
 
         $this->getTripsByDirections($trips, $startLocation);

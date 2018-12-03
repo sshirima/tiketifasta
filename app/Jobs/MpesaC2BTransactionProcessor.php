@@ -5,7 +5,7 @@ namespace App\Jobs;
 use App\Models\Booking;
 use App\Services\Bookings\AuthorizeBooking;
 use App\Services\Payments\Mpesa\Mpesa;
-use App\Services\Payments\Mpesa\MpesaPaymentC2B;
+use App\Services\Payments\Mpesa\MpesaTransactionC2B;
 use App\Services\Tickets\TicketManager;
 use Illuminate\Bus\Queueable;
 use Exception;
@@ -14,11 +14,10 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Log;
-use Nathanmac\Utilities\Parser\Parser;
 
 class MpesaC2BTransactionProcessor implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, AuthorizeBooking, MpesaPaymentC2B, TicketManager;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, AuthorizeBooking, MpesaTransactionC2B, TicketManager;
 
     private $request;
     private $mpesa;

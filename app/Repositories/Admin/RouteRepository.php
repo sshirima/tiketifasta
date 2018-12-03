@@ -80,7 +80,6 @@ class RouteRepository extends BaseRepository
                 'create' => ['alias' => RouteController::ROUTE_CREATE, 'parameters' => []],
                 'destroy' => ['alias' => RouteController::ROUTE_REMOVE, 'parameters' => []]])
             ->setRowsNumber(10)
-            ->enableRowsNumberSelector()
             ->addQueryInstructions(function ($query) {
                 $query->select($this->entityColumns)
                     ->join(Location::TABLE.' as A', 'A.id', '=', Route::START_LOCATION)

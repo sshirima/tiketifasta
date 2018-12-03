@@ -3,18 +3,18 @@
 namespace App\Console\Commands;
 
 use App\Models\Day;
-use App\Services\Schedules\AuthorizeSchedule;
+use App\Services\Schedules\SchedulesAuthorization;
 use Illuminate\Console\Command;
 
 class DisableExpiredSchedules extends Command
 {
-    use AuthorizeSchedule;
+    use SchedulesAuthorization;
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'bus_schedules:disable';
+    protected $signature = 'buses-schedules:disable';
 
     /**
      * The console command description.
@@ -41,7 +41,7 @@ class DisableExpiredSchedules extends Command
 
         foreach ($days as $day){
             foreach ($day->schedules as $schedule){
-                $this->disableSchedule($schedule);
+                $this->deactivateSchedule($schedule, 0);
             }
         }
     }

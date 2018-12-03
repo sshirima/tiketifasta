@@ -25,7 +25,7 @@ class ScheduleSeat extends Model
     const STATUES = ['available'=>'Available',
         'unavailable'=>'Unavailable',
         'booked'=>'Booked',
-        'suspended'=>'Booked',
+        'suspended'=>'Suspended',
     ];
 
     /**

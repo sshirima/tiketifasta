@@ -24,6 +24,7 @@ class MpesaB2C extends Model
     const COLUMN_CONFIRM_CODE = 'confirm_code';
     const COLUMN_CONFIRM_DESC = 'confirm_desc';
     const COLUMN_STATUS = 'status';
+    const COLUMN_MERCHANT_PAY_ID = 'merchant_pay_id';
     const COLUMN_WORKING_ACCOUNT_FUNDS = 'working_account_funds';
     const COLUMN_UTILITY_ACCOUNT_FUNDS = 'utility_account_funds';
     const COLUMN_CHARGES_PAID_FUNDS = 'charges_paid_funds';
@@ -42,4 +43,11 @@ class MpesaB2C extends Model
         self::COLUMN_TRANSACTION_ID,self::COLUMN_TRANSACTION_DATE,self::COLUMN_RESULT_TYPE,self::COLUMN_CONVERSATION_ID,
         self::COLUMN_RESULT_CODE,self::COLUMN_WORKING_ACCOUNT_FUNDS,self::COLUMN_UTILITY_ACCOUNT_FUNDS,self::COLUMN_CHARGES_PAID_FUNDS, self::COLUMN_RESULT_DESC
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function merchantPayment(){
+        return $this->belongsTo(MerchantPayment::class,self::COLUMN_MERCHANT_PAY_ID, MerchantPayment::COLUMN_ID);
+    }
 }

@@ -15,8 +15,12 @@ class TigoB2C extends Model
     const COLUMN_TXN_STATUS = 'txn_status';
     const COLUMN_TXN_ID = 'txn_id';
     const COLUMN_MESSAGE = 'txn_message';
+    const COLUMN_MERCHANT_PAY_ID = 'merchant_pay_id';
 
     const TABLE = 'tigo_b2c';
+
+    const ERROR_CODE_001 = '0x001';
+    const ERROR_DESC_001 = 'Connection timeout';
 
     protected $table = self::TABLE;
 
@@ -24,4 +28,11 @@ class TigoB2C extends Model
         self::COLUMN_MSISDN, self::COLUMN_MSISDN1,self::COLUMN_REFERENCE, self::COLUMN_LANGUAGE, self::COLUMN_AMOUNT,self::COLUMN_TXN_STATUS,
         self::COLUMN_TXN_ID,self::COLUMN_MESSAGE
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function merchantPayment(){
+        return $this->belongsTo(MerchantPayment::class,self::COLUMN_MERCHANT_PAY_ID, MerchantPayment::COLUMN_ID);
+    }
 }

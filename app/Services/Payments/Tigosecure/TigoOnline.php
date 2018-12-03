@@ -15,7 +15,7 @@ use Log;
 
 class TigoOnline
 {
-    use TigoOnlinePaymentC2B;
+    use TigoTransactionC2B;
 
     const ERROR_CODE_2501 = 'purchase-3008-2501-F';
     const ERROR_CODE_0000 = 'purchase-3008-0000-S';

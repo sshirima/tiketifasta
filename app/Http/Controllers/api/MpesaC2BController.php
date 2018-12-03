@@ -14,8 +14,8 @@ use App\Jobs\MpesaC2BTransactionProcessor;
 use App\Models\BookingPayment;
 use App\Services\Bookings\AuthorizeBooking;
 use App\Services\Payments\Mpesa\Mpesa;
-use App\Services\Payments\Mpesa\MpesaPaymentC2B;
-use App\Services\Payments\Mpesa\xml\MpesaC2BData;
+use App\Services\Payments\Mpesa\MpesaTransactionC2B;
+use App\Services\Payments\Mpesa\xml\MpesaTransactionC2BRequest;
 use App\Services\Payments\PaymentManager;
 use App\Services\Tickets\TicketManager;
 use Illuminate\Http\Request;
@@ -25,7 +25,7 @@ use Log;
 
 class MpesaC2BController extends Controller
 {
-    use AuthorizeBooking, TicketManager, MpesaPaymentC2B;
+    use AuthorizeBooking, TicketManager, MpesaTransactionC2B;
     private $mpesa;
 
     public function __construct(Mpesa $mpesa)
@@ -118,7 +118,7 @@ class MpesaC2BController extends Controller
         $timestamp = PaymentManager::getCurrentTimestamp();
         $spPassword = $mpesa->encryptSPPassword(env('MPESA_SPID'), env('MPESA_PASSWORD'), $timestamp);
 
-        return $this->c2bPaymentConfirmRequest([
+        return $this->c2bConfirmRequestToXml([
             'spId' => env('MPESA_SPID'),
             'spPassword' => $spPassword,
             'timestamp' => $timestamp,

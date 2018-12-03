@@ -47,16 +47,18 @@ class TripsController extends BaseController
         $table = app(TableList::class)
             ->setModel(Schedule::class)
             ->setRowsNumber(10)
-            ->enableRowsNumberSelector()
             ->setRoutes([
                 'index' => ['alias' => 'admin.trips.index', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {
-                $query->select('source.name as source','destination.name as destination','buses.reg_number as reg_number',
+                $query->select('trips.id as trip_id','buses.reg_number as reg_number','source.name as source','destination.name as destination',
                     'trips.price as price','days.date as date','merchants.name as name','schedules.status as status',
                     'schedules.direction as direction')
-                    ->join('trips', 'trips.direction', '=', 'schedules.direction')
-                    ->join('buses', 'buses.id', '=', 'schedules.bus_id')
                     ->join('days', 'days.id', '=', 'schedules.day_id')
+                    ->join('buses', 'buses.id', '=', 'schedules.bus_id')
+                    ->join('trips', function ($join){
+                        $join->on('trips.bus_id','=','schedules.bus_id');
+                        $join->on('trips.direction','=','schedules.direction');
+                    })
                     ->join('locations as source', 'source.id', '=', 'trips.source')
                     ->join('locations as destination', 'destination.id', '=', 'trips.destination')
                     ->join('merchants', 'merchants.id', '=', 'buses.merchant_id');
@@ -73,11 +75,11 @@ class TripsController extends BaseController
      */
     private function setTableColumns($table)
     {
+        $table->addColumn('date')->setTitle('Date')->isSearchable()->isSortable()->sortByDefault()->setCustomTable('days');
+
         $table->addColumn('source')->setTitle('From')->isSearchable()->isSortable()->setCustomTable('trips');
 
         $table->addColumn('destination')->setTitle('To')->isSearchable()->isSortable()->setCustomTable('trips');
-
-        $table->addColumn('date')->setTitle('Date')->isSearchable()->sortByDefault()->setCustomTable('days');
 
         $table->addColumn('name')->setTitle('Company')->isSortable()->isSearchable()->setCustomTable('merchants');
 
@@ -86,7 +88,7 @@ class TripsController extends BaseController
         $table->addColumn('price')->setTitle('Price')->isSearchable()->isSortable()->setCustomTable('trips');
 
         $table->addColumn('direction')->setTitle('Direction')->setCustomTable('schedules')->isCustomHtmlElement(function ($entity, $column) {
-            return $entity['direction'] == 'GO'?'<div class="label label-success"> Going </div>':'<div class="label label-info"> Return </div>';
+            return $entity['direction'] == 'GO'?'<div class="label label-default"> Going </div>':'<div class="label label-info"> Return </div>';
         });
 
         $table->addColumn('status')->setTitle('Status')->isCustomHtmlElement(function ($entity, $column) {

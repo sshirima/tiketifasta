@@ -27,7 +27,7 @@ class StaffController extends BaseController
 
     public function index(){
         $this->setMerchantId();
-        $staff_table = app(TableList::class)->setModel(Staff::class)->enableRowsNumberSelector()
+        $staff_table = app(TableList::class)->setModel(Staff::class)
             ->setRoutes([
             'index' => ['alias'=>'merchant.staff.index','parameters' => []],
             'create'=> ['alias' => 'merchant.staff.create', 'parameters' => []],

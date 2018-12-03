@@ -10,7 +10,7 @@ namespace App\Http\Controllers\Admins;
 
 use App\Http\Requests\Admin\TigoSendCashRequest;
 use App\Models\TigoB2C;
-use App\Services\Payments\TigoUSSD\TigoPaymentB2C;
+use App\Services\Payments\Tigosecure\TigoTransactionB2C;
 use App\Services\SMS\SendSMS;
 use Illuminate\Http\Request;
 use Okipa\LaravelBootstrapTableList\TableList;
@@ -18,7 +18,7 @@ use Okipa\LaravelBootstrapTableList\TableList;
 class TigoB2CController extends BaseController
 {
 
-    use TigoPaymentB2C, SendSMS;
+    use TigoTransactionB2C, SendSMS;
 
     public function __construct()
     {
@@ -111,7 +111,7 @@ class TigoB2CController extends BaseController
             $request->session()->forget('otp');
             $request->session()->forget('otp_entry_count');
 
-            $response = $this->initiatePayment($tigoB2C->msisdn1, $tigoB2C->amount);
+            $response = $this->initializeTigoB2CTransaction($tigoB2C->msisdn1, $tigoB2C->amount);
 
             //No comments
             if ($response['status'] == true) {
@@ -160,7 +160,6 @@ class TigoB2CController extends BaseController
         $table = app(TableList::class)
             ->setModel(TigoB2C::class)
             ->setRowsNumber(10)
-            ->enableRowsNumberSelector()
             ->setRoutes([
                 'index' => ['alias' => 'admin.tigo_b2c.index', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {
@@ -180,7 +179,7 @@ class TigoB2CController extends BaseController
     private function setTableColumns($table)
     {
         $table->addColumn('msisdn1')->setTitle('Receiver')->isSearchable();
-        $table->addColumn('amount')->setTitle('Reference');
+        $table->addColumn('amount')->setTitle('Amount');
         $table->addColumn('txn_id')->setTitle('Transaction Id');
         $table->addColumn('txn_status')->setTitle('Status')->isSearchable();
         $table->addColumn('txn_message')->setTitle('Status message')->isSearchable();

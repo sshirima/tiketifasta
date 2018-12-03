@@ -1,1 +1,3 @@
-<li class="{{Request::is('admin/merchant-payments*') ? 'active' : ''}}"><a href="{{route('admin.merchant_payments.summary')}}" >Summary</a></li>
+<li class="{{Request::is('admin/merchant-payments*') ? 'active' : ''}}"><a href="{{route('admin.merchant_payments.summary')}}" >Payment summary</a></li>
+<li class="{{Request::is('admin/merchant-scheduled-payment*') ? 'active' : ''}}"><a href="{{route('admin.merchant_schedule_payments.index')}}" >Scheduled payments</a></li>
+<li class="{{Request::is('admin/merchants-unpaid-transactions') ? 'active' : ''}}"><a href="{{route('admin.merchants_transactions.unpaid')}}" >Unpaid transaction</a></li>

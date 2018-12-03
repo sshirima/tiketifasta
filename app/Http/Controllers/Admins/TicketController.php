@@ -67,6 +67,8 @@ class TicketController extends BaseController
      */
     private function setTableColumns($table)
     {
+        $table->addColumn('created_at')->setTitle('Date purchased')->isSearchable()->isSortable()->sortByDefault('desc')->setColumnDateFormat('Y-m-d H:i:s');
+
         $table->addColumn('ticket_ref')->isSearchable()->setTitle('Ticket Ref#')->useForDestroyConfirmation();
         $table->addColumn('price')->setTitle('Price')->isSearchable()->isSortable()->setCustomTable('trips');
         $table->addColumn('firstname')->setTitle('First name')->isSearchable()->isSortable()->setCustomTable('bookings')
@@ -80,8 +82,28 @@ class TicketController extends BaseController
             ->isCustomHtmlElement(function($entity, $column){
             return $entity['date'].'<br>'.'('.$entity['depart_time'].' - '.$entity['arrival_time'].')';
         });
-        $table->addColumn('created_at')->setTitle('Created date')->isSearchable()->isSortable()->setColumnDateFormat('Y-m-d H:i:s');
-        $table->addColumn('updated_at')->setTitle('Updated at')->isSortable()->isSearchable()->sortByDefault('desc');
+        //$table->addColumn('updated_at')->setTitle('Updated at')->isSortable()->isSearchable()->sortByDefault('desc');
+
+        $table->addColumn('status')->setTitle('Status')->isCustomHtmlElement(function($entity, $column){
+            return  $this->getTicketLabelByStatus($entity['status']);
+        });
         return $table;
+    }
+
+    private function getTicketLabelByStatus($status){
+
+        if ($status == Ticket::STATUS_CONFIRMED){
+            return '<div class="label label-success">'.'Confirmed'.'</div>';
+        }
+
+        if ($status == Ticket::STATUS_VALID){
+            return '<div class="label label-danger">'.'Valid'.'</div>';
+        }
+
+        if ($status == Ticket::STATUS_EXPIRED){
+            return '<div class="label label-danger">'.'Expired'.'</div>';
+        }
+
+        return '<div class="label label-default">'.'Unknown'.'</div>';
     }
 }

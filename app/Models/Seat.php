@@ -83,7 +83,7 @@ class Seat extends Model
         return $seatArray;
     }
 
-    public static function createBusSeats($bus_id, $bustype_id, $seatRepository){
+    public static function createBusSeats($bus_id, $bustype_id){
 
         $bus_type = DB::table(Bustype::TABLE)->select([Bustype::COLUMN_ARRANGEMENT])->find($bustype_id);
         $seats = array();
@@ -105,13 +105,13 @@ class Seat extends Model
                 }
                 if (strcmp($char, 'e') == 0) {
                     $seat_param = ['seat_name'=>Seat::numberToRowLetter($rowIndex).$seatRowIndex,'bus_id'=>$bus_id, 'type'=>'Economy'];
-                    $seats[$seatIndex] = $seatRepository->create($seat_param);
+                    $seats[$seatIndex] = Seat::create($seat_param);
                     $seatIndex++;
                     $seatRowIndex++;
                 }
                 if (strcmp($char, 'f') == 0) {
                     $seat_param = ['seat_name'=>Seat::numberToRowLetter($rowIndex).$seatRowIndex,'bus_id'=>$bus_id,'type'=>'First'];
-                    $seats[$seatIndex] = $seatRepository->create($seat_param);
+                    $seats[$seatIndex] = Seat::create($seat_param);
                     $seatIndex++;
                     $seatRowIndex++;
                 }

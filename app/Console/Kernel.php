@@ -27,9 +27,16 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-         $schedule->command('merchants:disable')->dailyAt('00:00');
-         $schedule->command('bus_schedules:disable')->dailyAt('00:00');
-         $schedule->command('bus_schedules:disable')->dailyAt('00:00');
+         $schedule->command('merchants:contract-disable')
+             ->everyMinute()
+             ->thenPing(config('scheduled-tasks.url_disable_merchants_after'))
+             ->sendOutputTo('storage/logs/scheduled_tasks.log');//->dailyAt('00:00');,
+
+         $schedule->command('buses-schedules')->everyMinute();//->dailyAt('00:00');
+
+         $schedule->command('merchants:daily-payments')
+             ->everyMinute()->thenPing(config('scheduled-tasks.url_pay_merchants_after'))
+             ->sendOutputTo('storage/logs/scheduled_tasks_pay_merchants.log');//->dailyAt('00:00');
     }
 
     /**

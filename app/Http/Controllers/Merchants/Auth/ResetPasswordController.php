@@ -1,8 +1,11 @@
 <?php
 
 namespace App\Http\Controllers\Merchants\Auth;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ResetsPasswords;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Http\Request;
 
 class ResetPasswordController extends Controller
@@ -28,9 +31,7 @@ class ResetPasswordController extends Controller
     protected $redirectTo = '/merchant';
 
     /**
-     * Create a new controller instance.
-     *
-     * @return void
+     * ResetPasswordController constructor.
      */
     public function __construct()
     {
@@ -42,5 +43,23 @@ class ResetPasswordController extends Controller
         return view('merchants.pages.auth.reset')->with(
             ['token' => $token, 'email' => $request->email]
         );
+    }
+
+    /**
+     * Get the broker to be used during password reset.
+     *
+     * @return \Illuminate\Contracts\Auth\PasswordBroker
+     */
+    public function broker()
+    {
+        return Password::broker('merchants');
+    }
+
+    /**
+     * @return \Illuminate\Contracts\Auth\Guard|\Illuminate\Contracts\Auth\StatefulGuard|mixed
+     */
+    protected function guard()
+    {
+       return  Auth::guard('merchant');
     }
 }

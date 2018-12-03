@@ -36,12 +36,12 @@ class TigoSecureC2BController extends BaseController
         $table = app(TableList::class)
             ->setModel(TigoOnlineC2B::class)
             ->setRowsNumber(10)
-            ->enableRowsNumberSelector()
             ->setRoutes([
                 'index' => ['alias' => 'admin.tigoonline_c2b.index', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {
-                $query->select('tigoonline_c2b.id as id','tigoonline_c2b.amount as amount',
-                    'tigoonline_c2b.reference as reference','tigoonline_c2b.created_at as created_at','tigoonline_c2b.updated_at as updated_at')
+                $query->select('tigoonline_c2b.id as id','tigoonline_c2b.phone_number as phone_number','tigoonline_c2b.amount as amount',
+                    'tigoonline_c2b.reference as reference','tigoonline_c2b.created_at as created_at','tigoonline_c2b.updated_at as updated_at',
+                    'tigoonline_c2b.status as status')
                     ->join('booking_payments', 'booking_payments.id', '=', 'tigoonline_c2b.booking_payment_id');
             });
         $table = $this->setTableColumns($table);
@@ -57,15 +57,19 @@ class TigoSecureC2BController extends BaseController
         $table->addColumn('phone_number')->setTitle('Sent from');
         $table->addColumn('amount')->setTitle('Amount');
         $table->addColumn('reference')->setTitle('Reference')->isSearchable();
-        $table->addColumn('firstname')->setTitle('Name')->isSearchable()->isCustomHtmlElement(function($entity, $column){
+        /*$table->addColumn('firstname')->setTitle('Name')->isSearchable()->isCustomHtmlElement(function($entity, $column){
             return $entity['firstname'].' '.$entity['lastname'];
         });
-        $table->addColumn('email')->setTitle('Email')->isSearchable();
+        $table->addColumn('email')->setTitle('Email')->isSearchable();*/
         $table->addColumn('status')->setTitle('Status')->isCustomHtmlElement(function($entity, $column){
             return $entity['status'];
         });
-        $table->addColumn('updated_at')->setTitle('Updated at')->isSearchable();
-        $table->addColumn('created_at')->setTitle('Created at')->isSearchable()->sortByDefault();
+        //$table->addColumn('updated_at')->setTitle('Updated at')->isSearchable();
+        $table->addColumn('created_at')->setTitle('Transaction date')->isSearchable()->sortByDefault();
+
+        $table->addColumn('status')->setTitle('Status')->isCustomHtmlElement(function($entity, $column){
+            return $entity['status'];
+        });
         return $table;
     }
 }

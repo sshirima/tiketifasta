@@ -20,14 +20,18 @@
 @endsection
 
 @section('content-body')
-    <div class="nav-tabs-custom">
-        <div class="nav nav-tabs">
-            @include('admins.pages.payment_accounts.merchant_payment_account_options_filed')
+    <section class="content container-fluid">
+        <div class="box-body">
+            <div class="nav-tabs-custom">
+                <div class="nav nav-tabs">
+                    @include('admins.pages.payment_accounts.merchant_payment_account_options_filed')
+                </div>
+                <div class="tab-content">
+                    {!! $table->render() !!}
+                </div>
+            </div>
         </div>
-        <div class="tab-content">
-            {!! $table->render() !!}
-        </div>
-    </div>
+    </section>
     {{--<section class="content container-fluid">
         <div class="box box-primary">
             <div class="box-header ">

@@ -203,8 +203,8 @@ module.exports = function(grunt){
         }
     });
 
-    // These plugins provide necessary tasks.
-    require('load-grunt-tasks')(grunt, {scope: 'devDependencies'});
+    // These plugins provide necessary scheduled_tasks.
+    require('load-grunt-scheduled_tasks')(grunt, {scope: 'devDependencies'});
     require('time-grunt')(grunt);
 
     // JS distribution task.
@@ -217,7 +217,7 @@ module.exports = function(grunt){
     // Full distribution task.
     grunt.registerTask('dist', ['clean:dist', 'dist-js', 'dist-css']);
 
-    // Code check tasks.
+    // Code check scheduled_tasks.
     grunt.registerTask('lint-js', 'Lint all js files with jshint and jscs', ['jshint', 'jscs']);
     grunt.registerTask('lint-css', 'Lint all css files', ['dist-css', 'csslint:dist']);
     grunt.registerTask('qunit-all', 'Run qunit tests', ['qunit:main', 'qunit-timezone']);

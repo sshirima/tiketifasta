@@ -21,16 +21,15 @@
 
 @section('content-body')
     <section class="content container-fluid">
-        <div class="box box-success">
-            {{--<div class="box-header">
-                <div class="btn btn-success pull-right" data-toggle="modal">
-                    <a href="#" style="color: white"><i class="fas fa-plus"></i> {{__('merchant_page_staff.panel_nav_tab_new_product')}}</a>
+        <div class="box-body">
+            <div class="nav-tabs-custom">
+                <div class="nav nav-tabs">
+                    @include('admins.pages.payment_accounts.merchant_payment_account_options_filed')
                 </div>
-            </div>--}}
-            <div class="box-body">
-                {!! $table->render() !!}
+                <div class="tab-content">
+                    {!! $table->render() !!}
+                </div>
             </div>
         </div>
     </section>
-
 @endsection

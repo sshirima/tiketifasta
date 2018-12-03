@@ -11,6 +11,7 @@ class Booking extends Model
     const STATUS_PENDING = 'PENDING';
     const STATUS_CANCELLED = 'CANCELLED';
     const STATUS_CONFIRMED = 'CONFIRMED';
+    const STATUS_EXPIRED = 'EXPIRED';
 
     const COLUMN_ID = 'id';
     const COLUMN_TITLE = 'title';

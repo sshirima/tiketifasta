@@ -67,7 +67,6 @@ class SentSMSController extends BaseController
         $table = app(TableList::class)
             ->setModel(SentSMS::class)
             ->setRowsNumber(20)
-            ->enableRowsNumberSelector()
             ->setRoutes([
                 'index' => ['alias' => 'admin.sent_sms.index', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {

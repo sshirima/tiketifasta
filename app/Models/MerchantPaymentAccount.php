@@ -27,6 +27,4 @@ class MerchantPaymentAccount extends Model
     public function merchant(){
         return $this->belongsTo(Location::class, self::COLUMN_MERCHANT_ID,Merchant::COLUMN_ID);
     }
-
-    public $timestamps = false;
 }

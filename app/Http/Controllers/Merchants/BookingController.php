@@ -41,7 +41,6 @@ class BookingController extends BaseController
         $table = app(TableList::class)
             ->setModel(Booking::class)
             ->setRowsNumber(10)
-            ->enableRowsNumberSelector()
             ->setRoutes([
                 'index' => ['alias' => 'merchant.bookings.index', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {

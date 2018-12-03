@@ -34,6 +34,7 @@ trait AddBookingService
 
         //Check payment method to be used
         $seat = Seat::select(['*'])->where([Seat::COLUMN_BUS_ID => $busId, Seat::COLUMN_SEAT_NAME => $bookingDetails['seat']])->first();
+
         if (isset($seat)) {
             $isBooked = $this->seatIsBooked($seat->id, $scheduleId);
         }
@@ -51,7 +52,7 @@ trait AddBookingService
 
             //Create bookingPayment
             $bookingPayment = BookingPayment::create([
-                'payment_ref'=>strtoupper(PaymentManager::random_code(8)),
+                'payment_ref'=>strtoupper(PaymentManager::random_code(12)),
                 'amount'=>$booking->price,
                 'booking_id'=>$booking->id,
                 'method'=>$payment,
@@ -100,21 +101,18 @@ trait AddBookingService
         return Booking::create($attributes);
     }
 
-    public function markSeatAsBooked(array $attributes){
+    public function createScheduleSeat(array $attributes){
         return ScheduleSeat::create($attributes);
     }
 
     public function seatIsBooked($seatId, $scheduleId){
+
         $seat = ScheduleSeat::where([
             ScheduleSeat::COLUMN_SEAT_ID=>$seatId,
             ScheduleSeat::COLUMN_SCHEDULE_ID=>$scheduleId,
         ])->first();
 
-        if (isset($seat)){
-            return true;
-        } else {
-            return false;
-        }
+        return isset($seat);
     }
 
     /**
@@ -144,7 +142,7 @@ trait AddBookingService
         ]);
 
         //Mark the seat as booked
-        $scheduleSeat = $this->markSeatAsBooked([
+        $scheduleSeat = $this->createScheduleSeat([
             ScheduleSeat::COLUMN_SCHEDULE_ID => $scheduleId,
             ScheduleSeat::COLUMN_SEAT_ID => $seat->id,
             ScheduleSeat::COLUMN_STATUS => ScheduleSeat::STATUES['booked']

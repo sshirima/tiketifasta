@@ -1,3 +1,3 @@
 <li class="{{Request::is('admin/merchants') ? 'active' : ''}}"><a href="{{route('admin.merchant.index')}}" >Merchants</a></li>
-<li class="{{Request::is('admin/merchant_payments/index') ? 'active' : ''}}"><a href="{{route('admin.merchant_payment_accounts.index')}}" >Payments accounts</a></li>
-<li class="{{Request::is('admin/merchant_payments/create') ? 'active' : ''}}"><a href="{{route('admin.merchant_payment_accounts.create')}}" >Merchant staff accounts</a></li>
+<li class="{{Request::is('admin/merchant-payments-accounts*') ? 'active' : ''}}"><a href="{{route('admin.merchant_payment_accounts.index')}}" >Payments accounts</a></li>
+<li class="{{Request::is('admin/accounts/merchant*') ? 'active' : ''}}"><a href="{{route('admin.merchant_accounts.index')}}" >Merchant staff accounts</a></li>

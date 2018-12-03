@@ -21,7 +21,7 @@ module.exports = function (grunt) { // jshint ignore:line
         tasks: ['less:skins', 'less:minifiedSkins', 'notify:less']
       }
     },
-    // Notify end of tasks
+    // Notify end of scheduled_tasks
     notify: {
       less: {
         options: {
@@ -271,7 +271,7 @@ module.exports = function (grunt) { // jshint ignore:line
     }
   });
 
-  // Load all grunt tasks
+  // Load all grunt scheduled_tasks
 
   // LESS Compiler
   grunt.loadNpmTasks('grunt-contrib-less');

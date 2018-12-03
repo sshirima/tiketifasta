@@ -5,24 +5,24 @@
 @endsection
 
 @section('content-head')
-    {{--<section class="content-header">
+    <section class="content-header">
         <h1>
             Booking payments
-            <small> </small>
+            <small> All payments made to the bookings </small>
         </h1>
         <ol class="breadcrumb">
             <li>
                 <a href="{{route('admin.booking_payments.index')}}"> Booking payments</a>
             </li>
         </ol>
-    </section>--}}
+    </section>
 @endsection
 
 @section('content-body')
     <section class="content container-fluid">
         <div class="box box-primary">
             <div class="box-header">
-                Bookings
+                Bookings payments
             </div>
             <div class="box-body">
                 {!! $table->render() !!}

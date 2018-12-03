@@ -61,7 +61,7 @@ Route::prefix('admin')->group(function () {
     Route::get('password/reset', 'Admins\Auth\ForgotPasswordController@showLinkRequestForm')->name('admin.password.request');
     Route::post('password/email', 'Admins\Auth\ForgotPasswordController@sendResetLinkEmail')->name('admin.password.email');
     Route::get('password/reset/{token}', 'Admins\Auth\ResetPasswordController@showResetForm')->name('admin.password.reset');
-    Route::post('password/reset', 'Admins\Auth\ResetPasswordController@reset')->name('admin.password.reset');
+    Route::post('password/reset', 'Admins\Auth\ResetPasswordController@reset')->name('admin.password.reset.change');
 //Profile management routes
     Route::get('profile/show', 'Admins\ProfileController@show')->name('admin.profile.show');
     Route::get('profile/edit', 'Admins\ProfileController@edit')->name('admin.profile.edit');
@@ -141,13 +141,18 @@ Route::prefix('admin')->group(function () {
     Route::get('merchant-payments/tigopesa/send_cash/submit', 'Admins\TigoB2CController@sendCashSubmit')->name('admin.tigob2c.send_cash.submit');
     Route::post('merchant-payments/tigopesa/send_cash/verify-otp', 'Admins\TigoB2CController@verifyTransactionOTP')->name('admin.tigob2c.send_cash.verify_otp');
     Route::get('merchant-payments/summary', 'Admins\MerchantPaymentController@summaryReport')->name('admin.merchant_payments.summary');
+    Route::get('merchant-scheduled-payments', 'Admins\MerchantSchedulePaymentController@index')->name('admin.merchant_schedule_payments.index');
+    Route::get('merchant-scheduled-payments/{id}/details', 'Admins\MerchantSchedulePaymentController@details')->name('admin.merchant_schedule_payments.details');
     Route::get('merchant-payments/{id}/merchant-report', 'Admins\MerchantPaymentController@merchantReport')->name('admin.merchant_payments.merchant_report');
     Route::get('merchant-payments/{id}/bus-report', 'Admins\MerchantPaymentController@busReport')->name('admin.merchant_payments.bus_report');
     Route::get('merchant-payments-accounts/index', 'Admins\MerchantPaymentAccountController@index')->name('admin.merchant_payment_accounts.index');
     Route::get('merchant-payments-accounts/create', 'Admins\MerchantPaymentAccountController@create')->name('admin.merchant_payment_accounts.create');
+    Route::get('merchant-payments/retry-payment', 'Admins\MerchantSchedulePaymentController@retryPayment')->name('admin.merchant_payments.retry_payments');
     Route::post('merchant-payments-accounts/store', 'Admins\MerchantPaymentAccountController@store')->name('admin.merchant_payment_accounts.store');
-    Route::get('merchant-payments-accounts/edit', 'Admins\MerchantPaymentAccountController@edit')->name('admin.merchant_payment_accounts.edit');
-    Route::put('merchant-payments-accounts/update', 'Admins\MerchantPaymentAccountController@update')->name('admin.merchant_payment_accounts.update');
+    Route::get('merchant-payments-accounts/{id}/edit', 'Admins\MerchantPaymentAccountController@edit')->name('admin.merchant_payment_accounts.edit');
+    Route::put('merchant-payments-accounts/{id}/update', 'Admins\MerchantPaymentAccountController@update')->name('admin.merchant_payment_accounts.update');
+    Route::delete('merchant-payments-accounts/{id}/delete', 'Admins\MerchantPaymentAccountController@delete')->name('admin.merchant_payment_accounts.delete');
+    Route::delete('merchant-payments-accounts/{id}/destroy', 'Admins\MerchantPaymentAccountController@destroy')->name('admin.merchant_payment_accounts.destroy');
 
     Route::get('payments/tigopesa/c2b', 'Admins\TigoSecureC2BController@index')->name('admin.tigoonline_c2b.index');
     Route::get('payments/tigopesa/b2c', 'Admins\TigoB2CController@index')->name('admin.tigo_b2c.index');
@@ -165,8 +170,12 @@ Route::prefix('admin')->group(function () {
     Route::get('bookings', 'Admins\BookingController@index')->name('admin.bookings.index');
     //Tickets
     Route::get('tickets', 'Admins\TicketController@index')->name('admin.tickets.index');
+    Route::get('scheduled-tasks', 'Admins\ScheduleTasksController@index')->name('admin.scheduled_tasks.index');
+    Route::get('merchants-unpaid-transactions', 'Admins\MerchantPaymentController@unpaid')->name('admin.merchants_transactions.unpaid');
 
-    Route::get('account/merchants', 'Admins\StaffController@index')->name('admin.merchant_accounts.index');
+    Route::get('accounts/merchants', 'Admins\StaffController@index')->name('admin.merchant_accounts.index');
+    Route::get('accounts/merchants/reset-password', 'Admins\StaffController@showPasswordResetForm')->name('admin.merchant_accounts.password.reset_form');
+    Route::post('accounts/merchants/reset-password', 'Admins\StaffController@sendResetLinkEmail')->name('admin.merchant_accounts.password.send_link');
 });
 
 Route::prefix('merchant')->group(function () {
@@ -183,7 +192,7 @@ Route::prefix('merchant')->group(function () {
     Route::get('password/reset', 'Merchants\Auth\ForgotPasswordController@showLinkRequestForm')->name('merchant.password.request');
     Route::post('password/email', 'Merchants\Auth\ForgotPasswordController@sendResetLinkEmail')->name('merchant.password.email');
     Route::get('password/reset/{token}', 'Merchants\Auth\ResetPasswordController@showResetForm')->name('merchant.password.reset');
-    Route::post('password/reset', 'Merchants\Auth\ResetPasswordController@reset')->name('merchant.password.reset');
+    Route::post('password/reset', 'Merchants\Auth\ResetPasswordController@reset')->name('merchant.password.reset.change');
 
     //Profile management routes
     Route::get('profile/show', 'Merchants\ProfileController@show')->name('merchant.profile.show');
