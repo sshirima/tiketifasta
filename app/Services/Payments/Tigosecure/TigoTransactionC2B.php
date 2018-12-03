@@ -167,7 +167,7 @@ trait TigoTransactionC2B
                 return ['status'=>false, 'error'=>$error];
             }
 
-            if (!$input['trans_status'] == 'success') {
+            if (!($input['trans_status'] == 'success')) {
 
                 $error = 'Transaction failed with errorCode:'.$input['error_code'];
                 Log::channel('tigosecurec2b')->error($error . PHP_EOL);
@@ -181,14 +181,14 @@ trait TigoTransactionC2B
 
             }
 
-            if(!array_key_exists('verification_code', $input)){
+            if(!(array_key_exists('verification_code', $input))){
                 $error = 'Transaction failed, verification code not provided';
                 Log::channel('tigosecurec2b')->error($error . PHP_EOL);
 
                 return ['status'=>false, 'error'=>$error];
             }
 
-            if (!$transaction->access_token == $input['verification_code']) {
+            if (!($transaction->access_token == $input['verification_code'])) {
                 $error = 'Access code and verification code mismatch';
                 Log::channel('tigosecurec2b')->error($error . PHP_EOL);
 
