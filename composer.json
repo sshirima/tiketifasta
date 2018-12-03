@@ -22,7 +22,8 @@
         "nathanmac/parser": "^4.3",
         "nathanmac/responder": "^2.1",
         "okipa/laravel-bootstrap-table-list": "^2.1",
-        "prettus/l5-repository": "^2.6"
+        "prettus/l5-repository": "^2.6",
+        "nunomaduro/collision": "~2.0"
     },
     "require-dev": {
         "filp/whoops": "~2.0",
