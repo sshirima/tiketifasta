@@ -9,10 +9,21 @@
 namespace App\Services\Bookings;
 
 use App\Models\Booking;
+use App\Models\ScheduleSeat;
 
 trait AuthorizeBooking
 {
+    /**
+     * @param $transaction
+     */
+    public function deleteFailedBooking($transaction){
 
+        $booking = $transaction->bookingPayment->booking;
+
+        ScheduleSeat::where(['seat_id'=>$booking->seat_id,'schedule_id'=>$booking->schedule_id])->delete();
+
+        $booking->delete();
+    }
 
     public function setBookingCancelled(Booking $booking){
         $this->updateBookingStatus($booking, Booking::STATUS_CANCELLED);

@@ -43,6 +43,9 @@ class TigoOnlineController extends Controller
         $response = $this->tigoOnline->confirmTigoSecureC2BTransaction($request);
 
         if(!$response['status']){
+
+            $this->deleteBooking($response);
+
             return view('users.pages.bookings.booking_confirmation')->with(['error' => $response['error']]);
         }
 
@@ -54,6 +57,20 @@ class TigoOnlineController extends Controller
 
         return view('users.pages.bookings.booking_confirmation')->with(['ticket' => $ticket, 'transaction' => $tigoC2B,
             'bookingPayment' => $tigoC2B->bookingPayment, 'booking' => $ticket->booking]);
+    }
+
+    /**
+     * @param $response
+     */
+    protected function deleteBooking($response): void
+    {
+        if (array_key_exists('model', $response)) {
+
+            $tigoC2B = $response['model'];
+
+            $this->deleteFailedBooking($tigoC2B);
+
+        }
     }
 
 }

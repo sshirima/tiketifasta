@@ -177,7 +177,7 @@ trait TigoTransactionC2B
                 $transaction->update();
 
 
-                return ['status'=>false, 'error'=>$error];
+                return ['status'=>false, 'error'=>$error,'model'=>$transaction];
 
             }
 
@@ -185,14 +185,14 @@ trait TigoTransactionC2B
                 $error = 'Transaction failed, verification code not provided';
                 Log::channel('tigosecurec2b')->error($error . PHP_EOL);
 
-                return ['status'=>false, 'error'=>$error];
+                return ['status'=>false, 'error'=>$error, 'model'=>$transaction];
             }
 
             if (!($transaction->access_token == $input['verification_code'])) {
                 $error = 'Access code and verification code mismatch';
                 Log::channel('tigosecurec2b')->error($error . PHP_EOL);
 
-                return ['status'=>false, 'error'=>$error];
+                return ['status'=>false, 'error'=>$error, 'model'=>$transaction];
             }
 
             $this->updateMfsParameters($transaction, $request);
