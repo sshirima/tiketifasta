@@ -33,9 +33,9 @@ trait TigoTransactionC2B
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array('content-type: application/json'));
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('content-type' => 'application/x-www-form-urlencoded'));
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            $postFields = json_encode($this->accessTokenRequestParam());
+            $postFields = json_encode($this->accessTokenRequestParameters());
             curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
 
             curl_setopt($ch, CURLOPT_TIMEOUT, config('payments.mpesa.b2c.timeout'));
@@ -362,6 +362,17 @@ trait TigoTransactionC2B
             TigoOnlineC2B::COLUMN_TAX => '0',
             TigoOnlineC2B::COLUMN_FEE => '0',
             TigoOnlineC2B::COLUMN_AMOUNT => $booking->price,
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    private function accessTokenRequestParameters(): array
+    {
+        return [
+            'client_id' => config('payments.tigo.c2b.key'),
+            'client_secret' => config('payments.tigo.c2b.secret'),
         ];
     }
 
