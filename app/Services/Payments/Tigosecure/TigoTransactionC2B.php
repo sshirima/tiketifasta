@@ -56,7 +56,8 @@ trait TigoTransactionC2B
             if (!curl_errno($ch)) {
                 switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
                     case 200:
-                        return ['status'=>true,'accessToken'=>$response->accessToken];
+                        $res = json_encode($response);
+                        return ['status'=>true,'accessToken'=>$res->accessToken];
                         break;
                     default:
                         Log::channel('tigosecurec2b')->error('Unexpected response from server: response='.$response);
@@ -166,8 +167,7 @@ trait TigoTransactionC2B
         if (!curl_errno($ch)) {
             switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
                 case 200:
-                    $res = json_decode($response);
-                    return ['status'=>true,'redirectUrl'=>$res->redirectUrl];
+                    return ['status'=>true,'redirectUrl'=>$response->redirectUrl];
                     break;
                 default:
                     Log::channel('tigosecurec2b')->error('Unexpected response from server: response='.$response);
