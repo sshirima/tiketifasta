@@ -76,10 +76,9 @@ trait TigoTransactionC2BRequests
      */
     private function accessTokenRequestParameters()
     {
-        return json_encode([
-            'client_id' => config('payments.tigo.c2b.key'),
-            'client_secret' => config('payments.tigo.c2b.secret'),
-        ]);
+        $postData  = "client_id=".config('payments.tigo.c2b.key');
+        $postData .= "&client_secret=".config('payments.tigo.c2b.secret');
+        return $postData;
     }
 
     /*protected function paymentAuthorizationOptions(TigoOnlineC2B $tigoOnlineC2B, $accessToken){

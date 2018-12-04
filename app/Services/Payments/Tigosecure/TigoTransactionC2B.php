@@ -61,13 +61,12 @@ trait TigoTransactionC2B
                     default:
                         Log::channel('tigosecurec2b')->error('Unexpected response from server: response='.$response);
                         return ['status'=>true,'error'=>'Unexpected response from server: http_code='.$http_code];
-
                 }
             }
-            /*$curlError= curl_errno($ch);
+            $curlError= curl_errno($ch);
             curl_close($ch);
 
-            $response = $client->request('POST', $url, $this->accessTokenRequestParam());
+            /*$response = $client->request('POST', $url, $this->accessTokenRequestParam());
 
             if ($response->getStatusCode() == Response::HTTP_OK) {
 
