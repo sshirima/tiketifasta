@@ -30,6 +30,41 @@ trait TigoTransactionC2B
 
             $url = config('payments.tigo.c2b.url_token');
 
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('content-type: application/json'));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $postFields = json_encode($this->accessTokenRequestParam());
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+
+            curl_setopt($ch, CURLOPT_TIMEOUT, config('payments.mpesa.b2c.timeout'));
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, config('payments.mpesa.b2c.connect_timeout'));
+
+            $response = curl_exec($ch);
+
+            if ($response === false) {
+                $info = curl_getinfo($ch);
+                if ($info['http_code'] === 0) {
+                    Log::channel('mpesab2c')->error('Connection timeout: url='.$url  . PHP_EOL);
+                    return ['status'=>false,'error'=>'Generate access token: connection timeout, url='.$url];
+                }
+            }
+            // Check HTTP status code
+            if (!curl_errno($ch)) {
+                switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
+                    case 200:
+                        return ['status'=>true,'accessToken'=>$response->accessToken];
+                        break;
+                    default:
+                        Log::channel('tigosecurec2b')->error('Unexpected response from server: response='.$response);
+                        return ['status'=>true,'error'=>'Unexpected response from server: http_code='.$http_code];
+
+                }
+            }
+            /*$curlError= curl_errno($ch);
+            curl_close($ch);
+
             $response = $client->request('POST', $url, $this->accessTokenRequestParam());
 
             if ($response->getStatusCode() == Response::HTTP_OK) {
@@ -41,7 +76,7 @@ trait TigoTransactionC2B
                 //Log failure
                 Log::channel('tigosecurec2b')->error('Failed to get access token: url='.$url . PHP_EOL);
                 return null;
-            }
+            }*/
 
         }catch (\Exception $ex){
             //Log failure
@@ -84,11 +119,18 @@ trait TigoTransactionC2B
      */
     public function authorizeTigoC2BTransaction($bookingPayment)
     {
-        $accessToken = $this->generateAccessToken();
+        $tokenResponse = $this->generateAccessToken();
 
-        if(!isset($accessToken)){
+        if(!$tokenResponse['status']){
             return ['status'=>false, 'error'=>'Failed to generate access token'];
         }
+
+        if(array_key_exists('error', $tokenResponse)){
+            Log::channel('tigosecurec2b')->error('Generate access token error: '.$tokenResponse['error']  . PHP_EOL);
+           return  ['status'=>false, 'error'=>'Failed to generate access token'];
+        }
+
+        $accessToken = $tokenResponse['accessToken'];
 
         $tigoC2B = $this->createTigoC2B($bookingPayment);
 
@@ -115,7 +157,7 @@ trait TigoTransactionC2B
         if ($response === false) {
             $info = curl_getinfo($ch);
             if ($info['http_code'] === 0) {
-                Log::channel('mpesab2c')->error('Connection timeout: url='.$url  . PHP_EOL);
+                Log::channel('tigosecurec2b')->error('Connection timeout: url='.$url  . PHP_EOL);
                 return ['status'=>false,'error'=>'Authorize payment: connection timeout, url='.$url];
             }
         }
