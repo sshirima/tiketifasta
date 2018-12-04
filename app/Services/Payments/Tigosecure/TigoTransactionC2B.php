@@ -324,11 +324,11 @@ trait TigoTransactionC2B
 
     /**
      * @param TigoOnlineC2B $tigoOnlineC2B
-     * @param $payment
+     * @param $response
      */
-    protected function completeAuthorization(TigoOnlineC2B $tigoOnlineC2B, $payment): void
+    protected function completeAuthorization(TigoOnlineC2B $tigoOnlineC2B, $response): void
     {
-        $tigoOnlineC2B->auth_code = $payment['authCode'];
+        $tigoOnlineC2B->auth_code = $response->authCode;
         $tigoOnlineC2B->update();
     }
 
