@@ -72,9 +72,9 @@ trait TigoTransactionC2BRequests
     }
 
     /**
-     * @return array
+     * @return string
      */
-    private function accessTokenRequestParameters(): array
+    private function accessTokenRequestParameters()
     {
         return json_encode([
             'client_id' => config('payments.tigo.c2b.key'),
