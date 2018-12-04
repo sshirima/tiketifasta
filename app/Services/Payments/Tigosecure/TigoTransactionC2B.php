@@ -73,7 +73,7 @@ trait TigoTransactionC2B
         }catch (\Exception $ex){
             //Log failure
             Log::channel('tigosecurec2b')->error('Generate access token procedure fails: message='.$ex->getMessage());
-            $responseArray = ['status'=>true,'error'=>'Generate access token procedure fails: message='.$ex->getMessage()];
+            $responseArray = ['status'=>false,'error'=>'Generate access token procedure fails: message='.$ex->getMessage()];
         }
 
         return $responseArray;
@@ -165,7 +165,7 @@ trait TigoTransactionC2B
                     case 200:
                         $res = json_decode($response);
                         $this->completeAuthorization($tigoC2B, $res);
-                        $responseArray = ['status'=>true,'redirectUrl'=>$res->redirectUrl];
+                        $responseArray = ['status'=>true, 'redirectUrl'=>$res->redirectUrl];
                         break;
                     default:
                         Log::channel('tigosecurec2b')->error('Unexpected response from server: response='.$response);
@@ -180,7 +180,7 @@ trait TigoTransactionC2B
 
         }catch (\Exception $ex){
             Log::channel('tigosecurec2b')->error('Tigo transaction authorization fails: message='.$ex->getMessage());
-            $responseArray = ['status'=>true,'error'=>'Tigo transaction authorization fails: message='.$ex->getMessage()];;
+            $responseArray = ['status'=>false,'error'=>'Tigo transaction authorization fails: message='.$ex->getMessage()];;
         }
 
         return $responseArray;
