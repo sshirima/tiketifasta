@@ -25,6 +25,7 @@ trait TigoTransactionC2B
      */
     public function generateAccessToken()
     {
+        $responseArray=null;
         try{
             $client = new Client();
 
@@ -49,7 +50,7 @@ trait TigoTransactionC2B
                 $info = curl_getinfo($ch);
                 if ($info['http_code'] === 0) {
                     Log::channel('mpesab2c')->error('Connection timeout: url='.$url  . PHP_EOL);
-                    return ['status'=>false,'error'=>'Generate access token: connection timeout, url='.$url];
+                    $responseArray = ['status'=>false,'error'=>'Generate access token: connection timeout, url='.$url];
                 }
             }
             // Check HTTP status code
@@ -57,34 +58,22 @@ trait TigoTransactionC2B
                 switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
                     case 200:
                         $res = json_decode($response);
-                        return ['status'=>true,'accessToken'=>$res->accessToken];
+                        $responseArray= ['status'=>true,'accessToken'=>$res->accessToken];
                         break;
                     default:
                         Log::channel('tigosecurec2b')->error('Unexpected response from server: response='.$response);
-                        return ['status'=>true,'error'=>'Unexpected response from server: http_code='.$http_code];
+                        $responseArray= ['status'=>true,'error'=>'Unexpected response from server: http_code='.$http_code];
                 }
             }
-            $curlError= curl_errno($ch);
             curl_close($ch);
-
-            /*$response = $client->request('POST', $url, $this->accessTokenRequestParam());
-
-            if ($response->getStatusCode() == Response::HTTP_OK) {
-
-                $response = json_decode($response->getBody());
-                return $response->accessToken;
-
-            } else {
-                //Log failure
-                Log::channel('tigosecurec2b')->error('Failed to get access token: url='.$url . PHP_EOL);
-                return null;
-            }*/
 
         }catch (\Exception $ex){
             //Log failure
             Log::channel('tigosecurec2b')->error('Generate access token procedure fails: message='.$ex->getMessage());
-            return null;
+            $responseArray = ['status'=>true,'error'=>'Generate access token procedure fails: message='.$ex->getMessage()];
         }
+
+        return $responseArray;
     }
 
     public function serverStatus()
@@ -121,64 +110,71 @@ trait TigoTransactionC2B
      */
     public function authorizeTigoC2BTransaction($bookingPayment)
     {
-        $tokenResponse = $this->generateAccessToken();
+        try{
+            $tokenResponse = $this->generateAccessToken();
 
-        if(!$tokenResponse['status']){
-            return ['status'=>false, 'error'=>'Failed to generate access token'];
-        }
-
-        if(array_key_exists('error', $tokenResponse)){
-            Log::channel('tigosecurec2b')->error('Generate access token error: '.$tokenResponse['error']  . PHP_EOL);
-           return  ['status'=>false, 'error'=>'Failed to generate access token'];
-        }
-
-        $accessToken = $tokenResponse['accessToken'];
-
-        $tigoC2B = $this->createTigoC2B($bookingPayment);
-
-        if (!isset($tigoC2B)){
-            return ['status'=>false,'error'=>'Failed to create TigoC2B model'];
-        }
-
-        $this->saveAccessToken($tigoC2B, $accessToken);
-
-        $url = config('payments.tigo.c2b.url_authorize');
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('content-type: application/json', 'accessToken : ' . $accessToken));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $postFields = json_encode($this->paymentAuthorizationContent($tigoC2B, $accessToken));
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
-
-        curl_setopt($ch, CURLOPT_TIMEOUT, config('payments.mpesa.b2c.timeout'));
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, config('payments.mpesa.b2c.connect_timeout'));
-
-        $response = curl_exec($ch);
-
-        if ($response === false) {
-            $info = curl_getinfo($ch);
-            if ($info['http_code'] === 0) {
-                Log::channel('tigosecurec2b')->error('Connection timeout: url='.$url  . PHP_EOL);
-                return ['status'=>false,'error'=>'Authorize payment: connection timeout, url='.$url];
+            if(!$tokenResponse['status']){
+                return ['status'=>false, 'error'=>'Failed to generate access token'];
             }
-        }
-        // Check HTTP status code
-        if (!curl_errno($ch)) {
-            switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
-                case 200:
-                    return ['status'=>true,'redirectUrl'=>$response->redirectUrl];
-                    break;
-                default:
-                    Log::channel('tigosecurec2b')->error('Unexpected response from server: response='.$response);
-                    return ['status'=>true,'error'=>'Unexpected response from server: http_code='.$http_code];
 
+            if(array_key_exists('error', $tokenResponse)){
+                Log::channel('tigosecurec2b')->error('Generate access token error: '.$tokenResponse['error']  . PHP_EOL);
+                return  ['status'=>false, 'error'=>'Failed to generate access token'];
             }
-        }
-        $curlError= curl_errno($ch);
-        curl_close($ch);
 
-        return ['status'=>false,'error'=>'Curl error='.$curlError];
+            $accessToken = $tokenResponse['accessToken'];
+
+            $tigoC2B = $this->createTigoC2B($bookingPayment);
+
+            if (!isset($tigoC2B)){
+                return ['status'=>false,'error'=>'Failed to create TigoC2B model'];
+            }
+
+            $this->saveAccessToken($tigoC2B, $accessToken);
+
+            $url = config('payments.tigo.c2b.url_authorize');
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('content-type: application/json', 'accessToken : ' . $accessToken));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $postFields = json_encode($this->paymentAuthorizationContent($tigoC2B, $accessToken));
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+
+            curl_setopt($ch, CURLOPT_TIMEOUT, config('payments.mpesa.b2c.timeout'));
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, config('payments.mpesa.b2c.connect_timeout'));
+
+            $response = curl_exec($ch);
+
+            if ($response === false) {
+                $info = curl_getinfo($ch);
+                if ($info['http_code'] === 0) {
+                    Log::channel('tigosecurec2b')->error('Connection timeout: url='.$url  . PHP_EOL);
+                    $responseArray = ['status'=>false,'error'=>'Authorize payment: connection timeout, url='.$url];
+                }
+            }
+            // Check HTTP status code
+            if (!curl_errno($ch)) {
+                switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
+                    case 200:
+                        $responseArray = ['status'=>true,'redirectUrl'=>$response->redirectUrl];
+                        break;
+                    default:
+                        Log::channel('tigosecurec2b')->error('Unexpected response from server: response='.$response);
+                        $responseArray = ['status'=>true,'error'=>'Unexpected response from server: http_code='.$http_code];
+
+                }
+            }
+            $curlError= curl_errno($ch);
+            curl_close($ch);
+
+            return ['status'=>false,'error'=>'Curl error='.$curlError];
+        }catch (\Exception $ex){
+            Log::channel('tigosecurec2b')->error('Tigo transaction authorization fails: message='.$ex->getMessage());
+            $responseArray = ['status'=>true,'error'=>'Tigo transaction authorization fails: message='.$ex->getMessage()];;
+        }
+
+        return $responseArray;
     }
 
     /**
