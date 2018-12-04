@@ -49,7 +49,8 @@ trait TigoTransactionC2B
                 $info = curl_getinfo($ch);
                 if ($info['http_code'] === 0) {
                     Log::channel('mpesab2c')->error('Connection timeout: url='.$url  . PHP_EOL);
-                    $responseArray = ['status'=>false,'error'=>'Generate access token: connection timeout, url='.$url];
+                    curl_close($ch);
+                    return ['status'=>false,'error'=>'Generate access token: connection timeout, url='.$url];
                 }
             }
             // Check HTTP status code
@@ -154,7 +155,8 @@ trait TigoTransactionC2B
                 $info = curl_getinfo($ch);
                 if ($info['http_code'] === 0) {
                     Log::channel('tigosecurec2b')->error('Connection timeout: url='.$url  . PHP_EOL);
-                    $responseArray = ['status'=>false,'error'=>'Authorize payment: connection timeout, url='.$url];
+                    curl_close($ch);
+                    return ['status'=>false,'error'=>'Authorize payment: connection timeout, url='.$url];
                 }
             }
             // Check HTTP status code
@@ -162,7 +164,7 @@ trait TigoTransactionC2B
                 switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
                     case 200:
                         $res = json_decode($response);
-                        dd($res);
+                        $this->completeAuthorization($tigoC2B, $res);
                         $responseArray = ['status'=>true,'redirectUrl'=>$res->redirectUrl];
                         break;
                     default:

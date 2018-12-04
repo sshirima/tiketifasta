@@ -152,8 +152,8 @@ class SelectBusController extends Controller
                     $this->cancelBooking($bookingPaymentResponse['error'], $booking);
                     return redirect()->back()->with(['error'=>$bookingPaymentResponse['error']]);
                 }
-
-                return redirect($bookingPayment['redirectUrl']);
+                dd();
+                return redirect()->to($bookingPayment['redirectUrl']);//($bookingPayment['redirectUrl']);
             }
             $error = 'Something went wrong on the request, please contact the support team';
             return redirect()->back()->with(['error'=>$error]);
