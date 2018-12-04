@@ -113,7 +113,7 @@ trait TigoTransactionC2B
     public function authorizeTigoC2BTransaction($bookingPayment)
     {
         $responseArray=null;
-        
+
         try{
             $tokenResponse = $this->generateAccessToken();
 
@@ -162,6 +162,7 @@ trait TigoTransactionC2B
                 switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
                     case 200:
                         $res = json_decode($response);
+                        dd($res);
                         $responseArray = ['status'=>true,'redirectUrl'=>$res->redirectUrl];
                         break;
                     default:
