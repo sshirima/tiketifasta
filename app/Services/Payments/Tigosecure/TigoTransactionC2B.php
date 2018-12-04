@@ -27,7 +27,6 @@ trait TigoTransactionC2B
     {
         $responseArray=null;
         try{
-            $client = new Client();
 
             $url = config('payments.tigo.c2b.url_token');
 
@@ -64,6 +63,9 @@ trait TigoTransactionC2B
                         Log::channel('tigosecurec2b')->error('Unexpected response from server: response='.$response);
                         $responseArray= ['status'=>true,'error'=>'Unexpected response from server: http_code='.$http_code];
                 }
+            } else {
+                $curlError= curl_errno($ch);
+                $responseArray = ['status'=>false,'error'=>'Curl error='.$curlError];
             }
             curl_close($ch);
 
@@ -110,6 +112,8 @@ trait TigoTransactionC2B
      */
     public function authorizeTigoC2BTransaction($bookingPayment)
     {
+        $responseArray=null;
+        
         try{
             $tokenResponse = $this->generateAccessToken();
 
@@ -165,11 +169,12 @@ trait TigoTransactionC2B
                         $responseArray = ['status'=>true,'error'=>'Unexpected response from server: http_code='.$http_code];
 
                 }
+            } else {
+                $curlError= curl_errno($ch);
+                $responseArray = ['status'=>false,'error'=>'Curl error='.$curlError];
             }
-            $curlError= curl_errno($ch);
             curl_close($ch);
 
-            return ['status'=>false,'error'=>'Curl error='.$curlError];
         }catch (\Exception $ex){
             Log::channel('tigosecurec2b')->error('Tigo transaction authorization fails: message='.$ex->getMessage());
             $responseArray = ['status'=>true,'error'=>'Tigo transaction authorization fails: message='.$ex->getMessage()];;
