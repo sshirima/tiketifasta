@@ -166,7 +166,7 @@ trait TigoTransactionC2B
         if (!curl_errno($ch)) {
             switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
                 case 200:
-                    $res = json_encode($response);
+                    $res = json_decode($response);
                     return ['status'=>true,'redirectUrl'=>$res->redirectUrl];
                     break;
                 default:
