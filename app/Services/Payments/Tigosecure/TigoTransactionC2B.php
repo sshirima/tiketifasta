@@ -157,7 +157,8 @@ trait TigoTransactionC2B
             if (!curl_errno($ch)) {
                 switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
                     case 200:
-                        $responseArray = ['status'=>true,'redirectUrl'=>$response->redirectUrl];
+                        $res = json_decode($response);
+                        $responseArray = ['status'=>true,'redirectUrl'=>$res->redirectUrl];
                         break;
                     default:
                         Log::channel('tigosecurec2b')->error('Unexpected response from server: response='.$response);
