@@ -10,7 +10,6 @@ namespace App\Services\Payments\Tigosecure;
 
 use App\Models\TigoOnlineC2B;
 use App\Services\DateTime\DatesOperations;
-use App\Services\SMS\SendSMS;
 use App\Services\Tickets\TicketManager;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
@@ -19,7 +18,37 @@ use Log;
 
 trait TigoTransactionC2B
 {
-    use TigoTransactionC2BRequests, DatesOperations, TicketManager, SendSMS;
+    use TigoTransactionC2BRequests, DatesOperations, TicketManager;
+
+    /**
+     * @return null
+     */
+    public function generateAccessToken()
+    {
+        try{
+            $client = new Client();
+
+            $url = config('payments.tigo.c2b.url_token');
+
+            $response = $client->request('POST', $url, $this->accessTokenRequestParam());
+
+            if ($response->getStatusCode() == Response::HTTP_OK) {
+
+                $response = json_decode($response->getBody());
+                return $response->accessToken;
+
+            } else {
+                //Log failure
+                Log::channel('tigosecurec2b')->error('Failed to get access token: url='.$url . PHP_EOL);
+                return null;
+            }
+
+        }catch (\Exception $ex){
+            //Log failure
+            Log::channel('tigosecurec2b')->error('Generate access token procedure fails: message='.$ex->getMessage());
+            return null;
+        }
+    }
 
     public function serverStatus()
     {
@@ -34,10 +63,10 @@ trait TigoTransactionC2B
         $url = 'https://secure.tigo.com/v1/tigo/systemstatus';
 
         if (isset($accessToken)) {
-            $response = $client->request('GET', $url,$this->systemStatusOptions());
+            $response = $client->request('GET', $url, $this->systemStatusOptions());
 
             if ($response->getStatusCode() == Response::HTTP_OK) {
-                $serverStatus =  json_decode($response->getBody());
+                $serverStatus = json_decode($response->getBody());
             } else {
                 //Log error: Failed to retrieve server status
             }
@@ -50,46 +79,72 @@ trait TigoTransactionC2B
     }
 
     /**
-     * @param TigoOnlineC2B $tigoOnlineC2B
-     * @return array|null
+     * @param $bookingPayment
+     * @return array
      */
-    public function paymentAuthorization(TigoOnlineC2B $tigoOnlineC2B)
+    public function authorizeTigoC2BTransaction($bookingPayment)
     {
+        $accessToken = $this->generateAccessToken();
 
-        $payment = null;
-
-        $accessToken = $this->getAccessToken();
-
-        if (isset($accessToken)) {
-            $this->saveAccessToken($tigoOnlineC2B, $accessToken);
-            //$url = 'https://secure.tigo.com/v1/tigo/payment-auth-test-2018/authorize';//env('MPESA_C2B_CONFIRM');
-            $url = 'https://secure.tigo.com/v1/tigo/payment-auth/authorize';
-            $ch = curl_init();
-            curl_setopt( $ch, CURLOPT_URL, $url );
-            curl_setopt( $ch, CURLOPT_POST, true );
-            curl_setopt( $ch, CURLOPT_HTTPHEADER, array('content-type: application/json','accessToken : '.$accessToken));
-            curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-            $postFields = json_encode($this->paymentAuthorizationContent($tigoOnlineC2B, $accessToken));
-            curl_setopt( $ch, CURLOPT_POSTFIELDS,$postFields);
-            $response = curl_exec($ch);
-            // Check HTTP status code
-            if (!curl_errno($ch)) {
-                switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
-                    case 200:
-                        //Confirm the transaction, generate ticket and send notification to user
-                        //$payment = $response;
-                        $payment = ['status_code'=>$http_code, 'response'=>$response];
-                        break;
-                    default:
-                        $payment = ['status_code'=>$http_code, 'response'=>$response];
-                }
-            }
-            curl_close($ch);
-        } else {
-            return $payment;
+        if(!isset($accessToken)){
+            return ['status'=>false, 'error'=>'Failed to generate access token'];
         }
 
-        return $payment;
+        $tigoC2B = $this->createTigoC2B($bookingPayment);
+
+        if (!isset($tigoC2B)){
+            return ['status'=>false,'error'=>'Failed to create TigoC2B model'];
+        }
+
+        $this->saveAccessToken($tigoC2B, $accessToken);
+
+        $url = config('payments.tigo.c2b.url_authorize');
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('content-type: application/json', 'accessToken : ' . $accessToken));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $postFields = json_encode($this->paymentAuthorizationContent($tigoC2B, $accessToken));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+
+        curl_setopt($ch, CURLOPT_TIMEOUT, config('payments.mpesa.b2c.timeout'));
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, config('payments.mpesa.b2c.connect_timeout'));
+
+        $response = curl_exec($ch);
+
+        if ($response === false) {
+            $info = curl_getinfo($ch);
+            if ($info['http_code'] === 0) {
+                Log::channel('mpesab2c')->error('Connection timeout: url='.$url  . PHP_EOL);
+                return ['status'=>false,'error'=>'Authorize payment: connection timeout, url='.$url];
+            }
+        }
+        // Check HTTP status code
+        if (!curl_errno($ch)) {
+            switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
+                case 200:
+                    return ['status'=>true,'redirectUrl'=>$response->redirectUrl];
+                    break;
+                default:
+                    Log::channel('tigosecurec2b')->error('Unexpected response from server: response='.$response);
+                    return ['status'=>true,'error'=>'Unexpected response from server: http_code='.$http_code];
+
+            }
+        }
+        $curlError= curl_errno($ch);
+        curl_close($ch);
+
+        return ['status'=>false,'error'=>'Curl error='.$curlError];
+    }
+
+    /**
+     * @param $bookingPayment
+     * @return mixed
+     */
+    protected function createTigoC2B($bookingPayment){
+        $booking = $bookingPayment->booking;
+
+        return TigoOnlineC2B::create($this->getTigoC2BParameterArray($bookingPayment, $booking));
     }
 
     /**
@@ -99,13 +154,14 @@ trait TigoTransactionC2B
      * @param $lastname
      * @return array|null
      */
-    public function validateMFSAccount($transactionId, $msisdn, $firstname, $lastname){
+    public function validateMFSAccount($transactionId, $msisdn, $firstname, $lastname)
+    {
 
         $accountStatus = null;
 
         $accessToken = $this->getAccessToken();
 
-        if (isset($accessToken)){
+        if (isset($accessToken)) {
 
             //$url = $this->getTigosecureUrl('/v1/tigo/mfs/validateMFSAccount');
 
@@ -113,14 +169,14 @@ trait TigoTransactionC2B
 
             //$url = 'https://secure.tigo.com/v1/tigo/mfs/validateMFSAccount-test-2018';
             $ch = curl_init();
-            curl_setopt( $ch, CURLOPT_URL, $url );
-            curl_setopt( $ch, CURLOPT_POST, true );
-            curl_setopt( $ch, CURLOPT_HTTPHEADER, array('content-type: application/json','accessToken : '.$accessToken));
-            curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('content-type: application/json', 'accessToken : ' . $accessToken));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
             $postFields = json_encode($this->validateMFSAccountContent($transactionId, $msisdn, $firstname, $lastname));
 
-            curl_setopt( $ch, CURLOPT_POSTFIELDS,$postFields);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
             $response = curl_exec($ch);
 
             // Check HTTP status code
@@ -129,10 +185,10 @@ trait TigoTransactionC2B
                     case 200:
                         //Confirm the transaction, generate ticket and send notification to user
                         //$payment = $response;
-                        $accountStatus = ['status_code'=>$http_code, 'response'=>$response];
+                        $accountStatus = ['status_code' => $http_code, 'response' => $response];
                         break;
                     default:
-                        $accountStatus = ['status_code'=>$http_code, 'response'=>$response];
+                        $accountStatus = ['status_code' => $http_code, 'response' => $response];
                 }
             }
             curl_close($ch);
@@ -164,12 +220,12 @@ trait TigoTransactionC2B
                 $error = 'Transaction not found with ID=' . $transactionId;
                 Log::channel('tigosecurec2b')->error($error . PHP_EOL);
 
-                return ['status'=>false, 'error'=>$error];
+                return ['status' => false, 'error' => $error];
             }
 
             if (!($input['trans_status'] == 'success')) {
 
-                $error = 'Transaction failed with errorCode:'.$input['error_code'];
+                $error = 'Transaction failed with errorCode:' . $input['error_code'];
                 Log::channel('tigosecurec2b')->error($error . PHP_EOL);
 
                 $transaction->status = TigoOnlineC2B::STATUS_FAIL;
@@ -177,33 +233,33 @@ trait TigoTransactionC2B
                 $transaction->update();
 
 
-                return ['status'=>false, 'error'=>$error,'model'=>$transaction];
+                return ['status' => false, 'error' => $error, 'model' => $transaction];
 
             }
 
-            if(!(array_key_exists('verification_code', $input))){
+            if (!(array_key_exists('verification_code', $input))) {
                 $error = 'Transaction failed, verification code not provided';
                 Log::channel('tigosecurec2b')->error($error . PHP_EOL);
 
-                return ['status'=>false, 'error'=>$error, 'model'=>$transaction];
+                return ['status' => false, 'error' => $error, 'model' => $transaction];
             }
 
             if (!($transaction->access_token == $input['verification_code'])) {
                 $error = 'Access code and verification code mismatch';
                 Log::channel('tigosecurec2b')->error($error . PHP_EOL);
 
-                return ['status'=>false, 'error'=>$error, 'model'=>$transaction];
+                return ['status' => false, 'error' => $error, 'model' => $transaction];
             }
 
             $this->updateMfsParameters($transaction, $request);
 
-            return ['status'=>true, 'model'=>$transaction];
+            return ['status' => true, 'model' => $transaction];
 
         } catch (\Exception $ex) {
             //return $transaction;
-            $error = 'An exception was thrown on TigoTransactionC2B:confirmTigoSecureB2CTransaction, message='.$ex->getMessage();
+            $error = 'An exception was thrown on TigoTransactionC2B:confirmTigoSecureB2CTransaction, message=' . $ex->getMessage();
             Log::channel('tigosecurec2b')->error($error . PHP_EOL);
-            return ['status'=>false, 'error'=>'Something went wrong during processing'];
+            return ['status' => false, 'error' => 'Something went wrong during processing'];
         }
     }
 
@@ -231,19 +287,57 @@ trait TigoTransactionC2B
      * @param TigoOnlineC2B $tigoOnlineC2B
      * @param Request $request
      */
-    public function updateMfsParameters(TigoOnlineC2B $tigoOnlineC2B, Request $request){
+    public function updateMfsParameters(TigoOnlineC2B $tigoOnlineC2B, Request $request)
+    {
         $input = $request->all();
 
-        if($request->has('mfs_id')){
+        if ($request->has('mfs_id')) {
             $tigoOnlineC2B->mfs_id = $input['mfs_id'];
         }
 
-        if($request->has('external_ref_id')){
+        if ($request->has('external_ref_id')) {
             $tigoOnlineC2B->external_ref_id = $input['external_ref_id'];
         }
 
         $tigoOnlineC2B->status = TigoOnlineC2B::STATUS_SUCCESS;
 
         $tigoOnlineC2B->update();
+    }
+
+    /**
+     * @param $bookingPayment
+     * @param $booking
+     * @return array
+     */
+    protected function getTigoC2BParameterArray($bookingPayment, $booking): array
+    {
+        return [
+            TigoOnlineC2B::COLUMN_REFERENCE => $bookingPayment->payment_ref,//strtoupper(PaymentManager::random_code(12)),
+            TigoOnlineC2B::COLUMN_PHONE_NUMBER => $booking->phonenumber,
+            TigoOnlineC2B::COLUMN_FIRST_NAME => $booking->firstname,
+            TigoOnlineC2B::COLUMN_LAST_NAME => $booking->lastname,
+            TigoOnlineC2B::COLUMN_BOOKING_PAYMENT_ID => $bookingPayment->id,
+            TigoOnlineC2B::COLUMN_TAX => '0',
+            TigoOnlineC2B::COLUMN_FEE => '0',
+            TigoOnlineC2B::COLUMN_AMOUNT => $booking->price,
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function accessTokenRequestParam(): array
+    {
+        return [
+            'headers' =>
+                [
+                    'content-type' => 'application/x-www-form-urlencoded'
+                ],
+            'form_params' => [
+                'client_id' => config('payments.tigo.c2b.key'),
+                'client_secret' => config('payments.tigo.c2b.secret'),
+            ],
+
+        ];
     }
 }

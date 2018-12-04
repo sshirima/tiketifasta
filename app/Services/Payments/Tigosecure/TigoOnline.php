@@ -24,11 +24,6 @@ class TigoOnline
     const ERROR_CODE_3043 = 'purchase-3008-3043-E';
     const ERROR_CODE_3045 = 'purchase-3008-3045-E';
 
-    public function initializePaymentC2B(array $attributes)
-    {
-        return TigoOnlineC2B::create($attributes);
-    }
-
     /**
      * @return null
      */
@@ -60,9 +55,7 @@ class TigoOnline
 
         $client = new Client();
 
-        $url = 'https://secure.tigo.com/v1/oauth/generate/accesstoken?grant_type=client_credentials';//$this->getTigosecureUrl('/v1/oauth/generate/accesstoken?grant_type=client_credentials');
-
-        //$url = 'https://secure.tigo.com/v1/oauth/generate/accesstoken-test-2018?grant_type=client_credentials';
+        $url = 'https://secure.tigo.com/v1/oauth/generate/accesstoken?grant_type=client_credentials';
 
         $response = $client->request('POST', $url, $this->generateTokenOptions());
 
@@ -72,7 +65,7 @@ class TigoOnline
 
         } else {
             //Log failure
-            Log::channel('tigosecurec2b')->error('Payment authorization>Failed to retrieve access token' . PHP_EOL);
+            Log::channel('tigosecurec2b')->error('Failed to get access token: url='.$url . PHP_EOL);
         }
 
         return $accessToken;

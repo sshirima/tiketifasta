@@ -46,7 +46,7 @@ class MpesaC2BController extends Controller
 
             $response = $this->getMpesaC2BValidationResponse($request);
 
-            MpesaC2BTransactionProcessor::dispatch($input, new Mpesa());
+            MpesaC2BTransactionProcessor::dispatch($input);
 
         } catch (Exception $ex) {
             return json_encode($ex->getMessage());//response($response, 200, ['Content-type'=>'application/xml']);
@@ -58,7 +58,7 @@ class MpesaC2BController extends Controller
     /**
      * @param Request $request
      */
-    public function confirmPaymentC2B(Request $request)
+    /*public function confirmPaymentC2B(Request $request)
     {
         try {
             $bookingPayment = BookingPayment::find($request->all()['payment_id']);
@@ -134,5 +134,5 @@ class MpesaC2BController extends Controller
             'initiator' => null,//$this->mpesaC2B->reference,//Ticket ID
             'initiatorPassword' => null, //$this->mpesaC2B->reference,//Ticket ID
         ]);
-    }
+    }*/
 }

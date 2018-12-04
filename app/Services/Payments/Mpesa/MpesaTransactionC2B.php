@@ -55,17 +55,17 @@ trait MpesaTransactionC2B
 
         if (!isset($mpesaC2B)) {
             Log::channel('mpesac2b')->info('Transaction not found:'.'['.$attributes['mpesa_receipt'].']'. PHP_EOL );
-            return array('status'=>false,'message'=>'Transaction not found');
+            return array('status'=>false,'error'=>'Transaction not found');
         }
 
         if ($this->isDuplicateC2B($attributes['mpesa_receipt'])) {
             Log::channel('mpesac2b')->info('Transaction is duplicated:'.'['.$attributes['mpesa_receipt'].']'. PHP_EOL );
-            return array('status'=>false,'message'=>'Transaction is duplicated');
+            return array('status'=>false,'error'=>'Transaction is duplicated');
         }
 
         if ($mpesaC2B->amount != $attributes['amount']) {
             Log::channel('mpesac2b')->info('Paid amount is not equal to ticket price:'.'['. 'Paid='.$attributes['amount'].']'. PHP_EOL );
-            return array('status'=>false,'message'=>'Paid amount is not equal to ticket price');
+            return array('status'=>false,'error'=>'Paid amount is not equal to ticket price');
         }
 
         $this->updateValidationParameters($attributes, $mpesaC2B);
@@ -127,7 +127,9 @@ trait MpesaTransactionC2B
                 switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
                     case 200:
                         Log::channel('mpesac2b')->info('Transaction confirmed' . PHP_EOL);
-                        $reply = ['status'=>true, 'response'=>$response];
+                        $parser = new Parser();
+                        $input = $parser->xml($response);
+                        $reply = ['status'=>true, 'response'=>$input];
                         break;
                     default:
                         Log::channel('mpesac2b')->error('Unexpected HTTP code: ' . $http_code . '[' . $response . ']' . PHP_EOL);
@@ -135,7 +137,7 @@ trait MpesaTransactionC2B
                 }
             } else {
                 Log::channel('mpesac2b')->error('Curl error[Error code:' . curl_errno($ch) . ']' . PHP_EOL);
-                $reply = ['status'=>true, 'response'=>'Curl error[Error code:' . curl_errno($ch) . ']'];
+                $reply = ['status'=>false, 'response'=>'Curl error[Error code:' . curl_errno($ch) . ']'];
             }
 
             curl_close($ch);

@@ -27,28 +27,38 @@ trait AddBookingService
         $this->paymentManager = $paymentManager;
     }
 
-    public function bookTicket(array $bookingDetails, $busId, $scheduleId, $tripId){
-        $isBooked = false;
-        $isInitialized = false;
-        $booking = null;
+    public function processNewBooking(array $bookingDetails, $busId, $scheduleId, $tripId){
 
-        //Check payment method to be used
-        $seat = Seat::select(['*'])->where([Seat::COLUMN_BUS_ID => $busId, Seat::COLUMN_SEAT_NAME => $bookingDetails['seat']])->first();
+        try{
+            $seat = Seat::select(['*'])->where([Seat::COLUMN_BUS_ID => $busId, Seat::COLUMN_SEAT_NAME => $bookingDetails['seat']])->first();
 
-        if (isset($seat)) {
-            $isBooked = $this->seatIsBooked($seat->id, $scheduleId);
+            if (!isset($seat)) {
+                return ['status'=>false,'error'=>'Selected seat id invalid'];
+            }
+
+            $isBooked = $this->checkSeatIsBooked($seat->id, $scheduleId);
+
+            if ($isBooked){
+                return ['status'=>false, 'error'=>'The seat has already booked'];
+            }
+
+            $booking = $this->createNewBooking($bookingDetails, $scheduleId, $tripId, $seat);
+
+            $scheduleSeat = $this->markSeatAsBooked($scheduleId, $seat);
+
+            //ConfirmBookingPayment::dispatch($booking, $scheduleSeat)->delay(now()->addMinutes(5));
+
+            return ['status'=>true,'booking'=>$booking];
+
+        }catch (\Exception $exception){
+            return ['status'=>false, 'error'=>$exception->getMessage()];
         }
+        //$payment = $bookingDetails['payment'];
 
-        //Initiate payment gateway if the seat is not booked
-        $paymentReference = null;
-        $scheduleSeat = null;
-        $paymentModel = null;
-
-        $payment = $bookingDetails['payment'];
-        if (!$isBooked) {
+        /*if (!$isBooked) {
             //Create booking
 
-            list($booking, $scheduleSeat) = $this->storeBookingInfo($bookingDetails, $scheduleId, $tripId, $seat);
+            list($booking, $scheduleSeat) = $this->createNewBooking($bookingDetails, $scheduleId, $tripId, $seat);
 
             //Create bookingPayment
             $bookingPayment = BookingPayment::create([
@@ -86,26 +96,10 @@ trait AddBookingService
                     $isInitialized  = isset($tigoOnlineC2B)?true:false;
 
                 }
-        }
-
-        //Save the booking records
-        if ($isInitialized) {
-            //Initialize payment timer
-            //ConfirmBookingPayment::dispatch($booking, $scheduleSeat)->delay(now()->addMinutes(5));
-        }
-
-        return ['booking'=>$booking,'paymentModel'=>$paymentModel];
+        }*/
     }
 
-    public function saveBooking(array $attributes){
-        return Booking::create($attributes);
-    }
-
-    public function createScheduleSeat(array $attributes){
-        return ScheduleSeat::create($attributes);
-    }
-
-    public function seatIsBooked($seatId, $scheduleId){
+    private function checkSeatIsBooked($seatId, $scheduleId){
 
         $seat = ScheduleSeat::where([
             ScheduleSeat::COLUMN_SEAT_ID=>$seatId,
@@ -116,18 +110,40 @@ trait AddBookingService
     }
 
     /**
+     * @param $scheduleId
+     * @param $seat
+     * @return mixed
+     */
+    private function markSeatAsBooked($scheduleId, $seat){
+        return ScheduleSeat::create($this->getScheduleSeatParameterArray($scheduleId, $seat));
+    }
+
+    /**
      * @param array $bookingDetails
      * @param $scheduleId
      * @param $tripId
      * @param $seat
-     * @param $paymentReference
+     * @return mixed
+     */
+    protected function createNewBooking(array $bookingDetails, $scheduleId, $tripId, $seat)
+    {
+        $booking = Booking::create($this->getBookingParameterArray($bookingDetails, $scheduleId, $tripId, $seat));
+
+        return $booking;
+    }
+
+    /**
+     * @param array $bookingDetails
+     * @param $scheduleId
+     * @param $tripId
+     * @param $seat
      * @return array
      */
-    protected function storeBookingInfo(array $bookingDetails, $scheduleId, $tripId, $seat): array
+    protected function getBookingParameterArray(array $bookingDetails, $scheduleId, $tripId, $seat): array
     {
         $trip = Trip::find($tripId);
 
-        $booking = $this->saveBooking([
+        return [
             Booking::COLUMN_TITLE => $bookingDetails[Booking::COLUMN_TITLE],
             Booking::COLUMN_FIRST_NAME => $bookingDetails[Booking::COLUMN_FIRST_NAME],
             Booking::COLUMN_LAST_NAME => $bookingDetails[Booking::COLUMN_LAST_NAME],
@@ -139,14 +155,20 @@ trait AddBookingService
             Booking::COLUMN_TRIP_ID => $tripId,
             Booking::COLUMN_STATUS => Booking::STATUS_PENDING,
             Booking::COLUMN_SCHEDULE_ID => $scheduleId,
-        ]);
+        ];
+    }
 
-        //Mark the seat as booked
-        $scheduleSeat = $this->createScheduleSeat([
+    /**
+     * @param $scheduleId
+     * @param $seat
+     * @return array
+     */
+    protected function getScheduleSeatParameterArray($scheduleId, $seat): array
+    {
+        return [
             ScheduleSeat::COLUMN_SCHEDULE_ID => $scheduleId,
             ScheduleSeat::COLUMN_SEAT_ID => $seat->id,
             ScheduleSeat::COLUMN_STATUS => ScheduleSeat::STATUES['booked']
-        ]);
-        return array($booking, $scheduleSeat);
+        ];
     }
 }

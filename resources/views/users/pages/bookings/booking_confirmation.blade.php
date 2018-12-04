@@ -5,6 +5,8 @@
 @endsection
 
 @section('content')
+    @include('flash::message')
+    @include('includes.errors.message')
     <section class="features-icons bg-light text-center">
         <div class="container">
             @if(isset($booking))

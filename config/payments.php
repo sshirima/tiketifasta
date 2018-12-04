@@ -27,7 +27,10 @@ return[
     ],
     'tigo'=>[
         'c2b'=>[
-
+            'key'=>env('TIGOSECURE_KEY'),
+            'secret'=>env('TIGOSECURE_SECRET'),
+            'url_token'=>env('TIGOSECURE_URL_TOKEN'),
+            'url_authorize'=>env('TIGOSECURE_URL_AUTHORIZE'),
         ],
         'bc2'=>[
             'url'=>env('TIGO_B2C_URL'),

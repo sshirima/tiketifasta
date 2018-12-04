@@ -20,13 +20,11 @@ class MpesaC2BTransactionProcessor implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, AuthorizeBooking, MpesaTransactionC2B, TicketManager;
 
     private $request;
-    private $mpesa;
 
 
-    public function __construct($request, Mpesa $mpesa)
+    public function __construct($request)
     {
         $this->request = $request;
-        $this->mpesa = $mpesa;
     }
 
     /**
@@ -40,46 +38,61 @@ class MpesaC2BTransactionProcessor implements ShouldQueue
         try {
             $validation = $this->validateMpesaC2BTransaction($this->request);
 
-            if ($validation['status']) {
-                //Stop the booking timer
-                $mpesaC2B = $validation['mpesaC2B'];
-
-                $this->generateServiceNumber($mpesaC2B);
-
-                $bookingPayment = $mpesaC2B->bookingPayment()->first();
-
-                $booking = $bookingPayment->booking()->first();
-
-                $this->setBookingConfirmed($booking);
-
-                $ticket = $this->createTicket($bookingPayment);
-
-                $confirmation = $this->createMpesaC2BConfirmRequest($booking, $mpesaC2B, $ticket);
-
-                if($confirmation['status']){
-
-                    $response = $confirmation['response'];
-
-                    if ($this->verifyMpesaC2BResponse($mpesaC2B, $response)) {
-
-                        $this->setMpesaC2BStatusConfirmed($mpesaC2B);
-
-                        $booking->confirmBooking();
-
-                        $this->confirmTicket($ticket);
-                    }
-                }
-
-                //ConfirmMpesaC2B::dispatch($mpesaC2B, $bookingPayment);
+            if(!$validation['status']){
+                $this->deleteBooking($validation);
+                Log::channel('mpesac2b')->error('Mpesa transaction validation fail: error='.$validation['error'].PHP_EOL );
+                return false;
             }
 
+            $mpesaC2B = $validation['mpesaC2B'];
+
+            $booking = $mpesaC2B->bookingPayment->booking;
+
+            $this->generateServiceNumber($mpesaC2B);
+
+            $this->setBookingConfirmed($booking);
+
+            $ticket = $this->processTicket($mpesaC2B);
+
+            $confirmation = $this->createMpesaC2BConfirmRequest($booking, $mpesaC2B, $ticket);
+
+            if(!$confirmation['status']){
+                Log::channel('mpesac2b')->error('Mpesa transaction confirmation failed:mpesaReceipt='.$mpesaC2B->mpesa_receipt.PHP_EOL );
+                return false;
+            }
+
+            $response = $confirmation['response'];
+
+            if (!($this->verifyMpesaC2BResponse($mpesaC2B, $response))) {
+                Log::channel('mpesac2b')->error('Confirmation response failed'.PHP_EOL );
+                return false;
+            }
+
+            $this->setMpesaC2BStatusConfirmed($mpesaC2B);
+
+            $this->confirmTicket($ticket);
+            //ConfirmMpesaC2B::dispatch($mpesaC2B, $bookingPayment);
 
         } catch (Exception $ex){
-            Log::channel('mpesac2b')->error('Failed to validate transaction['.$ex->getMessage().']'. PHP_EOL );
+            Log::channel('mpesac2b')->error('Mpesa C2B transaction process failed: '.$ex->getMessage(). PHP_EOL );
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * @param $response
+     */
+    protected function deleteBooking($response): void
+    {
+        if (array_key_exists('mpesaC2B', $response)) {
+
+            $mpesaC2B = $response['mpesaC2B'];
+
+            $this->deleteBookingByTransaction($mpesaC2B);
+
+        }
     }
 
 

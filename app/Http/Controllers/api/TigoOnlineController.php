@@ -25,7 +25,7 @@ use Log;
 
 class TigoOnlineController extends Controller
 {
-    use DatesOperations, TicketManager, SendSMS, AuthorizeBooking;
+    use DatesOperations, TicketManager, AuthorizeBooking;
 
     private $tigoOnline;
 
@@ -68,7 +68,7 @@ class TigoOnlineController extends Controller
 
             $tigoC2B = $response['model'];
 
-            $this->deleteFailedBooking($tigoC2B);
+            $this->deleteBookingByTransaction($tigoC2B);
 
         }
     }

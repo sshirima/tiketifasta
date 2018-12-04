@@ -14,9 +14,19 @@ use App\Models\ScheduleSeat;
 trait AuthorizeBooking
 {
     /**
+     * @param $booking
+     */
+    public function deleteFailedBooking($booking){
+
+        ScheduleSeat::where(['seat_id'=>$booking->seat_id,'schedule_id'=>$booking->schedule_id])->delete();
+
+        $booking->delete();
+    }
+
+    /**
      * @param $transaction
      */
-    public function deleteFailedBooking($transaction){
+    public function deleteBookingByTransaction($transaction){
 
         $booking = $transaction->bookingPayment->booking;
 

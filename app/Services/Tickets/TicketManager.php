@@ -10,9 +10,12 @@ namespace App\Services\Tickets;
 
 use App\Models\BookingPayment;
 use App\Models\Ticket;
+use App\Services\SMS\SendSMS;
 
 trait TicketManager
 {
+
+    use SendSMS;
 
     public function processTicket($transaction){
 
@@ -35,14 +38,27 @@ trait TicketManager
 
         $booking = $bookingPayment->booking()->first();
 
-        return Ticket::createOrUpdate([
-            Ticket::COLUMN_BOOKING_ID => $booking->id,
-            Ticket::COLUMN_PAYMENT_ID => $bookingPayment->id,
-        ],[
-            Ticket::COLUMN_TICKET_REFERENCE => strtoupper($this->generateTicketRef(6)),
-            Ticket::COLUMN_PRICE => $bookingPayment->amount,
-            Ticket::COLUMN_STATUS => Ticket::STATUS_CONFIRMED,
-        ]);
+        if($bookingPayment->method == 'tigopesa'){
+            return Ticket::updateOrCreate([
+                Ticket::COLUMN_BOOKING_ID => $booking->id,
+                Ticket::COLUMN_PAYMENT_ID => $bookingPayment->id,
+            ],[
+                Ticket::COLUMN_TICKET_REFERENCE => strtoupper($this->generateTicketRef(6)),
+                Ticket::COLUMN_PRICE => $bookingPayment->amount,
+                Ticket::COLUMN_STATUS => Ticket::STATUS_CONFIRMED,
+            ]);
+        }
+
+        if($bookingPayment->method == 'mpesa'){
+            return Ticket::updateOrCreate([
+                Ticket::COLUMN_BOOKING_ID => $booking->id,
+                Ticket::COLUMN_PAYMENT_ID => $bookingPayment->id,
+            ],[
+                Ticket::COLUMN_TICKET_REFERENCE => strtoupper($this->generateTicketRef(6)),
+                Ticket::COLUMN_PRICE => $bookingPayment->amount,
+                Ticket::COLUMN_STATUS => Ticket::STATUS_VALID,
+            ]);
+        }
     }
 
 
