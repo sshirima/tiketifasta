@@ -38,17 +38,21 @@ class DeletePendingBookings extends Command
      */
     public function handle()
     {
-        $condition[] = ['created_at', '<', Carbon::now()->subMinutes(5)->toDateTimeString()];
-        $condition[] = ['status', '=',Booking::STATUS_PENDING];
-        $bookings = Booking::where($condition)->get();
+        try{
+            $condition[] = ['created_at', '<', Carbon::now()->subMinutes(5)->toDateTimeString()];
+            $condition[] = ['status', '=',Booking::STATUS_PENDING];
+            $bookings = Booking::where($condition)->get();
 
-        foreach ($bookings as $booking){
-            $ticket =$booking->ticket;
-            if(isset($ticket)){
-                continue;
+            foreach ($bookings as $booking){
+                $ticket =$booking->ticket;
+                if(isset($ticket)){
+                    continue;
+                }
+                $this->deleteFailedBooking($booking);
+                //$this->info('INFO: Pending booking deleted successful');
             }
-            $this->deleteFailedBooking($booking);
-            //$this->info('INFO: Pending booking deleted successful');
+        }catch(\Exception $ex){
+            \Log::error('Failed to delete pending bookings: error='.$ex->getMessage() );
         }
 
         //$this->info('');

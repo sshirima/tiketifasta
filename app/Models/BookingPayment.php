@@ -50,4 +50,11 @@ class BookingPayment extends Model
     public function mpesaC2B(){
         return $this->hasOne(MpesaC2B::class,MpesaC2B::COLUMN_BOOKING_PAYMENT_ID,self::COLUMN_ID);
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function tigoC2B(){
+        return $this->hasOne(TigoOnlineC2B::class,TigoOnlineC2B::COLUMN_BOOKING_PAYMENT_ID,self::COLUMN_ID);
+    }
 }
