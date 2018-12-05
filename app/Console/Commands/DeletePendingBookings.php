@@ -48,7 +48,7 @@ class DeletePendingBookings extends Command
                 continue;
             }
             $this->deleteFailedBooking($booking);
-            $this->info('INFO: Pending booking deleted successful');
+            //$this->info('INFO: Pending booking deleted successful');
         }
 
         //$this->info('');
