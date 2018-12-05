@@ -18,6 +18,12 @@ trait AuthorizeBooking
      */
     public function deleteFailedBooking($booking){
 
+        $bookingPayment = $booking->bookingPayment;
+
+        if(isset($bookingPayment)){
+            $bookingPayment->delete();
+        }
+
         ScheduleSeat::where(['seat_id'=>$booking->seat_id,'schedule_id'=>$booking->schedule_id])->delete();
 
         $booking->delete();

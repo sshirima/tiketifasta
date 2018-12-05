@@ -54,17 +54,17 @@ trait MpesaTransactionC2B
         $mpesaC2B = MpesaC2B::where(['account_reference'=>$attributes['account_reference']])->first();
 
         if (!isset($mpesaC2B)) {
-            Log::channel('mpesac2b')->info('Transaction not found:'.'['.$attributes['mpesa_receipt'].']'. PHP_EOL );
+            Log::channel('mpesac2b')->error('Transaction not found:'.'['.$attributes['mpesa_receipt'].']'. PHP_EOL );
             return array('status'=>false,'error'=>'Transaction not found');
         }
 
         if ($this->isDuplicateC2B($attributes['mpesa_receipt'])) {
-            Log::channel('mpesac2b')->info('Transaction is duplicated:'.'['.$attributes['mpesa_receipt'].']'. PHP_EOL );
+            Log::channel('mpesac2b')->error('Transaction is duplicated:'.'['.$attributes['mpesa_receipt'].']'. PHP_EOL );
             return array('status'=>false,'error'=>'Transaction is duplicated');
         }
 
         if ($mpesaC2B->amount != $attributes['amount']) {
-            Log::channel('mpesac2b')->info('Paid amount is not equal to ticket price:'.'['. 'Paid='.$attributes['amount'].']'. PHP_EOL );
+            Log::channel('mpesac2b')->error('Paid amount is not equal to ticket price:'.'['. 'Paid='.$attributes['amount'].']'. PHP_EOL );
             return array('status'=>false,'error'=>'Paid amount is not equal to ticket price');
         }
 
