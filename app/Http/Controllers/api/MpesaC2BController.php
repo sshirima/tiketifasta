@@ -40,6 +40,7 @@ class MpesaC2BController extends Controller
     public function validateMpesaC2BTransaction(Request $request)
     {
 
+        Log::channel('mpesab2c')->error('Received mpesa C2B callback'  . PHP_EOL);
         try {
             $parser = new Parser();
             $input = $parser->xml($request->getContent());
