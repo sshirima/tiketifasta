@@ -44,11 +44,12 @@ class DeletePendingBookings extends Command
 
         foreach ($bookings as $booking){
             $ticket =$booking->ticket;
-
             if(isset($ticket)){
                 continue;
             }
             $this->deleteFailedBooking($booking);
+            break;
         }
+        $this->info('Display this on the screen');
     }
 }

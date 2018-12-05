@@ -34,8 +34,8 @@ class Kernel extends ConsoleKernel
          $schedule->command('buses-schedules')
               ->everyFiveMinutes();
 
-         $schedule->command('merchants:daily-payments')
-             ->everyFiveMinutes();
+         /*$schedule->command('merchants:daily-payments')
+             ->everyFiveMinutes();*/
 
         $schedule->command('bookings:delete-pendings')
             ->everyFiveMinutes();
