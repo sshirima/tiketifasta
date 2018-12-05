@@ -21,13 +21,8 @@ trait MpesaTransactionC2B
 {
     use MpesaTransactionC2BRequest;
 
-    /**
-     * @param array $attributes
-     * @return mixed
-     */
-    public function initializePaymentC2B(array $attributes)
-    {
-        return MpesaC2B::create($attributes);
+    public function createMpesaC2B($bookingPayment){
+        MpesaC2B::create($this->mpesaC2BParametersArray($bookingPayment));
     }
 
     /**
@@ -244,5 +239,19 @@ trait MpesaTransactionC2B
         $mpesaC2B->conversation_id = $attributes['conversation_id'];
         $mpesaC2B->authorized_at = date('Y-m-d H:i:s');
         $mpesaC2B->stage = '2';
+    }
+
+    /**
+     * @param $bookingPayment
+     * @return array
+     */
+    protected function mpesaC2BParametersArray($bookingPayment): array
+    {
+        return [
+            'msisdn' => $bookingPayment->phone_number,
+            'amount' => $bookingPayment->amount,
+            'account_reference' => $bookingPayment->payment_ref,
+            'booking_payment_id' => $bookingPayment->id,
+        ];
     }
 }

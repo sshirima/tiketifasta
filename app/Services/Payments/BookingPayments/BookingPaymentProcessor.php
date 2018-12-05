@@ -11,19 +11,21 @@ namespace App\Services\Payments\BookingPayments;
 
 use App\Models\Booking;
 use App\Models\BookingPayment;
+use App\Services\Payments\Mpesa\MpesaTransactionC2B;
 use App\Services\Payments\PaymentManager;
 use App\Services\Payments\Tigosecure\TigoTransactionC2B;
 
 trait BookingPaymentProcessor
 {
 
-    use TigoTransactionC2B;
+    use TigoTransactionC2B, MpesaTransactionC2B;
 
     public function processNewBookingPayment(Booking $booking){
 
         $bookingPayment = BookingPayment::create($this->getBookingParamArray($booking));
 
         if ($bookingPayment->method == 'mpesa'){
+            $this->createMpesaC2B($bookingPayment);
             return ['status'=>true,'bookingPayment'=>$bookingPayment];
         }
 

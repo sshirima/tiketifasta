@@ -18,24 +18,7 @@ trait AuthorizeBooking
      */
     public function deleteFailedBooking($booking){
 
-        $bookingPayment = $booking->bookingPayment;
-
-        if(isset($bookingPayment)){
-            $mpesaC2B = $bookingPayment->mpesaC2B;
-            $tigoC2B = $bookingPayment->tigoC2B;
-
-            if(isset($mpesaC2B)){
-                $mpesaC2B->delete();
-            }
-
-            if(isset($tigoC2B)){
-                $tigoC2B->delete();
-            }
-
-            $bookingPayment->delete();
-        }
-        
-        ScheduleSeat::where(['seat_id'=>$booking->seat_id,'schedule_id'=>$booking->schedule_id])->delete();
+        $this->deleteBookingDependencies($booking);
 
         $booking->delete();
     }
@@ -47,7 +30,7 @@ trait AuthorizeBooking
 
         $booking = $transaction->bookingPayment->booking;
 
-        ScheduleSeat::where(['seat_id'=>$booking->seat_id,'schedule_id'=>$booking->schedule_id])->delete();
+        $this->deleteBookingDependencies($booking);
 
         $booking->delete();
     }
@@ -85,5 +68,30 @@ trait AuthorizeBooking
     private function updateBookingStatus(Booking $booking, $status){
         $booking->status = $status;
         $booking->update();
+    }
+
+    /**
+     * @param $booking
+     */
+    protected function deleteBookingDependencies($booking): void
+    {
+        $bookingPayment = $booking->bookingPayment;
+
+        if (isset($bookingPayment)) {
+            $mpesaC2B = $bookingPayment->mpesaC2B;
+            $tigoC2B = $bookingPayment->tigoC2B;
+
+            if (isset($mpesaC2B)) {
+                $mpesaC2B->delete();
+            }
+
+            if (isset($tigoC2B)) {
+                $tigoC2B->delete();
+            }
+
+            $bookingPayment->delete();
+        }
+
+        ScheduleSeat::where(['seat_id' => $booking->seat_id, 'schedule_id' => $booking->schedule_id])->delete();
     }
 }
