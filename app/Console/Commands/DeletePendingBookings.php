@@ -45,12 +45,10 @@ class DeletePendingBookings extends Command
         foreach ($bookings as $booking){
             $ticket =$booking->ticket;
             if(isset($ticket)){
-                $this->info('Booking has ticket');
                 continue;
             }
             $this->deleteFailedBooking($booking);
-            $this->info('Pending booking deleted');
-            break;
+            $this->info('INFO: Pending booking deleted successful');
         }
 
         //$this->info('');
