@@ -42,14 +42,14 @@ class DeletePendingBookings extends Command
         $condition[] = ['status', '=',Booking::STATUS_PENDING];
         $bookings = Booking::where($condition)->get();
 
-        foreach ($bookings as $booking){
+        /*foreach ($bookings as $booking){
             $ticket =$booking->ticket;
             if(isset($ticket)){
                 continue;
             }
             $this->deleteFailedBooking($booking);
             break;
-        }
-        $this->info('Display this on the screen');
+        }*/
+        $this->info(json_encode($bookings));
     }
 }
