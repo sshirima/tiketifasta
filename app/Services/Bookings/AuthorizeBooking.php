@@ -18,10 +18,23 @@ trait AuthorizeBooking
      */
     public function deleteFailedBooking($booking){
 
-        /*$bookingPayment = $booking->bookingPayment;
+        $bookingPayment = $booking->bookingPayment;
+
         if(isset($bookingPayment)){
+            $mpesaC2B = $bookingPayment->mpesaC2B;
+            $tigoC2B = $bookingPayment->tigoC2B;
+
+            if(isset($mpesaC2B)){
+                $mpesaC2B->delete();
+            }
+
+            if(isset($tigoC2B)){
+                $tigoC2B->delete();
+            }
+
             $bookingPayment->delete();
-        }*/
+        }
+        
         ScheduleSeat::where(['seat_id'=>$booking->seat_id,'schedule_id'=>$booking->schedule_id])->delete();
 
         $booking->delete();
