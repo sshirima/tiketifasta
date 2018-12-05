@@ -49,7 +49,7 @@ class DeletePendingBookings extends Command
                     continue;
                 }
                 $this->deleteFailedBooking($booking);
-                //$this->info('INFO: Pending booking deleted successful');
+                $this->info('INFO: Pending booking deleted successful');
             }
         }catch(\Exception $ex){
             \Log::error('Failed to delete pending bookings: error='.$ex->getMessage() );
