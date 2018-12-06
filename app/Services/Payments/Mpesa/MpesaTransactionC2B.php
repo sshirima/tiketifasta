@@ -122,10 +122,10 @@ trait MpesaTransactionC2B
                 switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
                     case 200:
                         Log::channel('mpesac2b')->info('Error on the response: response='.$xmlResponse . PHP_EOL);
-                        /*$parser = new Parser();
-                        $input = $parser->xml($response);*/
-                        $objectResponse = simplexml_load_string($xmlResponse);
-                        $jsonResponse =json_encode($objectResponse);
+                        $parser = new Parser();
+                        $jsonResponse = $parser->xml($xmlResponse);
+                        /*$objectResponse = simplexml_load_string($xmlResponse);
+                        $jsonResponse =json_encode($objectResponse);*/
                         $reply = ['status'=>true, 'response'=>$jsonResponse];
                         break;
                     default:
