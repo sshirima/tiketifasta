@@ -218,11 +218,11 @@ trait MpesaTransactionC2B
      */
     public function verifyMpesaC2BResponse($mpesaC2B, $response): bool
     {
-        $parser = new Parser();
-        $input = $parser->xml($response);
+        /*$parser = new Parser();
+        $input = $parser->xml($response);*/
 
-        return $mpesaC2B->og_conversation_id == $input['response']['originatorConversationID']
-            && $input['response']['serviceStatus'] == 'Confirming' && $input['response']['transactionID'] == $mpesaC2B->transaction_id;
+        return $mpesaC2B->og_conversation_id == $response['response']['originatorConversationID']
+            && $response['response']['serviceStatus'] == 'Confirming' && $response['response']['transactionID'] == $mpesaC2B->transaction_id;
     }
 
     /**
