@@ -226,4 +226,6 @@ return [
 
     ],
 
+    'debug_logs'=>env('DEBUG_LOGS', false)
+
 ];

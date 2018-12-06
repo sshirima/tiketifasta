@@ -74,6 +74,11 @@ class MpesaC2BTransactionProcessor implements ShouldQueue
             //ConfirmMpesaC2B::dispatch($mpesaC2B, $bookingPayment);
 
         } catch (Exception $ex){
+
+            if(config('app.debug_logs')){
+                Log::channel('mpesac2b')->error('Mpesa C2B transaction process failed: '.$ex->getTraceAsString(). PHP_EOL );
+            }
+
             Log::channel('mpesac2b')->error('Mpesa C2B transaction process failed: '.$ex->getMessage(). PHP_EOL );
             return false;
         }
