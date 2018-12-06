@@ -121,7 +121,7 @@ trait MpesaTransactionC2B
             if (!curl_errno($ch)) {
                 switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
                     case 200:
-                        Log::channel('mpesac2b')->info('Transaction confirmed' . PHP_EOL);
+                        Log::channel('mpesac2b')->info('Transaction confirmed: response='.$response . PHP_EOL);
                         $parser = new Parser();
                         $input = $parser->xml($response);
                         $reply = ['status'=>true, 'response'=>$input];
