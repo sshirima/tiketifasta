@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
         }
 
         print json_encode($payOptions).PHP_EOL;*/
-        $condition[] = ['created_at', '<', \Carbon\Carbon::now()->subMinutes(5)->toDateTimeString()];
+       /* $condition[] = ['created_at', '<', \Carbon\Carbon::now()->subMinutes(5)->toDateTimeString()];
         $condition[] = ['status', '=',\App\Models\Booking::STATUS_PENDING];
         $bookings = \App\Models\Booking::where($condition)->get();
 
@@ -50,8 +50,11 @@ class DatabaseSeeder extends Seeder
             $i++;
             print $i.' booking deleted'.PHP_EOL;
             print '==========='.PHP_EOL;
-        }
+        }*/
         //print json_encode($bookings).PHP_EOL;
-
+        $response = '<mpesaBroker version ="2.0" xmlns="http://infowise.co.tz/broker/"><response><conversationID>1645ba1ae67b43f5badbe3a70df84885</conversationID><originatorConversationID>1645ba1ae67b43f5badbe3a70df84885</originatorConversationID><responseCode>0</responseCode><serviceStatus>Confirming</serviceStatus><transactionID>173388288_664400</transactionID></response></mpesaBroker>';
+        $object = simplexml_load_string($response);
+        $json =json_encode($object);
+        print $json.PHP_EOL;
     }
 }

@@ -109,9 +109,9 @@ trait MpesaTransactionC2B
             curl_setopt($ch, CURLOPT_TIMEOUT, config('payments.mpesa.b2c.timeout'));
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, config('payments.mpesa.b2c.connect_timeout'));
 
-            $response = curl_exec($ch);
+            $xmlResponse = curl_exec($ch);
 
-            if ($response === false) {
+            if ($xmlResponse === false) {
                 $info = curl_getinfo($ch);
                 if ($info['http_code'] === 0) {
                     Log::channel('mpesab2c')->error('Connection timeout: url='.$url  . PHP_EOL);
@@ -121,14 +121,16 @@ trait MpesaTransactionC2B
             if (!curl_errno($ch)) {
                 switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
                     case 200:
-                        Log::channel('mpesac2b')->info('Error on the response: response='.$response . PHP_EOL);
-                        $parser = new Parser();
-                        $input = $parser->xml($response);
-                        $reply = ['status'=>true, 'response'=>$input];
+                        Log::channel('mpesac2b')->info('Error on the response: response='.$xmlResponse . PHP_EOL);
+                        /*$parser = new Parser();
+                        $input = $parser->xml($response);*/
+                        $objectResponse = simplexml_load_string($xmlResponse);
+                        $jsonResponse =json_encode($objectResponse);
+                        $reply = ['status'=>true, 'response'=>$jsonResponse];
                         break;
                     default:
-                        Log::channel('mpesac2b')->error('Unexpected HTTP code: ' . $http_code . '[' . $response . ']' . PHP_EOL);
-                        $reply = ['status'=>false, 'error'=>'Unexpected HTTP code: ' . $http_code . '[' . $response . ']'];
+                        Log::channel('mpesac2b')->error('Unexpected HTTP code: ' . $http_code . '[' . $xmlResponse . ']' . PHP_EOL);
+                        $reply = ['status'=>false, 'error'=>'Unexpected HTTP code: ' . $http_code . '[' . $xmlResponse . ']'];
                 }
             } else {
                 Log::channel('mpesac2b')->error('Curl error[Error code:' . curl_errno($ch) . ']' . PHP_EOL);

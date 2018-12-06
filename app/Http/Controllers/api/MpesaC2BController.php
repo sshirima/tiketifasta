@@ -11,12 +11,9 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\MpesaC2BTransactionProcessor;
-use App\Models\BookingPayment;
 use App\Services\Bookings\AuthorizeBooking;
 use App\Services\Payments\Mpesa\Mpesa;
 use App\Services\Payments\Mpesa\MpesaTransactionC2B;
-use App\Services\Payments\Mpesa\xml\MpesaTransactionC2BRequest;
-use App\Services\Payments\PaymentManager;
 use App\Services\Tickets\TicketManager;
 use Illuminate\Http\Request;
 use Nathanmac\Utilities\Parser\Parser;
