@@ -79,7 +79,7 @@ class MpesaC2BTransactionProcessor implements ShouldQueue
                 Log::channel('mpesac2b')->error('Mpesa C2B transaction process failed: '.$ex->getTraceAsString(). PHP_EOL );
             }
 
-            Log::channel('mpesac2b')->error('Mpesa C2B transaction process failed: '.$ex->getMessage(). PHP_EOL );
+            Log::channel('mpesac2b')->error('Mpesa C2B transaction process failed: '.$ex->getTraceAsString(). PHP_EOL );
             return false;
         }
 
