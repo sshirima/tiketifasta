@@ -187,14 +187,14 @@ class MerchantSchedulePaymentController extends BaseController
             return $entity['merchant_name'];
         });
 
-        $table->addColumn('net_amount')->setTitle('Collected amount')->isSearchable()->isCustomHtmlElement(function($entity, $column){
+        $table->addColumn('net_amount')->setTitle('Collected')->isSearchable()->isCustomHtmlElement(function($entity, $column){
             return $entity['net_amount'];
         });
 
-        $table->addColumn('merchant_amount')->setTitle('Merchant amount')->isSearchable()->isCustomHtmlElement(function($entity, $column){
+        $table->addColumn('merchant_amount')->setTitle('To merchant')->isSearchable()->isCustomHtmlElement(function($entity, $column){
             return $entity['merchant_amount'];
         });
-        $table->addColumn('commission_amount')->setTitle('Commission amount')->isSortable()->isSearchable()->isCustomHtmlElement(function($entity, $column){
+        $table->addColumn('commission_amount')->setTitle('Commission')->isSortable()->isSearchable()->isCustomHtmlElement(function($entity, $column){
             return $entity['commission_amount'];
         });
 
