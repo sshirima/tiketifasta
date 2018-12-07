@@ -205,7 +205,7 @@ class MerchantSchedulePaymentController extends BaseController
             return $entity['created_at'];
         });
 
-        $table->addColumn('transaction_status ')->setTitle('Transaction status')->isSortable()->isSearchable()->isCustomHtmlElement(function($entity, $column){
+        $table->addColumn('transaction_status ')->setTitle('Transaction status')->isSortable()->isCustomHtmlElement(function($entity, $column){
             return $this->getTransactionStatusLabel($entity['transaction_status']);
         });
 
