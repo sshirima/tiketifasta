@@ -210,7 +210,7 @@ class MerchantSchedulePaymentController extends BaseController
             return $entity['transfer_status']?'':$link = '<a href="' . route('admin.merchant_payments.retry_payments',['payment_reference'=>$entity['reference']]) . '" class="label label-primary" role="button">Re-try</a>';
         });
 
-        $table->addColumn('created_at')->setTitle('Date')->isSearchable()->sortByDefault('desc')->isCustomHtmlElement(function($entity, $column){
+        $table->addColumn('created_at')->setTitle('Transaction date')->isSearchable()->sortByDefault('desc')->isCustomHtmlElement(function($entity, $column){
             return $entity['created_at'];
         });
 
