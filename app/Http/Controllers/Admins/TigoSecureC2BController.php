@@ -36,12 +36,14 @@ class TigoSecureC2BController extends BaseController
         $table = app(TableList::class)
             ->setModel(TigoOnlineC2B::class)
             ->setRowsNumber(10)
+            ->enableRowsNumberSelector()
             ->setRoutes([
                 'index' => ['alias' => 'admin.tigoonline_c2b.index', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {
                 $query->select('tigoonline_c2b.id as id','tigoonline_c2b.phone_number as phone_number','tigoonline_c2b.amount as amount',
                     'tigoonline_c2b.reference as reference','tigoonline_c2b.created_at as created_at','tigoonline_c2b.updated_at as updated_at',
-                    'tigoonline_c2b.status as status','tigoonline_c2b.error_code as error_code')
+                    'tigoonline_c2b.status as status','tigoonline_c2b.error_code as error_code',
+                    'mpesa_c2b.transaction_status as transaction_status')
                     ->join('booking_payments', 'booking_payments.id', '=', 'tigoonline_c2b.booking_payment_id');
             });
         $table = $this->setTableColumns($table);
@@ -54,9 +56,22 @@ class TigoSecureC2BController extends BaseController
      */
     private function setTableColumns($table)
     {
-        $table->addColumn('phone_number')->setTitle('Sent from');
+        $table->addColumn('reference')->setTitle('Reference#')->isSearchable()->isSortable();
+
         $table->addColumn('amount')->setTitle('Amount');
-        $table->addColumn('reference')->setTitle('Reference')->isSearchable();
+
+        $table->addColumn('phone_number')->setTitle('Paid by')->isSortable();
+
+        $table->addColumn('created_at')->setTitle('Transaction date')->isSearchable()->sortByDefault('desc');
+
+        $table->addColumn('status')->setTitle('Status')->isCustomHtmlElement(function($entity, $column){
+            return $this->getTransactionStatusLabel($entity['transaction_status']);
+        });
+
+        $table->addColumn('error_code')->setTitle('Error code')->isCustomHtmlElement(function($entity, $column){
+            return $entity['error_code'];
+        });
+
         /*$table->addColumn('firstname')->setTitle('Name')->isSearchable()->isCustomHtmlElement(function($entity, $column){
             return $entity['firstname'].' '.$entity['lastname'];
         });
@@ -65,32 +80,28 @@ class TigoSecureC2BController extends BaseController
             return $entity['status'];
         });*/
         //$table->addColumn('updated_at')->setTitle('Updated at')->isSearchable();
-        $table->addColumn('created_at')->setTitle('Transaction date')->isSearchable()->sortByDefault();
 
-        $table->addColumn('status')->setTitle('Status')->isCustomHtmlElement(function($entity, $column){
-            return $this->getTransactionLabelByStatus($entity['status']);
-        });
-
-        $table->addColumn('error_code')->setTitle('Error code')->isCustomHtmlElement(function($entity, $column){
-            return $entity['error_code'];
-        });
         return $table;
     }
 
-    private function getTransactionLabelByStatus($status){
+    private function getTransactionStatusLabel($status){
 
-        if ($status == 'success'){
-            return '<div class="label label-success">'.'Success'.'</div>';
+        if ($status == TigoOnlineC2B::TRANS_STATUS_SETTLED){
+            return '<div class="label label-success">'.'Settled'.'</div>';
         }
 
-        if ($status == 'fail'){
+        if ($status == TigoOnlineC2B::TRANS_STATUS_FAILED){
             return '<div class="label label-danger">'.'Failed'.'</div>';
         }
 
-        if ($status == 'unauthorized'){
-            return '<div class="label label-warning">'.'Un-authorized'.'</div>';
+        if ($status == TigoOnlineC2B::TRANS_STATUS_AUTHORIZED){
+            return '<div class="label label-warning">'.'Authorized'.'</div>';
         }
 
-        return '<div class="label label-default">'.'Unknown'.'</div>';
+        if ($status == TigoOnlineC2B::TRANS_STATUS_POSTED){
+            return '<div class="label label-warning">'.'Posted'.'</div>';
+        }
+
+        return '<div class="label label-default">'.$status.'</div>';
     }
 }

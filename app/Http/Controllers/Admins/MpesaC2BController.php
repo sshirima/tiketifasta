@@ -35,12 +35,14 @@ class MpesaC2BController extends BaseController
         $table = app(TableList::class)
             ->setModel(MpesaC2B::class)
             ->setRowsNumber(10)
+            ->enableRowsNumberSelector()
             ->setRoutes([
                 'index' => ['alias' => 'admin.mpesac2b.index', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {
                 $query->select('mpesa_c2b.id as id','account_reference','mpesa_receipt','initiator','mpesa_c2b.amount as amount','mpesa_c2b.msisdn as msisdn',
                     'booking_payment_id','service_receipt','transaction_id','og_conversation_id','stage','service_status',
-                    'mpesa_c2b.authorized_at as authorized_at','mpesa_c2b.created_at as created_at')
+                    'mpesa_c2b.authorized_at as authorized_at','mpesa_c2b.created_at as created_at',
+                    'mpesa_c2b.transaction_status as transaction_status')
                     ->join('booking_payments', 'booking_payments.id', '=', 'mpesa_c2b.booking_payment_id');
             });
 
@@ -55,25 +57,50 @@ class MpesaC2BController extends BaseController
      */
     private function setTableColumns($table)
     {
-        $table->addColumn('account_reference')->setTitle('Reference')->isSearchable();
-        $table->addColumn('mpesa_receipt')->setTitle('Mpesa Recipient')->isSearchable();
+        $table->addColumn('account_reference')->setTitle('Reference#')->isSearchable();
+
         $table->addColumn('amount')->setTitle('Amount')->isSearchable()->isSortable();
+
         $table->addColumn('initiator')->setTitle('Paid by')->isSearchable()->isSortable();
-        $table->addColumn('service_receipt')->setTitle('Service ID')->isSearchable();
-        $table->addColumn('transaction_id')->setTitle('Transaction ID')->isSearchable()->isSortable();
-        $table->addColumn('og_conversation_id')->setTitle('Conversation ID')->isSearchable();
-        $table->addColumn('stage')->setTitle('Stage')->isCustomHtmlElement(function($entity, $column){
+
+        $table->addColumn('created_at')->setTitle('Transaction date')->isSearchable()->isSortable()->sortByDefault('desc');
+
+        $table->addColumn('service_status')->setTitle('Status')->isCustomHtmlElement(function($entity, $column){
+            return $this->getTransactionStatusLabel($entity['transaction_status']);}
+            );
+        //$table->addColumn('mpesa_receipt')->setTitle('Mpesa Recipient')->isSearchable();
+        //$table->addColumn('service_receipt')->setTitle('Service ID')->isSearchable();
+        //$table->addColumn('transaction_id')->setTitle('Transaction ID')->isSearchable()->isSortable();
+        //$table->addColumn('og_conversation_id')->setTitle('Conversation ID')->isSearchable();
+        /*$table->addColumn('stage')->setTitle('Stage')->isCustomHtmlElement(function($entity, $column){
             return $entity['stage']== '0'?
                 '<div class="label label-success">'.'0(OK)'.'</div>':'<div class="label label-warning">'.$entity['stage'].'(Pending)'.'</div>';
-        });
-        $table->addColumn('service_status')->setTitle('Status')->isCustomHtmlElement(function($entity, $column){
-            return $entity['service_status']== 'confirmed'?
-                '<div class="label label-success">'.$entity['service_status'].'</div>':'<div class="label label-warning">'.$entity['service_status'].'</div>';
-        });
-        $table->addColumn('authorized_at')->setTitle('Confirmed at')->isSearchable()->isSortable();
-        $table->addColumn('created_at')->setTitle('Initiated at')->isSearchable()->isSortable()->sortByDefault('desc');
+        });*/
+        //$table->addColumn('authorized_at')->setTitle('Confirmed at')->isSearchable()->isSortable();
+
 
 
         return $table;
+    }
+
+    private function getTransactionStatusLabel($status){
+
+        if ($status == MpesaC2B::TRANS_STATUS_SETTLED){
+            return '<div class="label label-success">'.'Settled'.'</div>';
+        }
+
+        if ($status == MpesaC2B::TRANS_STATUS_FAILED){
+            return '<div class="label label-danger">'.'Failed'.'</div>';
+        }
+
+        if ($status == MpesaC2B::TRANS_STATUS_AUTHORIZED){
+            return '<div class="label label-warning">'.'Authorized'.'</div>';
+        }
+
+        if ($status == MpesaC2B::TRANS_STATUS_POSTED){
+            return '<div class="label label-warning">'.'Posted'.'</div>';
+        }
+
+        return '<div class="label label-default">'.$status.'</div>';
     }
 }

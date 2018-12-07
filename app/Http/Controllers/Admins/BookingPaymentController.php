@@ -35,6 +35,7 @@ class BookingPaymentController extends BaseController
         $table = app(TableList::class)
             ->setModel(BookingPayment::class)
             ->setRowsNumber(10)
+            ->enableRowsNumberSelector()
             ->setRoutes([
                 'index' => ['alias' => 'admin.booking_payments.index', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {
@@ -62,30 +63,30 @@ class BookingPaymentController extends BaseController
      */
     private function setTableColumns($table)
     {
-        $table->addColumn('created_at')->setTitle('Created')->sortByDefault('desc')->isSortable()->isSearchable();
-
         $table->addColumn('payment_ref')->setTitle('Reference')->isSearchable();
 
         $table->addColumn('amount')->setTitle('Amount')->isSortable()->isSearchable();
 
-        $table->addColumn('method')->setTitle('Paid via')->isSortable()->isSearchable();
-
-        $table->addColumn('name')->setTitle('Merchant')->isSortable()->isSearchable()->setCustomTable('merchants')
+        $table->addColumn('name')->setTitle('Merchant/Bus')->isSortable()->isSearchable()->setCustomTable('merchants')
             ->isCustomHtmlElement(function ($entity, $column) {
-            return $entity['merchant_name'];
+            return $entity['merchant_name'].'('.$entity['reg_number'].')';
         });
-        $table->addColumn('reg_number')->setTitle('Bus number')->isSortable()->isSearchable()->setCustomTable('buses')
+        /*$table->addColumn('reg_number')->setTitle('Bus number')->isSortable()->isSearchable()->setCustomTable('buses')
             ->isCustomHtmlElement(function ($entity, $column) {
-                return $entity['reg_number'];
-            });
-        $table->addColumn('name')->setTitle('From')->isSortable()->isSearchable()->setCustomTable('locations')
+                return ;
+            });*/
+       /* $table->addColumn('name')->setTitle('From')->isSortable()->isSearchable()->setCustomTable('locations')
             ->isCustomHtmlElement(function ($entity, $column) {
                 return $entity['from'];
             });
         $table->addColumn('name')->setTitle('To')->isSortable()->isSearchable()->setCustomTable('locations')
             ->isCustomHtmlElement(function ($entity, $column) {
                 return $entity['to'];
-            });
+            });*/
+        $table->addColumn('method')->setTitle('Paid via')->isSortable()->isSearchable();
+
+        $table->addColumn('created_at')->setTitle('Created')->sortByDefault('desc')->isSortable()->isSearchable();
+
         $table->addColumn('transaction_status')->setTitle('Status')->isSortable()->isSearchable()->setCustomTable('locations')
             ->isCustomHtmlElement(function ($entity, $column) {
                 return $this->getBookingPaymentLabelByStatus( $entity['transaction_status']);
