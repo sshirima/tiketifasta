@@ -33,7 +33,7 @@ class MpesaB2CController extends Controller
 
                 $mpesaB2C = $response['model'];
 
-                $merchantPayment = $mpesaB2C->merchantPayment()->first();
+                $merchantPayment = $mpesaB2C->merchantPayment;
 
                 $this->onMerchantPaymentSuccess($merchantPayment);
             } else{
@@ -47,7 +47,8 @@ class MpesaB2CController extends Controller
                 \Log::channel('mpesab2c')->error('Transaction settling failed: error=' . $exception->getMessage() . PHP_EOL);
             }
 
-            return 'Error:'.$exception->getTraceAsString();
+            return 'false';
         }
+        return 'true';
     }
 }

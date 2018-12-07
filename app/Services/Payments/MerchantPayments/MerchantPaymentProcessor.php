@@ -220,6 +220,7 @@ trait MerchantPaymentProcessor
      */
     public function onMerchantPaymentSuccess($merchantPayment){
         $merchantPayment->payment_stage = 'TRANSFER_SUCCESS';
+        //$merchantPayment->transaction_status = 'TRANSFER_SUCCESS';
         $merchantPayment->transfer_status = true;
         $merchantPayment->update();
     }
