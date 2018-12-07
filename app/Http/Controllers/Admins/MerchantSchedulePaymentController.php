@@ -175,15 +175,15 @@ class MerchantSchedulePaymentController extends BaseController
      */
     private function setMerchantReportColumns($table)
     {
-        $table->addColumn('payment_ref')->setTitle('Reference')->isSearchable()->isCustomHtmlElement(function($entity, $column){
+        $table->addColumn('payment_ref')->setTitle('Reference')->isSortable()->isSearchable()->isCustomHtmlElement(function($entity, $column){
             return '<a href="'.route('admin.merchant_schedule_payments.details', $entity['id']).'">'.$entity['reference'].'</a>';
         });
 
-        $table->addColumn('account_number')->setTitle('Account number')->setCustomTable('merchant_payment_accounts')->isSortable()->isSearchable()->isCustomHtmlElement(function($entity, $column){
+        $table->addColumn('account_number')->setTitle('Account#')->setCustomTable('merchant_payment_accounts')->isSortable()->isSearchable()->isCustomHtmlElement(function($entity, $column){
             return $entity['account_number'];
         });
 
-        $table->addColumn('name')->setTitle('Merchant name')->setCustomTable('merchants')->isSortable()->isSearchable()->isCustomHtmlElement(function($entity, $column){
+        $table->addColumn('name')->setTitle('Merchant')->setCustomTable('merchants')->isSortable()->isSearchable()->isCustomHtmlElement(function($entity, $column){
             return $entity['merchant_name'];
         });
 
@@ -202,16 +202,16 @@ class MerchantSchedulePaymentController extends BaseController
             return $entity['payment_mode'];
         });
 
+        $table->addColumn('created_at')->setTitle('Transaction date')->isSortable()->isSearchable()->sortByDefault('desc')->isCustomHtmlElement(function($entity, $column){
+            return $entity['created_at'];
+        });
+        
         $table->addColumn('transaction_status ')->setTitle('Transaction status')->isSortable()->isCustomHtmlElement(function($entity, $column){
             return $this->getTransactionStatusLabel($entity['transaction_status']);
         });
 
         $table->addColumn('name')->setTitle('Action')->setCustomTable('merchants')->isCustomHtmlElement(function($entity, $column){
             return $entity['transfer_status']?'':$link = '<a href="' . route('admin.merchant_payments.retry_payments',['payment_reference'=>$entity['reference']]) . '" class="label label-primary" role="button">Re-try</a>';
-        });
-
-        $table->addColumn('created_at')->setTitle('Transaction date')->isSearchable()->sortByDefault('desc')->isCustomHtmlElement(function($entity, $column){
-            return $entity['created_at'];
         });
 
         return $table;
