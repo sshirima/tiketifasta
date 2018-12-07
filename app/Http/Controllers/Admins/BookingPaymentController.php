@@ -63,7 +63,7 @@ class BookingPaymentController extends BaseController
      */
     private function setTableColumns($table)
     {
-        $table->addColumn('payment_ref')->setTitle('Reference')->isSearchable();
+        $table->addColumn('payment_ref')->setTitle('Reference')->isSearchable()->isSortable();
 
         $table->addColumn('amount')->setTitle('Amount')->isSortable()->isSearchable();
 
