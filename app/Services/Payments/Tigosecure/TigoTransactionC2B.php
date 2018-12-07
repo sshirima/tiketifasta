@@ -278,6 +278,7 @@ trait TigoTransactionC2B
                 Log::channel('tigosecurec2b')->error($error . PHP_EOL);
 
                 $transaction->status = TigoOnlineC2B::STATUS_FAIL;
+                $transaction->transaction_status = TigoOnlineC2B::TRANS_STATUS_FAILED;
                 $transaction->error_code = $input['error_code'];
                 $transaction->update();
 
@@ -329,6 +330,7 @@ trait TigoTransactionC2B
     protected function completeAuthorization(TigoOnlineC2B $tigoOnlineC2B, $response): void
     {
         $tigoOnlineC2B->auth_code = $response->authCode;
+        $tigoOnlineC2B->transaction_status = TigoOnlineC2B::TRANS_STATUS_AUTHORIZED;
         $tigoOnlineC2B->update();
     }
 
@@ -349,6 +351,7 @@ trait TigoTransactionC2B
         }
 
         $tigoOnlineC2B->status = TigoOnlineC2B::STATUS_SUCCESS;
+        $tigoOnlineC2B->transaction_status = TigoOnlineC2B::TRANS_STATUS_SETTLED;
 
         $tigoOnlineC2B->update();
     }

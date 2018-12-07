@@ -91,6 +91,8 @@ trait MpesaTransactionC2B
 
         try{
 
+            $this->setMpesaC2BTransactionStatus($mpesaC2B, MpesaC2B::TRANS_STATUS_POSTED);
+
             $url = config('payments.mpesa.c2b.confirm_transaction_url');
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
@@ -175,6 +177,15 @@ trait MpesaTransactionC2B
 
     /**
      * @param MpesaC2B $mpesaC2B
+     * @param $status
+     */
+    public function setMpesaC2BTransactionStatus(MpesaC2B $mpesaC2B, $status){
+        $mpesaC2B->transaction_status = $status;
+        $mpesaC2B->update();
+    }
+
+    /**
+     * @param MpesaC2B $mpesaC2B
      */
     public function setMpesaC2BStatusConfirmed(MpesaC2B $mpesaC2B)
     {
@@ -239,6 +250,7 @@ trait MpesaTransactionC2B
         $mpesaC2B->transaction_date = $attributes['transaction_date'];
         $mpesaC2B->transaction_id = $attributes['transaction_id'];
         $mpesaC2B->conversation_id = $attributes['conversation_id'];
+        $mpesaC2B->transaction_status = MpesaC2B::TRANS_STATUS_AUTHORIZED;
         $mpesaC2B->authorized_at = date('Y-m-d H:i:s');
         $mpesaC2B->stage = '2';
     }

@@ -11,6 +11,7 @@ namespace App\Http\Controllers\Users\Bookings;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\CreateBookingRequest;
+use App\Models\BookingPayment;
 use App\Models\Bus;
 use App\Models\Seat;
 use App\Services\Bookings\AuthorizeBooking;
@@ -136,6 +137,7 @@ class SelectBusController extends Controller
             $bookingPayment = $bookingPaymentResponse['bookingPayment'];
 
             if($bookingPayment->method == 'mpesa'){
+
                 if (array_key_exists('error',$bookingPaymentResponse)){
                     $this->cancelBooking($bookingPaymentResponse['error'], $booking);
                     return redirect()->back()->with(['error'=>$bookingPaymentResponse['error']]);
@@ -152,6 +154,8 @@ class SelectBusController extends Controller
                     $this->cancelBooking($bookingPaymentResponse['error'], $booking);
                     return redirect()->back()->with(['error'=>$bookingPaymentResponse['error']]);
                 }
+                //Set bookingPayment as authorized
+                $this->changeBookingPaymentTransactionStatus($bookingPayment, BookingPayment::TRANS_STATUS_AUTHORIZED);
                 return redirect($bookingPaymentResponse['redirectUrl']);//($bookingPayment['redirectUrl']);
             }
             $error = 'Something went wrong on the request, please contact the support team';

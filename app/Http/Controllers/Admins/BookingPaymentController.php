@@ -41,7 +41,7 @@ class BookingPaymentController extends BaseController
                 $query->select('booking_payments.id as id','booking_payments.payment_ref as payment_ref','booking_payments.booking_id as booking_id',
                     'booking_payments.amount as amount','booking_payments.method as method','booking_payments.phone_number as phone_number'
                     ,'booking_payments.created_at as created_at','booking_payments.updated_at as updated_at','A.name as from','B.name as to',
-                    'merchants.name as merchant_name','buses.reg_number as reg_number')
+                    'merchants.name as merchant_name','buses.reg_number as reg_number','booking_payments.transaction_status as transaction_status')
                     ->join('bookings', 'bookings.id', '=', 'booking_payments.booking_id')
                     ->join('trips', 'bookings.trip_id', '=', 'trips.id')
                     ->join('locations as A', 'A.id', '=', 'trips.source')
@@ -86,8 +86,33 @@ class BookingPaymentController extends BaseController
             ->isCustomHtmlElement(function ($entity, $column) {
                 return $entity['to'];
             });
+        $table->addColumn('transaction_status')->setTitle('Status')->isSortable()->isSearchable()->setCustomTable('locations')
+            ->isCustomHtmlElement(function ($entity, $column) {
+                return $this->getBookingPaymentLabelByStatus( $entity['transaction_status']);
+            });
         //$table->addColumn('updated_at')->setTitle('Updated')->isSortable()->isSearchable();
 
         return $table;
+    }
+
+    private function getBookingPaymentLabelByStatus($status){
+
+        if ($status == BookingPayment::TRANS_STATUS_SETTLED){
+            return '<div class="label label-success">'.'Settled'.'</div>';
+        }
+
+        if ($status == BookingPayment::TRANS_STATUS_PENDING){
+            return '<div class="label label-warning">'.'Pending'.'</div>';
+        }
+
+        if ($status == BookingPayment::TRANS_STATUS_AUTHORIZED){
+            return '<div class="label label-danger">'.'Authorized'.'</div>';
+        }
+
+        if ($status == BookingPayment::TRANS_STATUS_FAILED){
+            return '<div class="label label-danger">'.'Failed'.'</div>';
+        }
+
+        return '<div class="label label-default">'.'Unknown'.'</div>';
     }
 }

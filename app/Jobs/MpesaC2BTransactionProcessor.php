@@ -3,7 +3,9 @@
 namespace App\Jobs;
 
 use App\Models\Booking;
+use App\Models\BookingPayment;
 use App\Services\Bookings\AuthorizeBooking;
+use App\Services\Payments\BookingPayments\BookingPaymentProcessor;
 use App\Services\Payments\Mpesa\Mpesa;
 use App\Services\Payments\Mpesa\MpesaTransactionC2B;
 use App\Services\Tickets\TicketManager;
@@ -17,7 +19,7 @@ use Log;
 
 class MpesaC2BTransactionProcessor implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, AuthorizeBooking, MpesaTransactionC2B, TicketManager;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, AuthorizeBooking, MpesaTransactionC2B, TicketManager, BookingPaymentProcessor;
 
     private $request;
 
@@ -46,17 +48,22 @@ class MpesaC2BTransactionProcessor implements ShouldQueue
 
             $mpesaC2B = $validation['mpesaC2B'];
 
-            $booking = $mpesaC2B->bookingPayment->booking;
+            $bookingPayment = $mpesaC2B->bookingPayment;
+
+            $booking = $bookingPayment->booking;
+
+            $this->changeBookingPaymentTransactionStatus($bookingPayment, BookingPayment::TRANS_STATUS_AUTHORIZED);
+
+            $this->setBookingAuthorized($booking);
 
             $this->generateServiceNumber($mpesaC2B);
-
-            $this->setBookingConfirmed($booking);
 
             $ticket = $this->processTicket($mpesaC2B);
 
             $confirmation = $this->createMpesaC2BConfirmRequest($booking, $mpesaC2B, $ticket);
 
             if(!$confirmation['status']){
+                $this->changeBookingPaymentTransactionStatus($bookingPayment, BookingPayment::TRANS_STATUS_FAILED);
                 Log::channel('mpesac2b')->error('Mpesa transaction confirmation failed:mpesaReceipt='.$mpesaC2B->mpesa_receipt.PHP_EOL );
                 return false;
             }
@@ -64,13 +71,18 @@ class MpesaC2BTransactionProcessor implements ShouldQueue
             $response = $confirmation['response'];
 
             if (!($this->verifyMpesaC2BResponse($mpesaC2B, $response))) {
+                $this->changeBookingPaymentTransactionStatus($bookingPayment, BookingPayment::TRANS_STATUS_FAILED);
                 Log::channel('mpesac2b')->error('Confirmation response failed'.PHP_EOL );
                 return false;
             }
 
             $this->setMpesaC2BStatusConfirmed($mpesaC2B);
 
-            $this->confirmTicket($ticket);
+            $this->setBookingConfirmed($booking);
+
+            $this->changeBookingPaymentTransactionStatus($bookingPayment, BookingPayment::TRANS_STATUS_SETTLED);
+
+            $this->confirmTicket($ticket, $bookingPayment);
             //ConfirmMpesaC2B::dispatch($mpesaC2B, $bookingPayment);
 
         } catch (Exception $ex){

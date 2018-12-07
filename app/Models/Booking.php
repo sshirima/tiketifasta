@@ -9,6 +9,7 @@ use Okipa\LaravelBootstrapTableList\TableList;
 class Booking extends Model
 {
     const STATUS_PENDING = 'PENDING';
+    const STATUS_AUTHORIZED = 'AUTHORIZED';
     const STATUS_CANCELLED = 'CANCELLED';
     const STATUS_CONFIRMED = 'CONFIRMED';
     const STATUS_EXPIRED = 'EXPIRED';

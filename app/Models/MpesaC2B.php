@@ -23,13 +23,23 @@ class MpesaC2B extends Model
     const COLUMN_STAGE = 'stage';
     const COLUMN_SERVICE_STATUS = 'service_status';
     const COLUMN_AUTHORIZED_AT = 'authorized_at';
+    const COLUMN_TRANSACTION_STATUS = 'transaction_status';
 
-    const TABLE = 'mpesa_c2b';
+    const TRANS_STATUS_AUTHORIZED = 'authorized';
+    const TRANS_STATUS_PENDING = 'pending';
+    const TRANS_STATUS_FAILED = 'failed';
+    const TRANS_STATUS_VOIDED = 'voided';
+    const TRANS_STATUS_POSTED = 'posted';
+    const TRANS_STATUS_SETTLED = 'settled';
+    const TRANS_STATUS_REFUND_POSTED= 'refund_posted';
+    const TRANS_STATUS_REFUND_SETTLED = 'refund_settled';
+    const TRANS_STATUS_REFUNDED = 'refunded';
 
     const STATUS_PENDING = 'pending';
     const STATUS_CANCELLED = 'cancelled';
     const STATUS_CONFIRMED = 'confirmed';
 
+    const TABLE = 'mpesa_c2b';
     protected $table = self::TABLE;
 
     protected $fillable = [

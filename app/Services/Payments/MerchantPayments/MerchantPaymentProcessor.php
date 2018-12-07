@@ -54,6 +54,7 @@ trait MerchantPaymentProcessor
             ->join('days','days.id','=','schedules.day_id')
             ->join('tickets','tickets.booking_id','=','bookings.id')
             ->join('booking_payments','booking_payments.booking_id','=','bookings.id')
+            ->where(['booking_payments.transaction_status'=> BookingPayment::TRANS_STATUS_SETTLED])
             ->whereNull('booking_payments.merchant_payment_id')
             ->whereDate('booking_payments.created_at','=', $date)
             ->groupBy(\DB::raw("DATE(booking_payments.created_at)"),'merchants.id','merchants.name','booking_payments.method')

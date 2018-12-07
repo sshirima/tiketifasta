@@ -25,8 +25,6 @@ trait TicketManager
 
         //$this->confirmTicket($ticket);
 
-        $this->sendConfirmationMessageToCustomer($ticket, $transaction);
-
         return $ticket;
     }
 
@@ -62,12 +60,13 @@ trait TicketManager
     }
 
 
-
     /**
      * @param Ticket $ticket
+     * @param $transaction
      * @return bool
      */
-    public function confirmTicket(Ticket $ticket){
+    public function confirmTicket(Ticket $ticket, $transaction){
+        $this->sendConfirmationMessageToCustomer($ticket, $transaction);
         $ticket->status = Ticket::STATUS_CONFIRMED;
         return $ticket->update();
     }

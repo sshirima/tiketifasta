@@ -54,7 +54,7 @@ class BookingController extends BaseController
             ])->addQueryInstructions(function ($query) {
                 $query->select('bookings.id as id','days.date as date', 'bookings.firstname as firstname',
                     'bookings.lastname as lastname','bookings.email as email','source.name as source','destination.name as destination',
-                    'buses.reg_number as reg_number','trips.price as price','bookings.status as status','booking_payments.payment_ref as payment_ref',
+                    'buses.reg_number as reg_number','bookings.price as price','bookings.status as status','booking_payments.payment_ref as payment_ref',
                     'bookings.created_at as created_at', 'bookings.updated_at as updated_at')
                     ->join('schedules', 'schedules.id', '=', 'bookings.schedule_id')
                     ->join('days', 'days.id', '=', 'schedules.day_id')

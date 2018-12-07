@@ -46,6 +46,15 @@ trait BookingPaymentProcessor
     }
 
     /**
+     * @param BookingPayment $bookingPayment
+     * @param $status
+     */
+    public function changeBookingPaymentTransactionStatus(BookingPayment $bookingPayment, $status){
+        $bookingPayment->transaction_status = $status;
+        $bookingPayment->update();
+    }
+
+    /**
      * @param Booking $booking
      * @return array
      */
@@ -57,6 +66,7 @@ trait BookingPaymentProcessor
             'booking_id' => $booking->id,
             'method' => $booking->payment,
             'phone_number' => $booking->phonenumber,
+            'transaction_status' => BookingPayment::TRANS_STATUS_PENDING,
         ];
     }
 }

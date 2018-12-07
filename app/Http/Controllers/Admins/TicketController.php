@@ -97,7 +97,7 @@ class TicketController extends BaseController
         }
 
         if ($status == Ticket::STATUS_VALID){
-            return '<div class="label label-danger">'.'Valid'.'</div>';
+            return '<div class="label label-danger">'.'Payment pending'.'</div>';
         }
 
         if ($status == Ticket::STATUS_EXPIRED){

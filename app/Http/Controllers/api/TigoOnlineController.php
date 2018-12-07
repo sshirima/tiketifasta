@@ -11,9 +11,11 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Models\BookingPayment;
 use App\Models\TigoOnlineC2B;
 use App\Services\Bookings\AuthorizeBooking;
 use App\Services\DateTime\DatesOperations;
+use App\Services\Payments\BookingPayments\BookingPaymentProcessor;
 use App\Services\Payments\PaymentManager;
 use App\Services\Payments\Tigosecure\TigoOnline;
 use App\Services\SMS\SendSMS;
@@ -25,7 +27,7 @@ use Log;
 
 class TigoOnlineController extends Controller
 {
-    use DatesOperations, TicketManager, AuthorizeBooking;
+    use DatesOperations, TicketManager, AuthorizeBooking, BookingPaymentProcessor;
 
     private $tigoOnline;
 
@@ -50,10 +52,15 @@ class TigoOnlineController extends Controller
         }
 
         $tigoC2B = $response['model'];
+        $bookingPayment = $tigoC2B->bookingPayment;
 
-        $this->setBookingConfirmed($tigoC2B->bookingPayment->booking);
+        $this->setBookingConfirmed($bookingPayment->booking);
+
+        $this->changeBookingPaymentTransactionStatus($bookingPayment, BookingPayment::TRANS_STATUS_SETTLED);
 
         $ticket = $this->processTicket($tigoC2B);
+
+        $this->confirmTicket($tigoC2B, $bookingPayment);
 
         return view('users.pages.bookings.booking_confirmation')->with(['ticket' => $ticket, 'transaction' => $tigoC2B,
             'bookingPayment' => $tigoC2B->bookingPayment, 'booking' => $ticket->booking]);

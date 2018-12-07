@@ -50,6 +50,13 @@ trait AuthorizeBooking
     /**
      * @param Booking $booking
      */
+    public function setBookingAuthorized(Booking $booking){
+        $this->updateBookingStatus($booking, Booking::STATUS_AUTHORIZED);
+    }
+
+    /**
+     * @param Booking $booking
+     */
     public function setBookingConfirmed(Booking $booking){
         $this->updateBookingStatus($booking, Booking::STATUS_CONFIRMED);
     }

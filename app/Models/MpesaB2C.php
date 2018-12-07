@@ -29,6 +29,18 @@ class MpesaB2C extends Model
     const COLUMN_UTILITY_ACCOUNT_FUNDS = 'utility_account_funds';
     const COLUMN_CHARGES_PAID_FUNDS = 'charges_paid_funds';
 
+    const COLUMN_TRANSACTION_STATUS = 'transaction_status';
+
+    const TRANS_STATUS_AUTHORIZED = 'authorized';
+    const TRANS_STATUS_PENDING = 'pending';
+    const TRANS_STATUS_FAILED = 'failed';
+    const TRANS_STATUS_VOIDED = 'voided';
+    const TRANS_STATUS_POSTED = 'posted';
+    const TRANS_STATUS_SETTLED = 'settled';
+    const TRANS_STATUS_REFUND_POSTED= 'refund_posted';
+    const TRANS_STATUS_REFUND_SETTLED = 'refund_settled';
+    const TRANS_STATUS_REFUNDED = 'refunded';
+
     const TABLE = 'mpesa_b2c';
 
     const STATUS_LEVEL = ['INITIALIZATION_SUCCESS','INITIALIZATION_FAIL','CONFIRMATION_SUCCESS','CONFIRMATION_FAIL'];
@@ -41,7 +53,8 @@ class MpesaB2C extends Model
     protected $fillable = [
          self::COLUMN_AMOUNT,self::COLUMN_RECIPIENT,self::COLUMN_COMMAND_ID,self::COLUMN_INITIATOR,self::COLUMN_OG_CONVERSATION_ID,self::COLUMN_RECIPIENT,self::COLUMN_MPESA_RECEIPT,
         self::COLUMN_TRANSACTION_ID,self::COLUMN_TRANSACTION_DATE,self::COLUMN_RESULT_TYPE,self::COLUMN_CONVERSATION_ID,
-        self::COLUMN_RESULT_CODE,self::COLUMN_WORKING_ACCOUNT_FUNDS,self::COLUMN_UTILITY_ACCOUNT_FUNDS,self::COLUMN_CHARGES_PAID_FUNDS, self::COLUMN_RESULT_DESC
+        self::COLUMN_RESULT_CODE,self::COLUMN_WORKING_ACCOUNT_FUNDS,self::COLUMN_UTILITY_ACCOUNT_FUNDS,self::COLUMN_TRANSACTION_STATUS,
+        self::COLUMN_CHARGES_PAID_FUNDS, self::COLUMN_RESULT_DESC
     ];
 
     /**

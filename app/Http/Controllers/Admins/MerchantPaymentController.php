@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers\Admins;
 
+use App\Models\BookingPayment;
 use App\Models\MerchantPayment;
 use App\Models\Schedule;
 use App\Services\Payments\MerchantPayments\MerchantPaymentProcessor;
@@ -83,6 +84,7 @@ class MerchantPaymentController extends BaseController
                     ->join('merchants', 'merchants.id', '=', 'buses.merchant_id')
                     ->join('tickets', 'tickets.booking_id', '=', 'bookings.id')
                     ->join('booking_payments', 'booking_payments.booking_id', '=', 'bookings.id')
+                    ->where(['booking_payments.transaction_status'=> BookingPayment::TRANS_STATUS_SETTLED])
                     ->groupBy(\DB::raw("DATE(booking_payments.created_at)"), 'merchants.id', 'merchants.name', 'booking_payments.method');
             });
 
@@ -111,6 +113,7 @@ class MerchantPaymentController extends BaseController
                     ->join('merchants', 'merchants.id', '=', 'buses.merchant_id')
                     ->join('tickets', 'tickets.booking_id', '=', 'bookings.id')
                     ->join('booking_payments', 'booking_payments.booking_id', '=', 'bookings.id')
+                    ->where(['booking_payments.transaction_status'=> BookingPayment::TRANS_STATUS_SETTLED])
                     ->whereNull('booking_payments.merchant_payment_id')
                     ->groupBy(\DB::raw("DATE(booking_payments.created_at)"), 'merchants.id', 'merchants.name', 'booking_payments.method');
             });
@@ -128,6 +131,7 @@ class MerchantPaymentController extends BaseController
     protected function merchantReportTable(Request $request, $merchantId)
     {
         $this->merchantCond[] = ['merchants.id', '=', $merchantId];
+        $this->merchantCond[] = ['booking_payments.transaction_status', '=', BookingPayment::TRANS_STATUS_SETTLED];
 
         if ($request->has('date')) {
             $this->dateCondition = $request->input('date');
