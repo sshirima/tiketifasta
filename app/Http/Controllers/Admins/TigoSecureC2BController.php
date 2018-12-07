@@ -102,6 +102,10 @@ class TigoSecureC2BController extends BaseController
             return '<div class="label label-warning">'.'Posted'.'</div>';
         }
 
+        if ($status == TigoOnlineC2B::TRANS_STATUS_PENDING){
+                return '<div class="label label-warning">'.'Pending'.'</div>';
+        }
+
         return '<div class="label label-default">'.$status.'</div>';
     }
 }

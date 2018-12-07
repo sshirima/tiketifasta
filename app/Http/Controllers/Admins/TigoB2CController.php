@@ -220,6 +220,10 @@ class TigoB2CController extends BaseController
             return '<div class="label label-warning">'.'Posted'.'</div>';
         }
 
+        if ($status == TigoB2C::TRANS_STATUS_PENDING){
+            return '<div class="label label-warning">'.'Pending'.'</div>';
+        }
+
         return '<div class="label label-default">'.$status.'</div>';
     }
 }

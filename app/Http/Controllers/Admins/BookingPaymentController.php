@@ -114,6 +114,10 @@ class BookingPaymentController extends BaseController
             return '<div class="label label-danger">'.'Failed'.'</div>';
         }
 
+        if ($status == BookingPayment::TRANS_STATUS_PENDING){
+            return '<div class="label label-warning">'.'Pending'.'</div>';
+        }
+
         return '<div class="label label-default">'.'Unknown'.'</div>';
     }
 }
