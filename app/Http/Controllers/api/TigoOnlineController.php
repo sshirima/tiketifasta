@@ -60,7 +60,7 @@ class TigoOnlineController extends Controller
 
         $ticket = $this->processTicket($tigoC2B);
 
-        $this->confirmTicket($tigoC2B, $bookingPayment);
+        $this->confirmTicket($ticket, $bookingPayment);
 
         return view('users.pages.bookings.booking_confirmation')->with(['ticket' => $ticket, 'transaction' => $tigoC2B,
             'bookingPayment' => $tigoC2B->bookingPayment, 'booking' => $ticket->booking]);
