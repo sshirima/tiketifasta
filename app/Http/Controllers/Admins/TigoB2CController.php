@@ -160,11 +160,12 @@ class TigoB2CController extends BaseController
         $table = app(TableList::class)
             ->setModel(TigoB2C::class)
             ->setRowsNumber(10)
+            ->enableRowsNumberSelector()
             ->setRoutes([
                 'index' => ['alias' => 'admin.tigo_b2c.index', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {
                 $query->select('tigo_b2c.id as id','reference_id','msisdn1','amount','txn_status','txn_message',
-                    'txn_id','tigo_b2c.created_at','tigo_b2c.updated_at');
+                    'txn_id','tigo_b2c.created_at','tigo_b2c.updated_at','tigo_b2c.transaction_status');
             });
 
         $table = $this->setTableColumns($table);
@@ -178,18 +179,47 @@ class TigoB2CController extends BaseController
      */
     private function setTableColumns($table)
     {
-        $table->addColumn('msisdn1')->setTitle('Receiver')->isSearchable();
+        $table->addColumn('txn_id')->setTitle('Reference');
+
         $table->addColumn('amount')->setTitle('Amount');
-        $table->addColumn('txn_id')->setTitle('Transaction Id');
-        $table->addColumn('txn_status')->setTitle('Status')->isSearchable();
-        $table->addColumn('txn_message')->setTitle('Status message')->isSearchable();
-        $table->addColumn('updated_at')->setTitle('Updated at')->isSortable()->isSearchable();
+
+        $table->addColumn('msisdn1')->setTitle('Sent to')->isSearchable();
+
         $table->addColumn('created_at')->setTitle('Created at')->isSortable()->isSearchable()->sortByDefault('desc');
+
+        $table->addColumn('transaction_status')->setTitle('Status')->isSortable()->isCustomHtmlElement(function($entity, $column){
+            return $this->getTransactionStatusLabel($entity['transaction_status']);
+        });
+        //$table->addColumn('txn_status')->setTitle('Status')->isSearchable();
+        //$table->addColumn('txn_message')->setTitle('Status message')->isSearchable();
+        //$table->addColumn('updated_at')->setTitle('Updated at')->isSortable()->isSearchable();
+
 
         /*$table->addColumn('status')->setTitle('Status')->isCustomHtmlElement(function($entity, $column){
             return $entity['status'] == Booking::STATUS_CONFIRMED?
                 '<div class="label label-success">'.'Paid'.'</div>':'<div class="label label-warning">'.$entity['status'].'</div>';
         });*/
         return $table;
+    }
+
+    private function getTransactionStatusLabel($status){
+
+        if ($status == TigoB2C::TRANS_STATUS_SETTLED){
+            return '<div class="label label-success">'.'Settled'.'</div>';
+        }
+
+        if ($status == TigoB2C::TRANS_STATUS_FAILED){
+            return '<div class="label label-danger">'.'Failed'.'</div>';
+        }
+
+        if ($status == TigoB2C::TRANS_STATUS_AUTHORIZED){
+            return '<div class="label label-warning">'.'Authorized'.'</div>';
+        }
+
+        if ($status == TigoB2C::TRANS_STATUS_POSTED){
+            return '<div class="label label-warning">'.'Posted'.'</div>';
+        }
+
+        return '<div class="label label-default">'.$status.'</div>';
     }
 }

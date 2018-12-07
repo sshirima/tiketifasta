@@ -48,7 +48,7 @@ trait TigoTransactionB2C
                 $info = curl_getinfo($ch);
                 if ($info['http_code'] === 0) {
                     Log::channel('mpesab2c')->error('Connection timeout: url='.$url . PHP_EOL);
-                    $this->setTigoB2CTransactionTimeout($tigoB2C);
+                    $this->deleteTigoB2CTransactionModel($tigoB2C, 'Connection timeout: url='.$url);
                 }
             }
 
@@ -77,6 +77,7 @@ trait TigoTransactionB2C
                         break;
                     default:
                         Log::channel('tigoussdb2c')->error('Unexpected HTTP code: ' . $http_code . '[' . $response . ']' . PHP_EOL);
+                        $this->deleteTigoB2CTransactionModel($tigoB2C, 'Unexpected HTTP code: ' . $http_code);
                         $reply = array('status'=>false, 'error'=>'Unexpected HTTP code: ' . $http_code);
                     //echo 'Unexpected HTTP code: ', $http_code, "\n";
                 }
@@ -140,10 +141,15 @@ trait TigoTransactionB2C
         return $tigoB2C;
     }
 
-    private function setTigoB2CTransactionTimeout(TigoB2C $tigoB2C){
-            $tigoB2C->txn_status = TigoB2C::ERROR_CODE_001;
-            $tigoB2C->txn_message = TigoB2C::ERROR_DESC_001;
-            $tigoB2C->update();
+    /**
+     * @param TigoB2C $tigoB2C
+     * @param string $reason
+     */
+    private function deleteTigoB2CTransactionModel(TigoB2C $tigoB2C, $reason=''){
+        Log::channel('mpesab2c')->error('TigoB2C model record has been deleted#reason:'.$reason . PHP_EOL);
+            /*$tigoB2C->txn_status = TigoB2C::ERROR_CODE_001;
+            $tigoB2C->txn_message = TigoB2C::ERROR_DESC_001;*/
+            $tigoB2C->delete();
     }
 
     /**
@@ -152,6 +158,7 @@ trait TigoTransactionB2C
      */
     private function onTransferSuccess($input, $tigoB2C): void
     {
+        $tigoB2C->transaction_status = TigoB2C::TRANS_STATUS_SETTLED;
         $tigoB2C->txn_id = $input['TXNID'];
         $tigoB2C->txn_status = $input['TXNSTATUS'];
         $tigoB2C->txn_message = $input['MESSAGE'];
@@ -165,6 +172,7 @@ trait TigoTransactionB2C
      */
     private function onTransferFailure($input, $tigoB2C)
     {
+        $tigoB2C->transaction_status = TigoB2C::TRANS_STATUS_FAILED;
         $tigoB2C->txn_status = isset($input['TXNSTATUS']) ? $input['TXNSTATUS'] : 'null';
         $tigoB2C->txn_message = isset($input['MESSAGE']) ? $input['MESSAGE'] : 'null';
         $tigoB2C->update();
@@ -177,6 +185,15 @@ trait TigoTransactionB2C
      */
     public function setMerchantPaymentId($tigoB2C, $merchantId){
         $tigoB2C->merchant_payment_id =$merchantId;
+        $tigoB2C->update();
+    }
+
+    /**
+     * @param TigoB2C $tigoB2C
+     * @param $status
+     */
+    public function setTigoB2CTransactionStatus(TigoB2C $tigoB2C, $status){
+        $tigoB2C->transaction_status = $status;
         $tigoB2C->update();
     }
 }

@@ -26,6 +26,20 @@ class MerchantPayment extends Model
 
     const PAYMENT_STATUS = ['PROCESSING_INITIATED','TRANSFER_INITIATED','TRANSFER_FAIL','TRANSFER_SUCCESS'];
 
+    const TRANS_STATUS_AUTHORIZED = 'authorized';
+    const TRANS_STATUS_PENDING = 'pending';
+    const TRANS_STATUS_FAILED = 'failed';
+    const TRANS_STATUS_VOIDED = 'voided';
+    const TRANS_STATUS_POSTED = 'posted';
+    const TRANS_STATUS_SETTLED = 'settled';
+    const TRANS_STATUS_REFUND_POSTED= 'refund_posted';
+    const TRANS_STATUS_REFUND_SETTLED = 'refund_settled';
+    const TRANS_STATUS_REFUNDED = 'refunded';
+
+    const TRANS_STATUES = [self::TRANS_STATUS_AUTHORIZED, self::TRANS_STATUS_PENDING, self::TRANS_STATUS_FAILED,
+        self::TRANS_STATUS_VOIDED,self::TRANS_STATUS_POSTED,self::TRANS_STATUS_SETTLED, self::TRANS_STATUS_REFUND_POSTED,
+        self::TRANS_STATUS_REFUND_SETTLED, self::TRANS_STATUS_REFUNDED];
+
     const TABLE = 'merchant_payments';
 
     protected $table = self::TABLE;
