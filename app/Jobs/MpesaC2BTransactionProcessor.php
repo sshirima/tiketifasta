@@ -19,7 +19,7 @@ use Log;
 
 class MpesaC2BTransactionProcessor implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, AuthorizeBooking, MpesaTransactionC2B, TicketManager, BookingPaymentProcessor;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, AuthorizeBooking, MpesaTransactionC2B, BookingPaymentProcessor;
 
     private $request;
 
