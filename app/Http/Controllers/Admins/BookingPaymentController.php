@@ -87,7 +87,7 @@ class BookingPaymentController extends BaseController
 
         $table->addColumn('created_at')->setTitle('Created')->sortByDefault('desc')->isSortable()->isSearchable();
 
-        $table->addColumn('transaction_status')->setTitle('Status')->isSortable()->isSearchable()->setCustomTable('locations')
+        $table->addColumn('transaction_status')->setTitle('Status')->isSortable()->isSearchable()
             ->isCustomHtmlElement(function ($entity, $column) {
                 return $this->getBookingPaymentLabelByStatus( $entity['transaction_status']);
             });
