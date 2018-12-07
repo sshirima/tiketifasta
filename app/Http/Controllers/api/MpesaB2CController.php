@@ -37,15 +37,16 @@ class MpesaB2CController extends Controller
 
                 $this->onMerchantPaymentSuccess($merchantPayment);
             } else{
-                \Log::channel('mpesab2c')->error('Transaction settling failed: error='.$response['error'] . PHP_EOL);
+                \Log::channel('mpesab2c')->error('Transaction settling failed'.$response['error'] . PHP_EOL);
             }
 
         } catch (\Exception $exception){
+
             if(config('app.debug_logs')){
-                \Log::channel('mpesab2c')->error('Transaction settling failed: error='.$exception->getTraceAsString() . PHP_EOL);
-            } else {
-                \Log::channel('mpesab2c')->error('Transaction settling failed: error=' . $exception->getMessage() . PHP_EOL);
+                \Log::channel('mpesab2c')->error('Transaction settling failed'.$exception->getTraceAsString() . PHP_EOL);
             }
+
+            \Log::channel('mpesab2c')->error('Transaction settling failed' . $exception->getMessage() . PHP_EOL);
 
             return 'false';
         }
