@@ -24,7 +24,7 @@ class MpesaB2C extends Model
     const COLUMN_CONFIRM_CODE = 'confirm_code';
     const COLUMN_CONFIRM_DESC = 'confirm_desc';
     const COLUMN_STATUS = 'status';
-    const COLUMN_MERCHANT_PAY_ID = 'merchant_pay_id';
+    const COLUMN_MERCHANT_PAY_ID = 'merchant_payment_id';
     const COLUMN_WORKING_ACCOUNT_FUNDS = 'working_account_funds';
     const COLUMN_UTILITY_ACCOUNT_FUNDS = 'utility_account_funds';
     const COLUMN_CHARGES_PAID_FUNDS = 'charges_paid_funds';
