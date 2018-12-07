@@ -15,6 +15,12 @@ use App\Models\TigoOnlineC2B;
 
 trait SendSMS
 {
+
+    /**
+     * @param $ticket
+     * @param $transaction
+     * @return array|bool
+     */
     public function sendConfirmationMessageToCustomer($ticket, $transaction){
 
         $message = $this->generateTicketMessage($ticket, $transaction);
@@ -38,20 +44,25 @@ trait SendSMS
         }
     }
 
-    public function generateTicketMessage(Ticket $ticket, $transaction){
+    /**
+     * @param Ticket $ticket
+     * @param $bookingPayment
+     * @return string
+     */
+    public function generateTicketMessage(Ticket $ticket, $bookingPayment){
 
         $format = config('smsc.format');
 
         $customerName = $ticket->booking->firstname;
-        $busRegNumber = $transaction->bookingPayment->booking->trip->bus->reg_number;
+        $busRegNumber = $bookingPayment->booking->trip->bus->reg_number;
 
-        $date = $transaction->bookingPayment->booking->schedule->day->date;
-        $time = $transaction->bookingPayment->booking->trip->depart_time;
+        $date = $bookingPayment->booking->schedule->day->date;
+        $time = $bookingPayment->booking->trip->depart_time;
         $formattedDate = date('Y:m:d G:i', strtotime($date.' '.$time));
         //$formattedDate = \DateTime::createFromFormat('Y-m-d G:i', $date.' '.$time)->format('Y:m:d G:i');
 
-        $from = $transaction->bookingPayment->booking->trip->from->name;
-        $to = $transaction->bookingPayment->booking->trip->to->name;
+        $from = $bookingPayment->booking->trip->from->name;
+        $to = $bookingPayment->booking->trip->to->name;
         $ticketRef = $ticket->ticket_ref;
 
         $message = sprintf($format,$customerName, $busRegNumber,  $from, $to, $formattedDate, strtoupper($ticketRef));
