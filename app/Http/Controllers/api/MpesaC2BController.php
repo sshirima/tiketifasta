@@ -22,7 +22,7 @@ use Log;
 
 class MpesaC2BController extends Controller
 {
-    use AuthorizeBooking, TicketManager, MpesaTransactionC2B;
+    use MpesaTransactionC2B;
     private $mpesa;
 
     public function __construct(Mpesa $mpesa)
