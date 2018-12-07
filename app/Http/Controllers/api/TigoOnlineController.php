@@ -27,7 +27,7 @@ use Log;
 
 class TigoOnlineController extends Controller
 {
-    use DatesOperations, TicketManager, AuthorizeBooking, BookingPaymentProcessor;
+    use TicketManager, AuthorizeBooking, BookingPaymentProcessor;
 
     private $tigoOnline;
 
