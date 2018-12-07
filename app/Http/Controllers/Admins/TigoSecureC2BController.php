@@ -58,17 +58,17 @@ class TigoSecureC2BController extends BaseController
     {
         $table->addColumn('reference')->setTitle('Reference#')->isSearchable()->isSortable();
 
-        $table->addColumn('amount')->setTitle('Amount');
+        $table->addColumn('amount')->setTitle('Amount')->isSortable();
 
         $table->addColumn('phone_number')->setTitle('Paid by')->isSortable();
 
-        $table->addColumn('created_at')->setTitle('Transaction date')->isSearchable()->sortByDefault('desc');
+        $table->addColumn('created_at')->setTitle('Transaction date')->isSortable()->isSearchable()->sortByDefault('desc');
 
-        $table->addColumn('status')->setTitle('Status')->isCustomHtmlElement(function($entity, $column){
+        $table->addColumn('status')->setTitle('Status')->isSortable()->isCustomHtmlElement(function($entity, $column){
             return $this->getTransactionStatusLabel($entity['transaction_status']);
         });
 
-        $table->addColumn('error_code')->setTitle('Error code')->isCustomHtmlElement(function($entity, $column){
+        $table->addColumn('error_code')->setTitle('Error code')->isSortable()->isCustomHtmlElement(function($entity, $column){
             return $entity['error_code'];
         });
 

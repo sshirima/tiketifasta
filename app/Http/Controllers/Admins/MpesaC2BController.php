@@ -57,7 +57,7 @@ class MpesaC2BController extends BaseController
      */
     private function setTableColumns($table)
     {
-        $table->addColumn('account_reference')->setTitle('Reference#')->isSearchable();
+        $table->addColumn('account_reference')->setTitle('Reference#')->isSearchable()->isSortable();
 
         $table->addColumn('amount')->setTitle('Amount')->isSearchable()->isSortable();
 
@@ -65,7 +65,7 @@ class MpesaC2BController extends BaseController
 
         $table->addColumn('created_at')->setTitle('Transaction date')->isSearchable()->isSortable()->sortByDefault('desc');
 
-        $table->addColumn('service_status')->setTitle('Status')->isCustomHtmlElement(function($entity, $column){
+        $table->addColumn('service_status')->setTitle('Status')->isSortable()->isCustomHtmlElement(function($entity, $column){
             return $this->getTransactionStatusLabel($entity['transaction_status']);}
             );
         //$table->addColumn('mpesa_receipt')->setTitle('Mpesa Recipient')->isSearchable();
