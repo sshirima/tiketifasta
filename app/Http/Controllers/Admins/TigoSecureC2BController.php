@@ -43,7 +43,7 @@ class TigoSecureC2BController extends BaseController
                 $query->select('tigoonline_c2b.id as id','tigoonline_c2b.phone_number as phone_number','tigoonline_c2b.amount as amount',
                     'tigoonline_c2b.reference as reference','tigoonline_c2b.created_at as created_at','tigoonline_c2b.updated_at as updated_at',
                     'tigoonline_c2b.status as status','tigoonline_c2b.error_code as error_code',
-                    'mpesa_c2b.transaction_status as transaction_status')
+                    'tigoonline_c2b.transaction_status as transaction_status')
                     ->join('booking_payments', 'booking_payments.id', '=', 'tigoonline_c2b.booking_payment_id');
             });
         $table = $this->setTableColumns($table);
