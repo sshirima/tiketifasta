@@ -35,7 +35,7 @@ class MpesaB2CController extends Controller
 
                 $merchantPayment = $mpesaB2C->merchantPayment;
 
-                \Log::channel('mpesab2c')->error('Merchant payment#'.json_encode($merchantPayment) . PHP_EOL);
+                \Log::channel('mpesab2c')->error('Merchant payment#'.json_encode($mpesaB2C) . PHP_EOL);
                 $this->onMerchantPaymentSuccess($merchantPayment);
             } else{
                 \Log::channel('mpesab2c')->error('Transaction settling failed'.$response['error'] . PHP_EOL);
