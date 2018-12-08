@@ -26,7 +26,8 @@ trait MerchantPaymentProcessor
      * @param $date
      * @return array
      */
-    public function  processPayments($date){
+    public function processPayments($date)
+    {
 
         $report = $this->generateDailyReport($date);
 
@@ -44,20 +45,21 @@ trait MerchantPaymentProcessor
      * @param $date
      * @return \Illuminate\Support\Collection
      */
-    protected function generateDailyReport($date){
+    protected function generateDailyReport($date)
+    {
 
-        $transactions = DB::table('schedules')->select('merchants.id as merchant_id','merchants.name as merchant_name',
-            \DB::Raw('DATE(booking_payments.created_at) created_at'),'booking_payments.method as payment_method', \DB::raw('sum(booking_payments.amount) as amount'))
-            ->join('bookings','bookings.schedule_id','=','schedules.id')
-            ->join('buses','buses.id','=','schedules.bus_id')
-            ->join('merchants','merchants.id','=','buses.merchant_id')
-            ->join('days','days.id','=','schedules.day_id')
-            ->join('tickets','tickets.booking_id','=','bookings.id')
-            ->join('booking_payments','booking_payments.booking_id','=','bookings.id')
-            ->where(['booking_payments.transaction_status'=> BookingPayment::TRANS_STATUS_SETTLED])
+        $transactions = DB::table('schedules')->select('merchants.id as merchant_id', 'merchants.name as merchant_name',
+            \DB::Raw('DATE(booking_payments.created_at) created_at'), 'booking_payments.method as payment_method', \DB::raw('sum(booking_payments.amount) as amount'))
+            ->join('bookings', 'bookings.schedule_id', '=', 'schedules.id')
+            ->join('buses', 'buses.id', '=', 'schedules.bus_id')
+            ->join('merchants', 'merchants.id', '=', 'buses.merchant_id')
+            ->join('days', 'days.id', '=', 'schedules.day_id')
+            ->join('tickets', 'tickets.booking_id', '=', 'bookings.id')
+            ->join('booking_payments', 'booking_payments.booking_id', '=', 'bookings.id')
+            ->where(['booking_payments.transaction_status' => BookingPayment::TRANS_STATUS_SETTLED])
             ->whereNull('booking_payments.merchant_payment_id')
-            ->whereDate('booking_payments.created_at','=', $date)
-            ->groupBy(\DB::raw("DATE(booking_payments.created_at)"),'merchants.id','merchants.name','booking_payments.method')
+            ->whereDate('booking_payments.created_at', '=', $date)
+            ->groupBy(\DB::raw("DATE(booking_payments.created_at)"), 'merchants.id', 'merchants.name', 'booking_payments.method')
             ->get();
 
         return $transactions;
@@ -67,10 +69,11 @@ trait MerchantPaymentProcessor
      * @param $transactions
      * @return array
      */
-    protected function generateMerchantPayments($transactions){
+    protected function generateMerchantPayments($transactions)
+    {
 
-        $merchantPayments= array();
-        foreach ($transactions as $transaction){
+        $merchantPayments = array();
+        foreach ($transactions as $transaction) {
 
             $merchantPayment = $this->createMerchantPaymentTransaction($transaction, $transaction->payment_method);
 
@@ -92,17 +95,21 @@ trait MerchantPaymentProcessor
      * @param $merchantPayments
      * @return array
      */
-    protected function makePayments($merchantPayments){
+    protected function makePayments($merchantPayments)
+    {
 
-        $report = ['status'=>false];
+        $report = ['status' => false];
 
-        try{
-            foreach ($merchantPayments as $payment){
+        try {
+            foreach ($merchantPayments as $payment) {
 
                 $report = $this->payMerchant($payment);
+                if (!$report['status']) {
+                    \Log::error('Erro#'.$report['error']);
+                }
             }
-        }catch (\Exception $exception){
-            $report = ['status'=>false, 'error'=>$exception->getMessage()];
+        } catch (\Exception $exception) {
+            $report = ['status' => false, 'error' => $exception->getMessage()];
         }
 
         return $report;
@@ -113,34 +120,36 @@ trait MerchantPaymentProcessor
      * @param $date
      * @return mixed
      */
-    protected function bookingPaymentsByAccountId($accountId, $date){
+    protected function bookingPaymentsByAccountId($accountId, $date)
+    {
 
         $condition = array();
-        $condition[] = ['merchant_payment_accounts.id','=', $accountId];
+        $condition[] = ['merchant_payment_accounts.id', '=', $accountId];
         //$condition[] = ['merchant_payment_accounts.payment_mode','=', $operator];
 
 
-        return BookingPayment::select('booking_payments.id as id','merchants.id as merchant_id','booking_payments.payment_ref as reference',
-            'booking_payments.amount as amount','booking_payments.method as payment_method',
-            'merchant_payment_accounts.account_number as recipient','merchant_payment_accounts.payment_mode as account_payment_mode', 'merchant_payment_accounts.id as account_id')
-            ->join('bookings','bookings.id','=','booking_payments.booking_id')
-            ->join('schedules','schedules.id','=','bookings.schedule_id')
-            ->join('buses','buses.id','=','schedules.bus_id')
-            ->join('merchants','merchants.id','=','buses.merchant_id')
-            ->join('merchant_payment_accounts',function ($join){
-                $join->on('merchant_payment_accounts.merchant_id','=','merchants.id');
-                $join->on('merchant_payment_accounts.payment_mode','=','booking_payments.method');
+        return BookingPayment::select('booking_payments.id as id', 'merchants.id as merchant_id', 'booking_payments.payment_ref as reference',
+            'booking_payments.amount as amount', 'booking_payments.method as payment_method',
+            'merchant_payment_accounts.account_number as recipient', 'merchant_payment_accounts.payment_mode as account_payment_mode', 'merchant_payment_accounts.id as account_id')
+            ->join('bookings', 'bookings.id', '=', 'booking_payments.booking_id')
+            ->join('schedules', 'schedules.id', '=', 'bookings.schedule_id')
+            ->join('buses', 'buses.id', '=', 'schedules.bus_id')
+            ->join('merchants', 'merchants.id', '=', 'buses.merchant_id')
+            ->join('merchant_payment_accounts', function ($join) {
+                $join->on('merchant_payment_accounts.merchant_id', '=', 'merchants.id');
+                $join->on('merchant_payment_accounts.payment_mode', '=', 'booking_payments.method');
             })
             ->where($condition)
-            ->whereDate('booking_payments.created_at','=',$date)->get();
+            ->whereDate('booking_payments.created_at', '=', $date)->get();
     }
 
     /**
      * @param $actualAmount
      * @return int
      */
-    private function calculateCommissionedAmount($actualAmount){
-        return (int)$actualAmount*(config('payments.tickets_commission_percentage')/100);
+    private function calculateCommissionedAmount($actualAmount)
+    {
+        return (int)$actualAmount * (config('payments.tickets_commission_percentage') / 100);
     }
 
     /**
@@ -148,7 +157,8 @@ trait MerchantPaymentProcessor
      * @param $commission
      * @return int
      */
-    private function calculateMerchantAmount($netAmount, $commission){
+    private function calculateMerchantAmount($netAmount, $commission)
+    {
         return $netAmount - $commission;
     }
 
@@ -156,7 +166,8 @@ trait MerchantPaymentProcessor
      * @param $payment
      * @param $amount
      */
-    private function setNetPaymentAmount($payment, $amount){
+    private function setNetPaymentAmount($payment, $amount)
+    {
         $payment->net_amount = $amount;
         $payment->update();
     }
@@ -165,7 +176,8 @@ trait MerchantPaymentProcessor
      * @param $payment
      * @param $amount
      */
-    private function setCommissionPaymentAmount($payment, $amount){
+    private function setCommissionPaymentAmount($payment, $amount)
+    {
         $payment->commission_amount = $amount;
         $payment->update();
     }
@@ -174,7 +186,8 @@ trait MerchantPaymentProcessor
      * @param $payment
      * @param $amount
      */
-    private function setMerchantPaymentAmount($payment, $amount){
+    private function setMerchantPaymentAmount($payment, $amount)
+    {
         $payment->merchant_amount = $amount;
         $payment->update();
     }
@@ -184,14 +197,15 @@ trait MerchantPaymentProcessor
      * @param $operator
      * @return mixed
      */
-    private function createMerchantPaymentTransaction($transaction, $operator){
+    private function createMerchantPaymentTransaction($transaction, $operator)
+    {
 
-        $paymentAccount = MerchantPaymentAccount::where(['merchant_id'=>$transaction->merchant_id,'payment_mode'=>$operator])->first();
+        $paymentAccount = MerchantPaymentAccount::where(['merchant_id' => $transaction->merchant_id, 'payment_mode' => $operator])->first();
 
         return MerchantPayment::create([
-            'payment_ref'=>strtoupper(PaymentManager::random_code(10)),
-            'payment_mode'=>$operator,
-            'payment_account_id'=>$paymentAccount->id,
+            'payment_ref' => strtoupper(PaymentManager::random_code(10)),
+            'payment_mode' => $operator,
+            'payment_account_id' => $paymentAccount->id,
         ]);
     }
 
@@ -209,8 +223,8 @@ trait MerchantPaymentProcessor
             foreach ($bookingPayments as $bookingPayment) {
                 $bookingPayment->merchant_payment_id = $merchantPayment->id;
                 $bookingPayment->update();
-               /* print 'INFO: Updated'.json_encode($bookingPayment).PHP_EOL;
-                print '**************************************************'.PHP_EOL;*/
+                /* print 'INFO: Updated'.json_encode($bookingPayment).PHP_EOL;
+                 print '**************************************************'.PHP_EOL;*/
             }
         }
     }
@@ -218,9 +232,10 @@ trait MerchantPaymentProcessor
     /**
      * @param $merchantPayment
      */
-    public function onMerchantPaymentSuccess($merchantPayment){
+    public function onMerchantPaymentSuccess($merchantPayment)
+    {
         $merchantPayment->payment_stage = 'TRANSFER_SUCCESS';
-        //$merchantPayment->transaction_status = 'TRANSFER_SUCCESS';
+        $merchantPayment->transaction_status = MerchantPayment::TRANS_STATUS_SETTLED;
         $merchantPayment->transfer_status = true;
         $merchantPayment->update();
     }
@@ -231,6 +246,7 @@ trait MerchantPaymentProcessor
     public function onMerchantPaymentFailure($merchantPayment)
     {
         $merchantPayment->payment_stage = 'TRANSFER_FAIL';
+        $merchantPayment->transaction_status = MerchantPayment::TRANS_STATUS_FAILED;
         $merchantPayment->transfer_status = false;
         $merchantPayment->update();
     }
@@ -251,25 +267,26 @@ trait MerchantPaymentProcessor
      */
     protected function payMerchant(MerchantPayment $payment): array
     {
-        $report = array('status'=>false);
+        $report = array('status' => false);
 
-        if($payment->transfer_status || $payment->payment_stage=='TRANSFER_INITIATED' || $payment->payment_stage=='TRANSFER_SUCCESS'){
-            return array('status'=>false,'error'=>'Payments has already being issued: Ref='.$payment->payment_ref);
+        if (($payment->transfer_status) || ($payment->payment_stage == 'TRANSFER_INITIATED') || ($payment->payment_stage == 'TRANSFER_SUCCESS')) {
+            return array('status' => false, 'error' => 'Payments has already being issued: Ref=' . $payment->payment_ref);
         }
 
-        if($payment->payment_stage=='TRANSFER_FAIL' || $payment->payment_stage=='PROCESSING_INITIATED'){
+        if (($payment->payment_stage == 'TRANSFER_FAIL') || ($payment->payment_stage == 'PROCESSING_INITIATED')) {
 
             if ($payment->payment_mode == 'mpesa') {
                 //Issue Mpesa payment to number
                 PayMpesaMerchant::dispatch($payment);
                 $report = ['status' => true];
-            }
-
-            if ($payment->payment_mode == 'tigopesa') {
-                //Issue Tigopesa payment to number
-                PayTigoPesaMerchant::dispatch($payment);
-                $report = ['status' => true];
-            }
+            } else
+                if ($payment->payment_mode == 'tigopesa') {
+                    //Issue Tigopesa payment to number
+                    PayTigoPesaMerchant::dispatch($payment);
+                    $report = ['status' => true];
+                } else {
+                    $report = ['status' => false, 'error'=>'Transfer fail or payment has already being initiated for B2C transaction'];
+                }
         }
         return $report;
     }
