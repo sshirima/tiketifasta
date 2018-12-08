@@ -20,8 +20,8 @@
                     <li class="nav-item {{Request::is('about-us') ? 'active' : ''}}">
                         <a class="nav-link " href="{{route('user.about_us')}}">About</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Cancel ticket</a>
+                    <li class="nav-item {{Request::is('verify-ticket') ? 'active' : ''}}">
+                        <a class="nav-link" href="{{route('user.verify.ticket.form')}}">Verify ticket</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link " href="{{route('merchant.home')}}">Merchant</a>

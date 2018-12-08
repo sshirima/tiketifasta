@@ -123,7 +123,7 @@ trait MpesaTransactionC2B
             if (!curl_errno($ch)) {
                 switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
                     case 200:
-                        Log::channel('mpesac2b')->info('Error on the response: response='.$xmlResponse . PHP_EOL);
+                        //Log::channel('mpesac2b')->info('Error on the response: response='.$xmlResponse . PHP_EOL);
                         $parser = new Parser();
                         $jsonResponse = $parser->xml($xmlResponse);
                         /*$objectResponse = simplexml_load_string($xmlResponse);
@@ -191,6 +191,7 @@ trait MpesaTransactionC2B
     {
         //Stage 0
         $mpesaC2B->stage ='0';
+        $mpesaC2B->transaction_status = MpesaC2B::TRANS_STATUS_SETTLED;
         $mpesaC2B->service_status = 'confirmed';
         $mpesaC2B->update();
     }

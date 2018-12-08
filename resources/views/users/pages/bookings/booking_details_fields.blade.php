@@ -55,5 +55,6 @@
             <button type="submit" class="btn btn-primary">Submit</button>
         </div>
     </div><br>
+    @csrf
     <input hidden name="seat" value="{{$trip->bus->seat_name}}">
 {!! Form::close() !!}

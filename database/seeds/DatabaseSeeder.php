@@ -4,7 +4,7 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    use \App\Services\Bookings\AuthorizeBooking;
+    use \App\Services\Tickets\TicketVerification;
     /**
      * Run the database seeds.
      *
@@ -52,9 +52,13 @@ class DatabaseSeeder extends Seeder
             print '==========='.PHP_EOL;
         }*/
         //print json_encode($bookings).PHP_EOL;
-        $response = '<mpesaBroker version ="2.0" xmlns="http://infowise.co.tz/broker/"><response><conversationID>1645ba1ae67b43f5badbe3a70df84885</conversationID><originatorConversationID>1645ba1ae67b43f5badbe3a70df84885</originatorConversationID><responseCode>0</responseCode><serviceStatus>Confirming</serviceStatus><transactionID>173388288_664400</transactionID></response></mpesaBroker>';
+        /*$response = '<mpesaBroker version ="2.0" xmlns="http://infowise.co.tz/broker/"><response><conversationID>1645ba1ae67b43f5badbe3a70df84885</conversationID><originatorConversationID>1645ba1ae67b43f5badbe3a70df84885</originatorConversationID><responseCode>0</responseCode><serviceStatus>Confirming</serviceStatus><transactionID>173388288_664400</transactionID></response></mpesaBroker>';
         $object = simplexml_load_string($response);
         $json =json_encode($object);
-        print $json.PHP_EOL;
+        print $json.PHP_EOL;*/
+
+        $response = $this->verifyTicketByReference('FC08NLUQVA8G');
+
+        print json_encode($response).PHP_EOL;
     }
 }

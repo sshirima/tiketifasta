@@ -12,4 +12,5 @@ namespace App\Services\Bookings;
 class BookingManager
 {
     use RetrieveBookingsService, AddBookingService;
+
 }

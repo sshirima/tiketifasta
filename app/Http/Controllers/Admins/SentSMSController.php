@@ -97,7 +97,7 @@ class SentSMSController extends BaseController
                 '<div class="label label-success">'.'Sent'.'</div>':'<div class="label label-danger">'.'Failed'.'</div>';
         });
 
-        $table->addColumn('created_at')->setTitle('Created at')->isSortable()->isSearchable()->sortByDefault();
+        $table->addColumn('created_at')->setTitle('Created at')->isSortable()->isSearchable()->sortByDefault('desc');
 
         return $table;
     }

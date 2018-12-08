@@ -14,6 +14,8 @@ Route::get('/', 'Users\UserController@homepage')->name('user.home');
 Route::get('/about-us', 'Users\UserController@aboutUs')->name('user.about_us');
 Route::get('/contact-us', 'Users\UserController@contactUs')->name('user.contact_us');
 Route::get('/testimonials', 'Users\UserController@testimonials')->name('user.testimonials');
+Route::get('/verify-ticket', 'Users\VerifyTicketController@displayForm')->name('user.verify.ticket.form');
+Route::post('/verify-ticket', 'Users\VerifyTicketController@verifyReference')->name('user.verify.ticket.submit');
 // Authentication Routes...
 Route::get('login', 'Users\Auth\LoginController@showLoginForm')->name('login');
 Route::post('login', 'Users\Auth\LoginController@login')->name('login');

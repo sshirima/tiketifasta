@@ -125,8 +125,18 @@
                                         class="lead mb-0"><strong>{{strtoupper($ticket->ticket_ref)}}</strong></span>
                             </div>
                             <div>
-                                <span class="lead mb-0">Status: </span><span
-                                        class="lead mb-0"><strong>{{$ticket->status}}</strong></span>
+                                <span class="lead mb-0 ">Status: </span><span
+                                        class="lead mb-0">
+                                    @if($ticket->status == 'CONFIRMED')
+                                        <span class="alert-success" style="padding-left: 3px;padding-right: 3px"><b>Confirmed</b></span>
+                                    @endif
+                                    @if($ticket->status == 'VALID')
+                                        <span class="alert-warning" style="padding-left: 3px;padding-right: 3px"><b>Pending</b></span>
+                                    @endif
+                                    @if($ticket->status == 'EXPIRED')
+                                        <span class="alert-danger" style="padding-left: 3px;padding-right: 3px"><b>Expired</b></span>
+                                    @endif
+                                </span>
                             </div>
                             <div>
                                 <span class="lead mb-0">Issued at: </span><span
