@@ -29,19 +29,19 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('merchants:daily-payments')
             ->withoutOverlapping()
-            ->dailyAt('01:00');
+            ->dailyAt('02:00');
 
          $schedule->command('merchants:contract-disable')
-             ->dailyAt('01:00');
+             ->dailyAt('02:00');
 
          $schedule->command('buses-schedules:disable')
-              ->dailyAt('01:00');
+              ->dailyAt('02:00');
 
         $schedule->command('bookings:delete-pendings')
             ->everyFiveMinutes();
 
         $schedule->command('bookings:expire')
-            ->dailyAt('01:00');
+            ->dailyAt('02:00');
     }
 
     /**
