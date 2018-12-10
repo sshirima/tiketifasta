@@ -28,15 +28,7 @@ trait MpesaTransactionB2C
     public function initializeMpesaB2CTransaction($receipt, $amount){
         $reply = null;
         $ch = curl_init();
-        $mpesaB2C = $this->createMpesaB2CTransaction([
-            'amount'=>$amount,
-            'command_id'=>'BusinessPayment',
-            'initiator'=>config('payments.mpesa.b2c.initiator'),
-            'recipient'=>$receipt,
-            'og_conversation_id'=>strtoupper(PaymentManager::random_code(16)),
-            'transaction_date'=>PaymentManager::getCurrentTimestamp(),
-            'transaction_id'=>strtoupper(PaymentManager::random_code(10)),
-        ]);
+        $mpesaB2C = $this->createMpesaB2CTransaction($this->getMpesaB2CParametersArray($receipt, $amount));
 
         //Log::channel('mpesab2c')->error('Mpesa B2C transaction initiated: transactionID='.$mpesaB2C->transaction_id . PHP_EOL);
 
@@ -250,5 +242,23 @@ trait MpesaTransactionB2C
     public function setMpesaB2CTransactionStatus(MpesaB2C $mpesab2c, $status){
         $mpesab2c->transaction_status = $status;
         $mpesab2c->update();
+    }
+
+    /**
+     * @param $receipt
+     * @param $amount
+     * @return array
+     */
+    protected function getMpesaB2CParametersArray($receipt, $amount): array
+    {
+        return [
+            'amount' => $amount,
+            'command_id' => 'BusinessPayment',
+            'initiator' => config('payments.mpesa.b2c.initiator'),
+            'recipient' => $receipt,
+            'og_conversation_id' => strtoupper(PaymentManager::random_code(16)),
+            'transaction_date' => PaymentManager::getCurrentTimestamp(),
+            'transaction_id' => strtoupper(PaymentManager::random_code(10)),
+        ];
     }
 }

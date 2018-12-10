@@ -38,6 +38,8 @@ class DailyMerchantPayment extends Command
      */
     public function handle()
     {
+        \Log::info('Running scheduled command: '.$this->signature .' at '.date('Y-m-d H:i:s'));
+
         $d = $this->option('date');//date('Y-m-d');
 
         $date = isset($d)?$d:date('Y-m-d');

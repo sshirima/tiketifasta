@@ -43,6 +43,8 @@ class DisableExpiredMerchants extends Command
         //Query all expired merchants
         //$merchants = Merchant::contractExpired()->get();
 
+        \Log::info('Running scheduled command: '.$this->signature .' at '.date('Y-m-d H:i:s'));
+
         $status = 0;
 
         $merchants = Merchant::where(['status'=>!$status])->whereDate(Merchant::COLUMN_CONTRACT_END, '<', date('Y-m-d'))->get();

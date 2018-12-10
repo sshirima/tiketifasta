@@ -38,9 +38,11 @@ class DeletePendingBookings extends Command
      */
     public function handle()
     {
+        \Log::info('Running scheduled command: '.$this->signature .' at '.date('Y-m-d H:i:s'));
         try{
             $condition[] = ['created_at', '<', Carbon::now()->subMinutes(5)->toDateTimeString()];
             $condition[] = ['status', '=',Booking::STATUS_PENDING];
+
             $bookings = Booking::where($condition)->get();
 
             foreach ($bookings as $booking){

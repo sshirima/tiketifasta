@@ -9,19 +9,15 @@
 namespace App\Services\Payments\MerchantPayments;
 
 
-use App\Jobs\PayMpesaMerchant;
-use App\Jobs\PayTigoPesaMerchant;
 use App\Models\BookingPayment;
-use App\Models\Merchant;
 use App\Models\MerchantPayment;
 use App\Models\MerchantPaymentAccount;
-use App\Services\Payments\Mpesa\MpesaTransactionB2C;
 use App\Services\Payments\PaymentManager;
 use Illuminate\Support\Facades\DB;
 
 trait MerchantPaymentProcessor
 {
-
+    use PayMerchant;
     /**
      * @param $date
      * @return array
@@ -105,7 +101,9 @@ trait MerchantPaymentProcessor
 
                 $report = $this->payMerchant($payment);
                 if (!$report['status']) {
-                    \Log::error('Erro#'.$report['error']);
+                    \Log::error('Erro#' . $report['error']);
+                } else {
+                    \Log::info('INFO: Success# Transfer to merchant account success');
                 }
             }
         } catch (\Exception $exception) {
@@ -277,16 +275,15 @@ trait MerchantPaymentProcessor
 
             if ($payment->payment_mode == 'mpesa') {
                 //Issue Mpesa payment to number
-                PayMpesaMerchant::dispatch($payment);
-                $report = ['status' => true];
+                $report = $this->issueMpesaPayments($payment);
             } else
                 if ($payment->payment_mode == 'tigopesa') {
                     //Issue Tigopesa payment to number
-                    PayTigoPesaMerchant::dispatch($payment);
-                    $report = ['status' => true];
-                } else {
-                    $report = ['status' => false, 'error'=>'Transfer fail or payment has already being initiated for B2C transaction'];
+                    $res =
+                    $report = $this->issueTigoPesaPayment($payment);
                 }
+        } else {
+            $report = ['status' => false, 'error' => 'Transfer fail or payment has already being initiated for B2C transaction'];
         }
         return $report;
     }

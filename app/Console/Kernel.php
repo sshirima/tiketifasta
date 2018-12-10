@@ -27,18 +27,21 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $schedule->command('merchants:daily-payments')
+            ->withoutOverlapping()
+            ->dailyAt('01:00');
+
          $schedule->command('merchants:contract-disable')
-             ->everyFiveMinutes();
+             ->dailyAt('01:00');
 
-
-         $schedule->command('buses-schedules')
-              ->everyFiveMinutes();
-
-         /*$schedule->command('merchants:daily-payments')
-             ->everyFiveMinutes();*/
+         $schedule->command('buses-schedules:disable')
+              ->dailyAt('01:00');
 
         $schedule->command('bookings:delete-pendings')
             ->everyFiveMinutes();
+
+        $schedule->command('bookings:expire')
+            ->dailyAt('01:00');
     }
 
     /**
