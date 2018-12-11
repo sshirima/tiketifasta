@@ -23,23 +23,23 @@ trait PayMerchant
         try{
             $account = $merchantPayment->merchantPaymentAccount;
 
-            $response = $this->initializeMpesaB2CTransaction($account->account_number, $this->merchantPayment->merchant_amount);
+            $response = $this->initializeMpesaB2CTransaction($account->account_number, $merchantPayment->merchant_amount);
 
             if ($response['status']){
 
-                $this->setMerchantPaymentId($response['model'], $this->merchantPayment->id);
+                $this->setMerchantPaymentId($response['model'], $merchantPayment->id);
 
-                $this->onMerchantPaymentInitiated($this->merchantPayment);
+                $this->onMerchantPaymentInitiated($merchantPayment);
 
                 return ['status'=>true];
             }else {
-                $this->onMerchantPaymentFailure($this->merchantPayment);
+                $this->onMerchantPaymentFailure($merchantPayment);
                 return ['status'=>false,'error'=>'Merchant payment failure'];
             }
 
         }catch(\Exception $ex){
             if(config('app.debug_logs')){
-                Log::error('Fail to process merchant payment on Tigopesa#error='.$ex->getTraceAsString());
+                Log::error('Fail to process merchant payment on Mpesa#error='.$ex->getTraceAsString());
             }
             return ['status'=>false,'error'=>'Fail to process merchant payment on Mpesa#error='.$ex->getMessage()];
         }
@@ -53,17 +53,17 @@ trait PayMerchant
         try{
             $account = $merchantPayment->merchantPaymentAccount;
 
-            $response = $this->initializeTigoB2CTransaction($account->account_number, $this->merchantPayment->merchant_amount);
+            $response = $this->initializeTigoB2CTransaction($account->account_number, $merchantPayment->merchant_amount);
 
             if ($response['status']){
 
-                $this->setMerchantPaymentId($response['model'],$this->merchantPayment->id );
+                $this->setMerchantPaymentId($response['model'],$merchantPayment->id );
 
-                $this->onMerchantPaymentSuccess($this->merchantPayment);
+                $this->onMerchantPaymentSuccess($merchantPayment);
 
                 return ['status'=>true];
             }else {
-                $this->onMerchantPaymentFailure($this->merchantPayment);
+                $this->onMerchantPaymentFailure($merchantPayment);
                 return ['status'=>false,'error'=>'Merchant payment failure'];
             }
         }catch(\Exception $ex){
