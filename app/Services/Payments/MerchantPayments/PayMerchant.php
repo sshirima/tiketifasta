@@ -20,7 +20,7 @@ trait PayMerchant
     public function issueMpesaPayments(MerchantPayment $merchantPayment){
 
         try{
-            $account = $this->merchantPayment->merchantPaymentAccount;
+            $account = $merchantPayment->merchantPaymentAccount;
 
             $response = $this->initializeMpesaB2CTransaction($account->account_number, $this->merchantPayment->merchant_amount);
 
@@ -47,7 +47,7 @@ trait PayMerchant
      */
     public function issueTigoPesaPayment(MerchantPayment $merchantPayment){
         try{
-            $account = $this->merchantPayment->merchantPaymentAccount;
+            $account = $merchantPayment->merchantPaymentAccount;
 
             $response = $this->initializeTigoB2CTransaction($account->account_number, $this->merchantPayment->merchant_amount);
 
