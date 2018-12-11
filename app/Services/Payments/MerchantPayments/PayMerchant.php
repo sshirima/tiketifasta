@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Log;
 
 trait PayMerchant
 {
-    use MpesaTransactionB2C, TigoTransactionB2C{MpesaTransactionB2C::setMerchantPaymentId insteadof TigoTransactionB2C;}
+    use MpesaTransactionB2C, TigoTransactionB2C;
     /**
      * @param MerchantPayment $merchantPayment
      * @return array
