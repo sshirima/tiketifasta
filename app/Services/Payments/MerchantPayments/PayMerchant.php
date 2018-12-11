@@ -10,6 +10,7 @@ namespace App\Services\Payments\MerchantPayments;
 
 
 use App\Models\MerchantPayment;
+use Illuminate\Support\Facades\Log;
 
 trait PayMerchant
 {
@@ -37,6 +38,9 @@ trait PayMerchant
             }
 
         }catch(\Exception $ex){
+            if(config('app.debug_logs')){
+                Log::error('Fail to process merchant payment on Tigopesa#error='.$ex->getTraceAsString());
+            }
             return ['status'=>false,'error'=>'Fail to process merchant payment on Mpesa#error='.$ex->getMessage()];
         }
     }
@@ -63,7 +67,10 @@ trait PayMerchant
                 return ['status'=>false,'error'=>'Merchant payment failure'];
             }
         }catch(\Exception $ex){
-            return ['status'=>false,'error'=>'Fail to process merchant payment on Mpesa#error='.$ex->getMessage()];
+            if(config('app.debug_logs')){
+                Log::error('Fail to process merchant payment on Tigopesa#error='.$ex->getTraceAsString());
+            }
+            return ['status'=>false,'error'=>'Fail to process merchant payment on Tigopesa#error='.$ex->getMessage()];
         }
     }
 }
