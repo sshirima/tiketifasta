@@ -19,6 +19,7 @@ use Okipa\LaravelBootstrapTableList\TableList;
 class MerchantSchedulePaymentController extends BaseController
 {
     use MerchantPaymentProcessor;
+
     private $merchantCond = array();
 
     public function __construct()

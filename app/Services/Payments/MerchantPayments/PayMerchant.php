@@ -10,10 +10,13 @@ namespace App\Services\Payments\MerchantPayments;
 
 
 use App\Models\MerchantPayment;
+use App\Services\Payments\Mpesa\MpesaTransactionB2C;
+use App\Services\Payments\Tigosecure\TigoTransactionB2C;
 use Illuminate\Support\Facades\Log;
 
 trait PayMerchant
 {
+    use MpesaTransactionB2C, TigoTransactionB2C;
     /**
      * @param MerchantPayment $merchantPayment
      * @return array
