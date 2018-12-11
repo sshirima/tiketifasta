@@ -45,6 +45,7 @@ class ScheduleController extends BaseController
         $table = app(TableList::class)
             ->setModel(Schedule::class)
             ->setRowsNumber(10)
+            ->enableRowsNumberSelector()
             ->setRoutes([
                 'index' => ['alias' => 'admin.schedules.index', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {

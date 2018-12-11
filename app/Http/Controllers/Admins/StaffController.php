@@ -43,6 +43,8 @@ class StaffController extends BaseController
     {
         $staff_table = app(TableList::class)
             ->setModel(Staff::class)
+            ->setRowsNumber(10)
+            ->enableRowsNumberSelector()
             ->setRoutes([
                 'index' => ['alias' => 'admin.merchant_accounts.index', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {

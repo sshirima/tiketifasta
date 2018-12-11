@@ -50,6 +50,7 @@ class ScheduleTasksController extends BaseController
         $table = app(TableList::class)
             ->setModel(ScheduledTask::class)
             ->setRowsNumber(10)
+            ->enableRowsNumberSelector()
             ->setRoutes([
                 'index' => ['alias' => 'admin.scheduled_tasks.index', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {

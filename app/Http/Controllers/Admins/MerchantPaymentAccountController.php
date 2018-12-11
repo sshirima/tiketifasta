@@ -109,6 +109,7 @@ class MerchantPaymentAccountController extends BaseController
         $table = app(TableList::class)
             ->setModel(MerchantPaymentAccount::class)
             ->setRowsNumber(10)
+            ->enableRowsNumberSelector()
             ->setRoutes([
                 'index' => ['alias' => 'admin.merchant_payment_accounts.index', 'parameters' => []],
                 'create' => ['alias' => 'admin.merchant_payment_accounts.create', 'parameters' => []],

@@ -59,6 +59,7 @@ class SystemPaymentController extends BaseController
         $table = app(TableList::class)
             ->setModel(SystemPaymentAccount::class)
             ->setRowsNumber(10)
+            ->enableRowsNumberSelector()
             ->setRoutes([
                 'index' => ['alias' => 'admin.payments-accounts.index', 'parameters' => []],
                 'create' => ['alias' => 'admin.payments-accounts.create', 'parameters' => []],

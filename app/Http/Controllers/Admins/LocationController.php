@@ -28,6 +28,8 @@ class LocationController extends BaseController
 
         $staff_table = app(TableList::class)
             ->setModel(Location::class)
+            ->setRowsNumber(10)
+            ->enableRowsNumberSelector()
             ->setRoutes([
             'index' => ['alias'=>'admin.location.index','parameters' => []],
             'create'=> ['alias' => 'admin.location.create', 'parameters' => []],

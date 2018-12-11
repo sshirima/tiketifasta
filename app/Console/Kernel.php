@@ -2,6 +2,9 @@
 
 namespace App\Console;
 
+use App\Console\Commands\DailyMerchantPayment;
+use App\Console\Commands\DeletePendingBookings;
+use App\Console\Commands\DisableExpiredBookings;
 use App\Console\Commands\DisableExpiredMerchants;
 use App\Console\Commands\DisableExpiredSchedules;
 use Illuminate\Console\Scheduling\Schedule;
@@ -16,7 +19,10 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         DisableExpiredMerchants::class,
-        DisableExpiredSchedules::class
+        DisableExpiredSchedules::class,
+        DailyMerchantPayment::class,
+        DeletePendingBookings::class,
+        DisableExpiredBookings::class,
     ];
 
     /**

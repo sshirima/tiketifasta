@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Services\Payments\MerchantPayments\MerchantPaymentProcessor;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class DailyMerchantPayment extends Command
@@ -42,7 +43,7 @@ class DailyMerchantPayment extends Command
 
         $d = $this->option('date');//date('Y-m-d');
 
-        $date = isset($d)?$d:date('Y-m-d');
+        $date = isset($d)?$d: Carbon::now()->subDay(1)->toDateTimeString();
 
         $response = $this->processPayments($date);
 
