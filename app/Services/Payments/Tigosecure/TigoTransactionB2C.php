@@ -180,15 +180,6 @@ trait TigoTransactionB2C
     }
 
     /**
-     * @param $tigoB2C
-     * @param $merchantId
-     */
-    public function setMerchantPaymentId($tigoB2C, $merchantId){
-        $tigoB2C->merchant_payment_id =$merchantId;
-        $tigoB2C->update();
-    }
-
-    /**
      * @param TigoB2C $tigoB2C
      * @param $status
      */

@@ -227,15 +227,6 @@ trait MpesaTransactionB2C
     }
 
     /**
-     * @param $mpesaB2C
-     * @param $merchantId
-     */
-    public function setMerchantPaymentId($mpesaB2C, $merchantId){
-        $mpesaB2C->merchant_payment_id =$merchantId;
-        $mpesaB2C->update();
-    }
-
-    /**
      * @param MpesaB2C $mpesab2c
      * @param $status
      */

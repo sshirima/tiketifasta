@@ -260,6 +260,15 @@ trait MerchantPaymentProcessor
     }
 
     /**
+     * @param $model
+     * @param $merchantId
+     */
+    public function setMerchantPaymentId($model, $merchantId){
+        $model->merchant_payment_id =$merchantId;
+        $model->update();
+    }
+
+    /**
      * @param $payment
      * @return array
      */
