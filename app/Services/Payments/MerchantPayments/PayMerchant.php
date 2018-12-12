@@ -43,7 +43,7 @@ trait PayMerchant
                 }else {
                     $mpesaB2c->delete();
 
-                    Log::channel('mpesab2c')->error('MpesaB2C model record has been deleted' . PHP_EOL);
+                    Log::channel('mpesab2c')->error('MpesaB2C model record has been deleted#error='.$response['error'] . PHP_EOL);
 
                     $this->onMerchantPaymentFailure($merchantPayment);
 
@@ -84,7 +84,7 @@ trait PayMerchant
                 }else {
                     $tigoB2C->delete();
 
-                    Log::channel('mpesab2c')->error('TigoB2C model record has been deleted' . PHP_EOL);
+                    Log::channel('mpesab2c')->error('TigoB2C model record has been deleted#error='.$response['error'] . PHP_EOL);
 
                     $this->onMerchantPaymentFailure($merchantPayment);
 
