@@ -18,7 +18,7 @@ use Nathanmac\Utilities\Parser\Parser;
 
 class MpesaB2CController extends Controller
 {
-    use MpesaTransactionB2C, MerchantPaymentProcessor;
+    use MerchantPaymentProcessor;
 
     /**
      * @param Request $request
@@ -26,6 +26,8 @@ class MpesaB2CController extends Controller
      */
     public function confirmB2CTransaction(Request $request){
         try{
+
+            \Log::channel('mpesac2b')->info('Received mpesa B2C callback#request='.json_encode($request->getContent())  . PHP_EOL);
 
             $response = $this->confirmMpesaB2CTransaction($request);
 

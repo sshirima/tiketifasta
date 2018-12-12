@@ -36,10 +36,11 @@ class MpesaC2BController extends Controller
      */
     public function validateMpesaC2BTransaction(Request $request)
     {
+        Log::channel('mpesac2b')->info('Received mpesa C2B callback#request='.json_encode($request->getContent())  . PHP_EOL);
+
         try {
             $parser = new Parser();
             $input = $parser->xml($request->getContent());
-            Log::channel('mpesac2b')->info('Received mpesa C2B callback#request='.json_encode($input)  . PHP_EOL);
 
             $response = $this->getMpesaC2BValidationResponse($request);
 
