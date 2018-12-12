@@ -43,7 +43,7 @@ class DailyMerchantPayment extends Command
 
         $d = $this->option('date');//date('Y-m-d');
 
-        $date = isset($d)?$d: Carbon::now()->subDay(1)->toDateTimeString();
+        $date = isset($d)?$d: Carbon::now()->subDay(1)->format('Y-m-d');
 
         $response = $this->processPayments($date);
 

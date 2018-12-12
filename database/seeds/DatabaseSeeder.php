@@ -57,8 +57,8 @@ class DatabaseSeeder extends Seeder
         $json =json_encode($object);
         print $json.PHP_EOL;*/
 
-        $response = $this->verifyTicketByReference('FC08NLUQVA8G');
+        //$response = $this->verifyTicketByReference('FC08NLUQVA8G');
 
-        print json_encode($response).PHP_EOL;
+        print json_encode(\Carbon\Carbon::now()->subDay(1)->format('Y-m-d')).PHP_EOL;
     }
 }
