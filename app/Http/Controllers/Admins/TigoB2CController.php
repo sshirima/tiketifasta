@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Admins;
 
 use App\Http\Requests\Admin\TigoSendCashRequest;
 use App\Models\TigoB2C;
+use App\Services\Payments\PaymentManager;
 use App\Services\Payments\Tigosecure\TigoTransactionB2C;
 use App\Services\SMS\SendSMS;
 use Illuminate\Http\Request;
@@ -59,14 +60,24 @@ class TigoB2CController extends BaseController
 
         $receiver = $numberCheck['number'];
 
-        $tigpB2C = $this->createTigoB2CModel($receiver,$input['amount']);
+        $tigoB2C = TigoB2C::create([
+            'type' => config('payments.tigo.bc2.type'),
+            'reference_id' => strtoupper(PaymentManager::random_code(8)),
+            'msisdn' => config('payments.tigo.bc2.mfi'),
+            'pin' => config('payments.tigo.bc2.pin'),
+            'msisdn1' => $input['amount'],
+            'amount' => $receiver,
+            'language' => config('payments.tigo.bc2.language'),
+        ]);
+
+        //$tigpB2C = $this->createTigoB2CModel($receiver,$input['amount']);
 
         //Generate and Send OTP
         $otp = rand(1000, 9999);
 
         \Session::put('otp',$otp);
 
-        \Session::put('tigob2cReferenceId',$tigpB2C->reference_id);
+        \Session::put('tigob2cReferenceId',$tigoB2C->reference_id);
 
         $phoneNumber = config('payments.tigo.bc2.confirm_otp');
         $message = sprintf(config('payments.tigo.bc2.otp_message'), $otp);
@@ -111,7 +122,7 @@ class TigoB2CController extends BaseController
             $request->session()->forget('otp');
             $request->session()->forget('otp_entry_count');
 
-            $response = $this->initializeTigoB2CTransaction($tigoB2C->msisdn1, $tigoB2C->amount);
+            $response = $this->initializeTigoB2CTransaction($tigoB2C);
 
             //No comments
             if ($response['status'] == true) {
