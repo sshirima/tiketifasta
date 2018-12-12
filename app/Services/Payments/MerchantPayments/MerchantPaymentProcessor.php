@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 trait MerchantPaymentProcessor
 {
     use PayMerchant;
+
     /**
      * @param $date
      * @return array
@@ -101,7 +102,7 @@ trait MerchantPaymentProcessor
 
                 $report = $this->payMerchant($payment);
                 if (!$report['status']) {
-                    \Log::error('Erro#' . $report['error']);
+                    \Log::error('Error#' . $report['error']);
                 } else {
                     \Log::info('INFO: Success# Transfer to merchant account success');
                 }
@@ -263,8 +264,9 @@ trait MerchantPaymentProcessor
      * @param $model
      * @param $merchantId
      */
-    public function setMerchantPaymentId($model, $merchantId){
-        $model->merchant_payment_id =$merchantId;
+    public function setMerchantPaymentId($model, $merchantId)
+    {
+        $model->merchant_payment_id = $merchantId;
         $model->update();
     }
 
@@ -283,14 +285,12 @@ trait MerchantPaymentProcessor
         if (($payment->payment_stage == 'TRANSFER_FAIL') || ($payment->payment_stage == 'PROCESSING_INITIATED')) {
 
             if ($payment->payment_mode == 'mpesa') {
-                //Issue Mpesa payment to number
+                //issue Mpesa payment to number
                 $report = $this->issueMpesaPayments($payment);
-            } else
-                if ($payment->payment_mode == 'tigopesa') {
-                    //Issue Tigopesa payment to number
-                    $res =
-                    $report = $this->issueTigoPesaPayment($payment);
-                }
+            } else if ($payment->payment_mode == 'tigopesa') {
+                //issue Tigopesa payment to number
+                $report = $this->issueTigoPesaPayment($payment);
+            }
         } else {
             $report = ['status' => false, 'error' => 'Transfer fail or payment has already being initiated for B2C transaction'];
         }
