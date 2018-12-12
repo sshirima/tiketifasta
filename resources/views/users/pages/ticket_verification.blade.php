@@ -10,21 +10,21 @@
             @if(isset($booking))
                 <div class="row">
                     <div class="col-lg-12">
-                        @if(!isset($ticket))
+                        @if(isset($ticket))
+                            @if($ticket->status =='CONFIRMED')
+                                <div class="lead mb-0 alert alert-success">Your <b>ticket</b> is still valid</div>
+                            @endif
+                            @if($ticket->status =='EXPIRED')
+                                <div class="lead mb-0 alert alert-danger">Sorry, your ticket is <b>expired</b></div>
+                            @endif
+                            @if($ticket->status =='VALID')
+                                <div class="lead mb-0 alert alert-danger">Sorry, your ticket is <b>pending on processing</b></div>
+                            @endif
+                        @else
                             <div class="lead mb-0 alert alert-warning">Your <b>booking</b> has been created but still
                                 pending
                             </div>
                         @endif
-
-                        @if($ticket->status =='CONFIRMED')
-                            <div class="lead mb-0 alert alert-success">Your <b>ticket</b> is still valid</div>
-                        @endif
-                        @if($ticket->status =='EXPIRED')
-                            <div class="lead mb-0 alert alert-danger">Sorry, your ticket is <b>expired</b></div>
-                        @endif
-                            @if($ticket->status =='VALID')
-                                <div class="lead mb-0 alert alert-danger">Sorry, your ticket is <b>pending on processing</b></div>
-                            @endif
                     </div>
                 </div>
                 <br>
