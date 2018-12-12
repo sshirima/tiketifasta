@@ -81,10 +81,10 @@ trait PayMerchant
                     $this->onMerchantPaymentSuccess($merchantPayment);
 
                     return ['status'=>true];
-                }else {
+                } else {
                     $tigoB2C->delete();
 
-                    Log::channel('mpesab2c')->error('TigoB2C model record has been deleted#error='.$response['error'] . PHP_EOL);
+                    Log::channel('mpesab2c')->error('TigoB2C model record has been deleted#error='.json_encode($response['error']) . PHP_EOL);
 
                     $this->onMerchantPaymentFailure($merchantPayment);
 
