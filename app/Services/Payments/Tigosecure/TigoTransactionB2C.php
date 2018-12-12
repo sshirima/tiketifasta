@@ -133,7 +133,7 @@ trait TigoTransactionB2C
             'pin' => config('payments.tigo.bc2.pin'),
             'msisdn1' => $msisdn,
             'amount' => $amount,
-            'merchant_pay_id' => $merchantPayment->id,
+            'merchant_payment_id' => $merchantPayment->id,
             'language' => config('payments.tigo.bc2.language'),
         ]);
         return $tigoB2C;

@@ -15,7 +15,7 @@ class TigoB2C extends Model
     const COLUMN_TXN_STATUS = 'txn_status';
     const COLUMN_TXN_ID = 'txn_id';
     const COLUMN_MESSAGE = 'txn_message';
-    const COLUMN_MERCHANT_PAY_ID = 'merchant_pay_id';
+    const COLUMN_MERCHANT_PAY_ID = 'merchant_payment_id';
 
     const COLUMN_TRANSACTION_STATUS = 'transaction_status';
 
