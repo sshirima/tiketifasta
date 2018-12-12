@@ -25,7 +25,7 @@ trait MpesaTransactionB2C
      * @param MerchantPayment $merchantPayment
      * @return mixed
      */
-    protected function createMpesaB2CModel(MerchantPayment $merchantPayment): mixed
+    protected function createMpesaB2CModel(MerchantPayment $merchantPayment)
     {
         $mpesaB2C = MpesaB2C::create($this->getMpesaB2CParametersArray($merchantPayment));
         return $mpesaB2C;
