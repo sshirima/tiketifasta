@@ -24,21 +24,33 @@ trait PayMerchant
     public function issueMpesaPayments(MerchantPayment $merchantPayment){
 
         try{
-            $account = $merchantPayment->merchantPaymentAccount;
 
-            $response = $this->initializeMpesaB2CTransaction($account->account_number, $merchantPayment->merchant_amount);
+            $mpesaB2c = $merchantPayment->mpesaB2C;
 
-            if ($response['status']){
+            if(!isset($mpesaB2c)){
 
-                $this->setMerchantPaymentId($response['model'], $merchantPayment->id);
+                $mpesaB2c = $this->createMpesaB2CModel($merchantPayment);
 
-                $this->onMerchantPaymentInitiated($merchantPayment);
+                $response = $this->initializeMpesaB2CTransaction($mpesaB2c);
 
-                return ['status'=>true];
-            }else {
-                $this->onMerchantPaymentFailure($merchantPayment);
-                return ['status'=>false,'error'=>'Merchant payment failure'];
+                if ($response['status']){
+
+                    $this->setMerchantPaymentId($response['model'], $merchantPayment->id);
+
+                    $this->onMerchantPaymentInitiated($merchantPayment);
+
+                    return ['status'=>true];
+                }else {
+                    $mpesaB2c->delete();
+
+                    Log::channel('mpesab2c')->error('MpesaB2C model record has been deleted' . PHP_EOL);
+
+                    $this->onMerchantPaymentFailure($merchantPayment);
+
+                    return ['status'=>false,'error'=>'Merchant payment failure'];
+                }
             }
+            return ['status'=>false,'error'=>'Merchant payment on progress'];
 
         }catch(\Exception $ex){
             if(config('app.debug_logs')){
@@ -54,21 +66,33 @@ trait PayMerchant
      */
     public function issueTigoPesaPayment(MerchantPayment $merchantPayment){
         try{
-            $account = $merchantPayment->merchantPaymentAccount;
+            $tigoB2C = $merchantPayment->tigoB2C;
 
-            $response = $this->initializeTigoB2CTransaction($account->account_number, $merchantPayment->merchant_amount);
+            if(!isset($tigoB2C)){
 
-            if ($response['status']){
+                $tigoB2C = $this->createTigoB2CModel($merchantPayment);
 
-                $this->setMerchantPaymentId($response['model'],$merchantPayment->id );
+                $response = $this->initializeTigoB2CTransaction($tigoB2C);
 
-                $this->onMerchantPaymentSuccess($merchantPayment);
+                if ($response['status']){
 
-                return ['status'=>true];
-            }else {
-                $this->onMerchantPaymentFailure($merchantPayment);
-                return ['status'=>false,'error'=>'Merchant payment failure'];
+                    $this->setMerchantPaymentId($response['model'],$merchantPayment->id );
+
+                    $this->onMerchantPaymentSuccess($merchantPayment);
+
+                    return ['status'=>true];
+                }else {
+                    $tigoB2C->delete();
+
+                    Log::channel('mpesab2c')->error('TigoB2C model record has been deleted' . PHP_EOL);
+
+                    $this->onMerchantPaymentFailure($merchantPayment);
+
+                    return ['status'=>false,'error'=>'Merchant payment failure'];
+                }
             }
+            return ['status'=>false,'error'=>'Merchant payment on progress'];
+
         }catch(\Exception $ex){
             if(config('app.debug_logs')){
                 Log::error('Fail to process merchant payment on Tigopesa#error='.$ex->getTraceAsString());

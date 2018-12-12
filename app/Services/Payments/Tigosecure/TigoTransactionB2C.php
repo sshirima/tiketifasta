@@ -17,18 +17,15 @@ trait TigoTransactionB2C
     use TigoTransactionB2CRequest;
 
     /**
-     * @param $msisdn
-     * @param $amount
-     * @return array
+     * @param $tigoB2C
+     * @return array|null
      */
-    public function initializeTigoB2CTransaction($msisdn, $amount)
+    public function initializeTigoB2CTransaction($tigoB2C)
     {
         $reply = null;
         $ch = curl_init();
         try {
             //Create TigoB2C
-            $tigoB2C = $this->createTigoB2CModel($msisdn, $amount);
-
             $requestContent = $this->b2cInitiatePaymentData($this->getParameterRequestArray($tigoB2C));
 
             $url = config('payments.tigo.bc2.url');
@@ -48,7 +45,7 @@ trait TigoTransactionB2C
                 $info = curl_getinfo($ch);
                 if ($info['http_code'] === 0) {
                     Log::channel('mpesab2c')->error('Connection timeout: url='.$url . PHP_EOL);
-                    $this->deleteTigoB2CTransactionModel($tigoB2C, 'Connection timeout: url='.$url);
+                    //$this->deleteTigoB2CTransactionModel($tigoB2C, 'Connection timeout: url='.$url);
                 }
             }
 
@@ -122,20 +119,21 @@ trait TigoTransactionB2C
         }
     }
 
-    /**
-     * @param $msisdn
-     * @param $amount
-     * @return mixed
-     */
-    public function createTigoB2CModel($msisdn, $amount)
+
+    public function createTigoB2CModel($merchantPayment)
     {
+        $account = $merchantPayment->merchantPaymentAccount;
+        $amount = $account->account_number;
+        $msisdn = $merchantPayment->merchant_amount;
+
         $tigoB2C = TigoB2C::create([
             'type' => config('payments.tigo.bc2.type'),
-            'reference_id' => strtoupper(self::random_code(8)),
+            'reference_id' => $merchantPayment->payment_ref,
             'msisdn' => config('payments.tigo.bc2.mfi'),
             'pin' => config('payments.tigo.bc2.pin'),
             'msisdn1' => $msisdn,
             'amount' => $amount,
+            'merchant_pay_id' => $merchantPayment->id,
             'language' => config('payments.tigo.bc2.language'),
         ]);
         return $tigoB2C;

@@ -9,6 +9,7 @@
 namespace App\Services\Payments\Mpesa;
 
 
+use App\Models\MerchantPayment;
 use App\Models\MpesaB2C;
 use App\Services\Payments\PaymentManager;
 use Illuminate\Http\Request;
@@ -21,15 +22,22 @@ trait MpesaTransactionB2C
     use MpesaTransactionB2CRequest;
 
     /**
-     * @param $receipt
-     * @param $amount
+     * @param MerchantPayment $merchantPayment
+     * @return mixed
+     */
+    protected function createMpesaB2CModel(MerchantPayment $merchantPayment): mixed
+    {
+        $mpesaB2C = MpesaB2C::create($this->getMpesaB2CParametersArray($merchantPayment));
+        return $mpesaB2C;
+    }
+    /**
+     * @param $mpesaB2C
      * @return array|null
      */
-    public function initializeMpesaB2CTransaction($receipt, $amount){
+    public function initializeMpesaB2CTransaction($mpesaB2C){
+
         $reply = null;
         $ch = curl_init();
-        $mpesaB2C = $this->createMpesaB2CTransaction($this->getMpesaB2CParametersArray($receipt, $amount));
-
         //Log::channel('mpesab2c')->error('Mpesa B2C transaction initiated: transactionID='.$mpesaB2C->transaction_id . PHP_EOL);
 
         try{
@@ -60,7 +68,7 @@ trait MpesaTransactionB2C
                 $info = curl_getinfo($ch);
                 if ($info['http_code'] === 0) {
                     Log::channel('mpesab2c')->error('Connection timeout: url='.$url  . PHP_EOL);
-                    $this->deleteMpesaB2CTransaction($mpesaB2C, 'Connection timeout: url='.$url);
+                    //$this->deleteMpesaB2CTransaction($mpesaB2C, 'Connection timeout: url='.$url);
                 }
             }
 
@@ -95,14 +103,6 @@ trait MpesaTransactionB2C
         }
         curl_close($ch);
         return $reply;
-    }
-
-    /**
-     * @param $values
-     * @return mixed
-     */
-    public function createMpesaB2CTransaction($values){
-        return MpesaB2C::create($values);
     }
 
     /**
@@ -236,20 +236,25 @@ trait MpesaTransactionB2C
     }
 
     /**
-     * @param $receipt
-     * @param $amount
+     * @param MerchantPayment $merchantPayment
      * @return array
      */
-    protected function getMpesaB2CParametersArray($receipt, $amount): array
+    protected function getMpesaB2CParametersArray(MerchantPayment $merchantPayment): array
     {
+        $account = $merchantPayment->merchantPaymentAccount;
+
+        $receipt = $account->account_number;
+        $amount = $merchantPayment->merchant_amount;
+
         return [
             'amount' => $amount,
             'command_id' => 'BusinessPayment',
             'initiator' => config('payments.mpesa.b2c.initiator'),
             'recipient' => $receipt,
+            'merchant_payment_id' => $merchantPayment->id,
             'og_conversation_id' => strtoupper(PaymentManager::random_code(16)),
             'transaction_date' => PaymentManager::getCurrentTimestamp(),
-            'transaction_id' => strtoupper(PaymentManager::random_code(10)),
+            'transaction_id' => $merchantPayment->payment_ref,
         ];
     }
 }

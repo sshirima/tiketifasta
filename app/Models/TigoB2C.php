@@ -38,7 +38,7 @@ class TigoB2C extends Model
 
     protected $fillable = [
         self::COLUMN_MSISDN, self::COLUMN_MSISDN1,self::COLUMN_REFERENCE, self::COLUMN_LANGUAGE, self::COLUMN_AMOUNT,self::COLUMN_TXN_STATUS,
-        self::COLUMN_TXN_ID,self::COLUMN_MESSAGE,self::COLUMN_TRANSACTION_STATUS
+        self::COLUMN_TXN_ID,self::COLUMN_MESSAGE,self::COLUMN_TRANSACTION_STATUS,self::COLUMN_MERCHANT_PAY_ID
     ];
 
     /**

@@ -244,6 +244,7 @@ trait MerchantPaymentProcessor
      */
     public function onMerchantPaymentFailure($merchantPayment)
     {
+
         $merchantPayment->payment_stage = 'TRANSFER_FAIL';
         $merchantPayment->transaction_status = MerchantPayment::TRANS_STATUS_FAILED;
         $merchantPayment->transfer_status = false;
@@ -276,23 +277,17 @@ trait MerchantPaymentProcessor
      */
     protected function payMerchant(MerchantPayment $payment): array
     {
-        $report = array('status' => false);
+        $report = array('status' => false,'error'=>'');
 
-        if (($payment->transfer_status) || ($payment->payment_stage == 'TRANSFER_INITIATED') || ($payment->payment_stage == 'TRANSFER_SUCCESS')) {
-            return array('status' => false, 'error' => 'Payments has already being issued: Ref=' . $payment->payment_ref);
+        if ($payment->payment_mode == 'mpesa') {
+
+            $report = $this->issueMpesaPayments($payment);
+
         }
 
-        if (($payment->payment_stage == 'TRANSFER_FAIL') || ($payment->payment_stage == 'PROCESSING_INITIATED')) {
+        if ($payment->payment_mode == 'tigopesa') {
 
-            if ($payment->payment_mode == 'mpesa') {
-                //issue Mpesa payment to number
-                $report = $this->issueMpesaPayments($payment);
-            } else if ($payment->payment_mode == 'tigopesa') {
-                //issue Tigopesa payment to number
-                $report = $this->issueTigoPesaPayment($payment);
-            }
-        } else {
-            $report = ['status' => false, 'error' => 'Transfer fail or payment has already being initiated for B2C transaction'];
+            $report = $this->issueTigoPesaPayment($payment);
         }
         return $report;
     }

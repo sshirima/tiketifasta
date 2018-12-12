@@ -43,7 +43,9 @@ class DisableExpiredMerchants extends Command
         //Query all expired merchants
         //$merchants = Merchant::contractExpired()->get();
 
-        \Log::info('Running scheduled command: '.$this->signature .' at '.date('Y-m-d H:i:s'));
+        if(config('app.debug_logs')) {
+            \Log::info('Running scheduled command: '.$this->signature .' at '.date('Y-m-d H:i:s'));
+        }
 
         $status = 0;
 
