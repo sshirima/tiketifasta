@@ -54,32 +54,29 @@ trait TigoTransactionB2C
                 switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
                     case 200:
                         //Confirm the transaction, set booking and ticket  confirmed send notification to user
-                        Log::channel('tigoussdb2c')->info('Transaction confirmed' . PHP_EOL);
                         $parser = new Parser();
                         $input = $parser->xml($response);
                         //return array('status'=>true, 'model'=>$tigoB2C,'response'=>$input);
                         if (isset($input['TXNID'])){
-
+                            Log::info('Tigo B2C transaction success#request={'.json_encode($requestContent).'},response={'.json_encode($response) .'}'. PHP_EOL);
                             $this->onTransferSuccess($input, $tigoB2C);
-
                             $reply = array('status'=>true, 'model'=>$tigoB2C,'response'=>$input);
 
                         } else {
-
+                            Log::error('Tigo B2C transaction failed#txnid not found:request={'.json_encode($requestContent).'},response={'.json_encode($response) .'}' . PHP_EOL);
                             $input = $this->onTransferFailure($input, $tigoB2C);
-
                             $reply = array('status'=>false, 'error'=>$input);
                         }
                         //echo $input;
                         break;
                     default:
-                        Log::channel('tigoussdb2c')->error('Unexpected HTTP code: ' . $http_code . '[' . $response . ']' . PHP_EOL);
+                        Log::error('Tigo B2C transaction failed#unexpected HTTP code:request={'.json_encode($requestContent).'},http_code={' . $http_code . '},response={' . $response . '}' . PHP_EOL);
                         $this->deleteTigoB2CTransactionModel($tigoB2C, 'Unexpected HTTP code: ' . $http_code);
                         $reply = array('status'=>false, 'error'=>'Unexpected HTTP code: ' . $http_code);
                     //echo 'Unexpected HTTP code: ', $http_code, "\n";
                 }
             } else {
-                Log::channel('tigoussdb2c')->error('Curl error[Error code:' . curl_errno($ch) . ']' . PHP_EOL);
+                Log::error('Tigo B2C transaction failed#request={'.json_encode($requestContent).'}, Curl error:' . curl_errno($ch) . '}' . PHP_EOL);
                 $reply = array('status'=>false, 'error'=>'Curl error[Error code:' . curl_errno($ch) . ']');
                 //echo curl_errno($ch);
             }
