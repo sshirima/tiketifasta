@@ -44,7 +44,7 @@ trait TigoTransactionB2C
             if ($response === false) {
                 $info = curl_getinfo($ch);
                 if ($info['http_code'] === 0) {
-                    Log::channel('mpesab2c')->error('Connection timeout: url='.$url . PHP_EOL);
+                    Log::error('Connection timeout: url={'.$url .'}, request={'.json_encode($requestContent).'}'. PHP_EOL);
                     //$this->deleteTigoB2CTransactionModel($tigoB2C, 'Connection timeout: url='.$url);
                 }
             }
@@ -81,6 +81,10 @@ trait TigoTransactionB2C
                 //echo curl_errno($ch);
             }
         } catch (\Exception $ex) {
+            if(config('app.debug_logs')){
+                Log::error('Tigo pesa B2C transaction processing failed#error='.$ex->getTraceAsString());
+            }
+            Log::error('Tigo pesa B2C transaction processing failed#error='.$ex->getMessage());
             $reply = array('status'=>false, 'error'=>$ex->getMessage());
         }
         curl_close($ch);
