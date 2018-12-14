@@ -42,7 +42,6 @@ class MpesaC2BTransactionProcessor implements ShouldQueue
 
             if(!$validation['status']){
                 $this->deleteBooking($validation);
-                Log::channel('mpesac2b')->error('Mpesa transaction validation fail: error='.$validation['error'].PHP_EOL );
                 return false;
             }
 
@@ -87,11 +86,7 @@ class MpesaC2BTransactionProcessor implements ShouldQueue
 
         } catch (Exception $ex){
 
-            if(config('app.debug_logs')){
-                Log::channel('mpesac2b')->error('Mpesa C2B transaction process failed: '.$ex->getTraceAsString(). PHP_EOL );
-            }
-
-            Log::channel('mpesac2b')->error('Mpesa C2B transaction process failed: '.$ex->getTraceAsString(). PHP_EOL );
+            Log::channel('mpesac2b')->error('Process mpesa c2b transaction, fail, exception: '.$ex->getTraceAsString(). PHP_EOL );
             return false;
         }
 
