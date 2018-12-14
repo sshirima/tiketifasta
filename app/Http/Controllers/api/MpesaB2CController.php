@@ -28,8 +28,8 @@ class MpesaB2CController extends Controller
     public function confirmB2CTransaction(Request $request){
         $log_action = 'Receiving mpesa b2c post confirmation';
         $log_data = '';
-        $log_format_success = '%s,%s,%s,%s';
-        $log_format_fail = '%s,%s,%s';
+        $log_format_success = '%s, %s, %s';
+        $log_format_fail = '%s, %s, %s, %s';
 
         try{
             $log_data = 'request:'.$request->getContent();
