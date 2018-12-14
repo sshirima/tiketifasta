@@ -44,7 +44,7 @@ trait MpesaTransactionC2B
      */
     public function validateMpesaC2BTransaction(array $request):array
     {
-        $log_action = 'Verify mpesa b2c post response';
+        $log_action = 'Verify mpesa c2b post response';
         $log_format_success = '%s, %s, %s';
         $log_format_fail = '%s,% s, %s, %s';
 
@@ -74,7 +74,7 @@ trait MpesaTransactionC2B
 
         $this->updateAuthorizationParams($attributes, $mpesaC2B);
 
-        Log::info(sprintf('%s, %s, %s',$log_action,'success',$mpesaC2B->account_reference). PHP_EOL);
+        //Log::info(sprintf('%s, %s, %s',$log_action,'success',$mpesaC2B->account_reference). PHP_EOL);
         
         return array('status'=>$mpesaC2B->update(),'mpesaC2B'=>$mpesaC2B);
     }
