@@ -124,9 +124,9 @@
                                 <div class="text-info">3. Enter company number: <b>{{ env('MPESA_SPID') }}</b>
                                     ({{env('MPESA_ACCOUNT_NAME')}})
                                 </div>
-                                <div class="text-info">4. Enter payment number: <b>{{$bookingPayment->payment_ref}}</b>
+                                <div class="text-info">4. Enter payment number: <b>{{$booking->bookingPayment->payment_ref}}</b>
                                 </div>
-                                <div class="text-info">5. Enter amount: <b>{{$bookingPayment->amount}}</b></div>
+                                <div class="text-info">5. Enter amount: <b>{{$booking->bookingPayment->amount}}</b></div>
                                 <div class="text-info">6. Then submit:</div>
                             </div>
                         @else
