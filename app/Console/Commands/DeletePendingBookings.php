@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Services\Bookings\AuthorizeBooking;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class DeletePendingBookings extends Command
 {
@@ -38,7 +39,7 @@ class DeletePendingBookings extends Command
      */
     public function handle()
     {
-        \Log::info('Running scheduled command: '.$this->signature);
+        Log::info('Running scheduled command: '.$this->signature);
 
         try{
             $condition[] = ['created_at', '<', Carbon::now()->subMinutes(5)->toDateTimeString()];
@@ -52,10 +53,10 @@ class DeletePendingBookings extends Command
                     continue;
                 }
                 $this->deleteFailedBooking($booking);
-                $this->info('INFO: Pending booking deleted successful');
+                Log::info('Delete pending booking, success, reference:'.$bookings->bookingPayment->payment_ref);
             }
         }catch(\Exception $ex){
-            \Log::error('Failed to delete pending bookings: error='.$ex->getMessage() );
+            Log::error('Delete pending booking, failed, exception'.$ex->getMessage() );
         }
 
         //$this->info('');
