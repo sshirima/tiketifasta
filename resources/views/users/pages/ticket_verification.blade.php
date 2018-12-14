@@ -116,7 +116,7 @@
 
                         </div>
                     @else
-                        @if($booking->method == 'mpesa')
+                        @if($booking->payment == 'mpesa')
                             <div class="col-lg-4">
                                 <h4 class="mb-5">Payment information</h4>
                                 <div class="text-info">1. Dial <b>*150*00#</b></div>

@@ -37,12 +37,10 @@ class MpesaC2BController extends Controller
     public function validateMpesaC2BTransaction(Request $request)
     {
         $log_action = 'Receiving mpesa c2b post confirmation';
-        $log_data = '';
-        $log_format_success = '%s,%s,%s,%s';
-        $log_format_fail = '%s,%s,%s';
-
+        $log_format_success = '%s, %s, %s';
+        $log_format_fail = '%s, %s, %s, %s';
+        $log_data = 'request:'.json_encode($request->getContent());
         try {
-            $log_data = 'request:'.json_encode($request->getContent());
             Log::info(sprintf($log_format_success,$log_action,'success',$log_data). PHP_EOL);
 
             $parser = new Parser();
