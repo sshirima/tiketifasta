@@ -74,7 +74,7 @@ trait MpesaTransactionC2B
 
         $this->updateAuthorizationParams($attributes, $mpesaC2B);
 
-        Log::error(sprintf($log_format_success,$log_action,'success',$log_data). PHP_EOL);
+        Log::error(sprintf($log_format_success,$log_action,'success',$mpesaC2B->account_reference). PHP_EOL);
         
         return array('status'=>$mpesaC2B->update(),'mpesaC2B'=>$mpesaC2B);
     }
