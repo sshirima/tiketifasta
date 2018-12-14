@@ -18,7 +18,6 @@ use Log;
 
 trait MpesaTransactionB2C
 {
-
     use MpesaTransactionB2CRequest;
 
     /**
@@ -30,20 +29,28 @@ trait MpesaTransactionB2C
         $mpesaB2C = MpesaB2C::create($this->getMpesaB2CParametersArray($merchantPayment));
         return $mpesaB2C;
     }
+
     /**
      * @param $mpesaB2C
      * @return array|null
      */
-    public function initializeMpesaB2CTransaction($mpesaB2C){
+    public function initializeMpesaB2CTransaction($mpesaB2C)
+    {
+        $log_action = 'Posting Mpesa B2C transaction,';
+        $log_status = '';
+        $log_event = '';
+        $log_data = '';
+        $log_format_success = '%s,%s,%s,%s';
+        $log_format_fail = '%s,%s,%s';
 
         $reply = null;
         $ch = curl_init();
         //Log::channel('mpesab2c')->error('Mpesa B2C transaction initiated: transactionID='.$mpesaB2C->transaction_id . PHP_EOL);
 
-        try{
+        try {
             $requestBody = $this->getMpesaB2CInitializationParameter($mpesaB2C);
 
-            Log::channel('mpesab2c')->info('Request='.$requestBody . PHP_EOL);
+            Log::channel('mpesab2c')->info('Request=' . $requestBody . PHP_EOL);
 
             $url = config('payments.mpesa.b2c.url_initiate');
 
@@ -67,39 +74,43 @@ trait MpesaTransactionB2C
             if ($response === false) {
                 $info = curl_getinfo($ch);
                 if ($info['http_code'] === 0) {
-                    Log::channel('mpesab2c')->error('Connection timeout: url='.$url  . PHP_EOL);
+                    $log_status = 'fail';
+                    $log_event = 'connection timed out:'.$url;
+                    Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,''). PHP_EOL);
                     //$this->deleteMpesaB2CTransaction($mpesaB2C, 'Connection timeout: url='.$url);
                 }
             }
 
-            $this->setMpesaB2CTransactionStatus($mpesaB2C, MpesaB2C::TRANS_STATUS_AUTHORIZED);
+            $this->setMpesaB2CTransactionStatus($mpesaB2C, MpesaB2C::TRANS_STATUS_POSTED);
 
             //Check HTTP status code
             if (!curl_errno($ch)) {
-                switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE))
-                {
+                switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
                     case 200:
-                        //Confirm the transaction, set booking and ticket  confirmed send notification to user
-                        Log::channel('mpesab2c')->info('B2C transaction initiated: transactionID='.$mpesaB2C->transaction_id . PHP_EOL);
+                        $log_status = 'success';
+                        Log::info(sprintf($log_format_success,$log_action). PHP_EOL);
                         $parser = new Parser();
                         $res = $parser->xml($response);
 
                         $res = $this->processMpesaB2CInitializationResponse($res, $mpesaB2C);
 
-                        $reply = array('status'=>true, 'model'=>$mpesaB2C,'response'=>$res);
+                        $reply = array('status' => true, 'model' => $mpesaB2C, 'response' => $res);
                         break;
                     default:
+                        Log::error('Posting mpesa B2C#failed#unexpected HTTP code:request={' . json_encode($requestBody) . '},http_code={' . $http_code . '},response={' . $response . '}' . PHP_EOL);
                         $this->deleteMpesaB2CTransaction($mpesaB2C, 'Unexpected HTTP code: ' . $http_code);
-                        Log::channel('mpesab2c')->error('Unexpected HTTP code: ' . $http_code . '[' . $response . ']' . PHP_EOL);
-                        $reply = array('status'=>false, 'error'=>'Unexpected HTTP code: ' . $http_code . '[' . $response . ']' );
+                        $reply = array('status' => false, 'error' => 'Unexpected HTTP code: ' . $http_code . '[' . $response . ']');
                 }
             } else {
-                Log::channel('mpesab2c')->error('Curl error[ Error code:' . curl_errno($ch) . ']' . PHP_EOL);
-                $reply = array('status'=>false, 'error'=>'Curl error[ Error code:' . curl_errno($ch) . ']');
+                Log::error('Posting mpesa B2C#Curl error#request={' . json_encode($requestBody) . '}, Curl error:' . curl_errno($ch) . '}' . PHP_EOL);
+                $reply = array('status' => false, 'error' => 'Curl error[ Error code:' . curl_errno($ch) . ']');
             }
 
-        }catch(\Exception $exception){
-            $reply = array('status'=>false, 'error'=>$exception->getMessage());
+        } catch (\Exception $ex) {
+            if (config('app.debug_logs')) {
+                Log::error('Posting mpesa B2C#processing failed#error=' . $ex->getTraceAsString());
+            }
+            $reply = array('status' => false, 'error' => $ex->getMessage());
         }
         curl_close($ch);
         return $reply;
@@ -109,7 +120,8 @@ trait MpesaTransactionB2C
      * @param $mpesaB2C
      * @return mixed
      */
-    private function getMpesaB2CInitializationParameter($mpesaB2C){
+    private function getMpesaB2CInitializationParameter($mpesaB2C)
+    {
         $mpesa = new Mpesa();
         $timestamp = PaymentManager::getCurrentTimestamp();
         $spPassword = $mpesa->encryptSPPassword(config('payments.mpesa.b2c.spid'), config('payments.mpesa.b2c.sppassword'), $timestamp);
@@ -158,7 +170,8 @@ trait MpesaTransactionB2C
      * @param Request $request
      * @return array|bool
      */
-    protected function confirmMpesaB2CTransaction(Request $request){
+    protected function confirmMpesaB2CTransaction(Request $request)
+    {
         $parser = new Parser();
         $input = $parser->xml($request->getContent());
 
@@ -168,23 +181,23 @@ trait MpesaTransactionB2C
         $orgConvId = $input['ns3:originatorConversationID'];
         $convId = $input['ns3:conversationID'];
         $trID = $input['ns3:transactionID'];
-        $mpesaReceipt =$input['ns3:mpesaReceipt'];
-        $resultParams =$input['ns3:resultParameters']['ns3:parameter'];
+        $mpesaReceipt = $input['ns3:mpesaReceipt'];
+        $resultParams = $input['ns3:resultParameters']['ns3:parameter'];
 
-        \Log::channel('mpesab2c')->info('Confirmation request received: transactionID='.$trID .', response='.json_encode($input). PHP_EOL);
+        \Log::channel('mpesab2c')->info('Confirmation request received: transactionID=' . $trID . ', response=' . json_encode($input) . PHP_EOL);
 
-        $mpesaB2C = MpesaB2C::where(['transaction_id'=>$trID])->first();
+        $mpesaB2C = MpesaB2C::where(['transaction_id' => $trID])->first();
 
-        if(!isset($mpesaB2C)){
-            Log::channel('mpesab2c')->error('Mpesa B2C transaction not found: transactionID='.$trID . PHP_EOL);
-            return array('status'=>false);
+        if (!isset($mpesaB2C)) {
+            Log::channel('mpesab2c')->error('Mpesa B2C transaction not found: transactionID=' . $trID . PHP_EOL);
+            return array('status' => false);
         }
 
-        if(!($mpesaB2C->og_conversation_id == $orgConvId)){
-            Log::channel('mpesab2c')->error('Original conversation ID do not match: transactionID='.$trID . PHP_EOL);
-            return array('status'=>false);
+        if (!($mpesaB2C->og_conversation_id == $orgConvId)) {
+            Log::channel('mpesab2c')->error('Original conversation ID do not match: transactionID=' . $trID . PHP_EOL);
+            return array('status' => false);
         }
-        if ($resCode == '0'){
+        if ($resCode == '0') {
             $mpesaB2C->mpesa_receipt = $mpesaReceipt;
             $mpesaB2C->conversation_id = $convId;
             $mpesaB2C->status = MpesaB2C::STATUS_LEVEL[2];
@@ -193,8 +206,8 @@ trait MpesaTransactionB2C
         } else {
             $mpesaB2C->status = MpesaB2C::STATUS_LEVEL[3];
             $mpesaB2C->mpesa_receipt = $mpesaReceipt;
-            Log::channel('mpesab2c')->error('Result code error: response='.json_encode($input) . PHP_EOL);
-            $mpesaB2C->transaction_status = MpesaB2C::TRANS_STATUS_FAILED ;
+            Log::channel('mpesab2c')->error('Result code error: response=' . json_encode($input) . PHP_EOL);
+            $mpesaB2C->transaction_status = MpesaB2C::TRANS_STATUS_FAILED;
             //$this->setMpesaB2cTransactionStatus($mpesaB2C, MpesaB2C::TRANS_STATUS_FAILED);
         }
 
@@ -213,16 +226,16 @@ trait MpesaTransactionB2C
 
             }
         }*/
-        return array('status'=>true, 'model'=>$mpesaB2C);
+        return array('status' => true, 'model' => $mpesaB2C);
     }
 
     /**
      * @param $mpesaB2C
      * @param string $reason
      */
-    protected function deleteMpesaB2CTransaction($mpesaB2C, $reason=''): void
+    protected function deleteMpesaB2CTransaction($mpesaB2C, $reason = ''): void
     {
-        Log::channel('mpesab2c')->error('MpesaB2C model record has been deleted#reason:'.$reason  . PHP_EOL);
+        Log::channel('mpesab2c')->error('MpesaB2C model record has been deleted#reason:' . $reason . PHP_EOL);
         $mpesaB2C->delete();
     }
 
@@ -230,7 +243,8 @@ trait MpesaTransactionB2C
      * @param MpesaB2C $mpesab2c
      * @param $status
      */
-    public function setMpesaB2CTransactionStatus(MpesaB2C $mpesab2c, $status){
+    public function setMpesaB2CTransactionStatus(MpesaB2C $mpesab2c, $status)
+    {
         $mpesab2c->transaction_status = $status;
         $mpesab2c->update();
     }

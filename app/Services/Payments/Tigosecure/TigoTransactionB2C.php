@@ -123,17 +123,13 @@ trait TigoTransactionB2C
 
     public function createTigoB2CModel($merchantPayment)
     {
-        $account = $merchantPayment->merchantPaymentAccount;
-        $amount = $account->account_number;
-        $msisdn = $merchantPayment->merchant_amount;
-
         $tigoB2C = TigoB2C::create([
             'type' => config('payments.tigo.bc2.type'),
             'reference_id' => $merchantPayment->payment_ref,
             'msisdn' => config('payments.tigo.bc2.mfi'),
             'pin' => config('payments.tigo.bc2.pin'),
-            'msisdn1' => $msisdn,
-            'amount' => $amount,
+            'msisdn1' => $merchantPayment->merchantPaymentAccount->account_number,
+            'amount' => $merchantPayment->merchant_amount,
             'merchant_payment_id' => $merchantPayment->id,
             'language' => config('payments.tigo.bc2.language'),
         ]);
