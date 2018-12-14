@@ -45,8 +45,8 @@ trait MpesaTransactionC2B
     public function validateMpesaC2BTransaction(array $request):array
     {
         $log_action = 'Verify mpesa b2c post response';
-        $log_format_success = '%s,%s,%s,%s';
-        $log_format_fail = '%s,%s,%s';
+        $log_format_success = '%s, %s, %s';
+        $log_format_fail = '%s,% s, %s, %s';
 
         $attributes = $this->getMpesaC2BAuthorizationParamsArray($request);
 

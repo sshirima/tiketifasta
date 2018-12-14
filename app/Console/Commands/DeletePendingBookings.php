@@ -55,7 +55,7 @@ class DeletePendingBookings extends Command
                 $this->info('INFO: Pending booking deleted successful');
             }
         }catch(\Exception $ex){
-            \Log::channel('mpesac2b')->error('Failed to delete pending bookings: error='.$ex->getMessage() );
+            \Log::error('Failed to delete pending bookings: error='.$ex->getMessage() );
         }
 
         //$this->info('');
