@@ -70,9 +70,7 @@ class TigoB2CController extends BaseController
             'language' => config('payments.tigo.bc2.language'),
         ]);
 
-        return json_encode($tigoB2C);
-
-        /*//$tigoB2C = $this->createTigoB2CModel($receiver,$input['amount']);
+        //$tigoB2C = $this->createTigoB2CModel($receiver,$input['amount']);
 
         //Generate and Send OTP
         $otp = rand(1000, 9999);
@@ -92,7 +90,7 @@ class TigoB2CController extends BaseController
         }else{
             return view('admins.pages.payments.tigoB2C_send_cash')->with(['otpIsSent'=>false, 'error'=>$sendSMS['error']]);
             //return view('admins.pages.sms.send_sms')->with(['sentStatus'=>false,'error'=>$sendSMS['error']]);
-        }*/
+        }
     }
 
     /**
