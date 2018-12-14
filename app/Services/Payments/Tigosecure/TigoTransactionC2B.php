@@ -27,9 +27,8 @@ trait TigoTransactionC2B
     {
         $responseArray=null;
         $log_action = 'Generate tigo_secure access token';
-        $log_data ='';
-        $log_format_success = '%s,%s,%s,%s';
-        $log_format_fail = '%s,%s,%s';
+        $log_format_fail = '%s, %s, %s, %s';
+        $log_format_success = '%s, %s, %s';
         $ch = curl_init();
 
         try{
@@ -61,7 +60,7 @@ trait TigoTransactionC2B
             }
             // Check HTTP status code
             if (!curl_errno($ch)) {
-                $log_data = $log_data .',response:'.$response;
+                $log_data = 'response:'.$response;
                 switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
                     case 200:
                         $log_status = 'success';

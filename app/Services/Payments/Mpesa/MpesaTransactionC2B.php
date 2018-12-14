@@ -101,8 +101,8 @@ trait MpesaTransactionC2B
         $ch = curl_init();
         $log_action = 'Posting mpesa c2b transaction';
         $log_data = '';
-        $log_format_fail = '%s,%s,%s,%s';
-        $log_format_success = '%s,%s,%s';
+        $log_format_fail = '%s, %s, %s, %s';
+        $log_format_success = '%s, %s, %s';
         try{
 
             $this->setMpesaC2BTransactionStatus($mpesaC2B, MpesaC2B::TRANS_STATUS_POSTED);

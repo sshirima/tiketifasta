@@ -38,8 +38,8 @@ trait MpesaTransactionB2C
     {
         $log_action = 'Posting mpesa b2c transaction';
         $log_data = '';
-        $log_format_fail = '%s,%s,%s,%s';
-        $log_format_success = '%s,%s,%s';
+        $log_format_fail = '%s, %s, %s, %s';
+        $log_format_success = '%s, %s, %s';
 
         $reply = null;
         $ch = curl_init();

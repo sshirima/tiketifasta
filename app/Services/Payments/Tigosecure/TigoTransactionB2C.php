@@ -188,8 +188,8 @@ trait TigoTransactionB2C
     protected function verifyTigoB2CResponse($tigoB2C, $input, $log_data): array
     {
         $log_action = 'Verify tigo b2c post response';
-        $log_format_fail = '%s,%s,%s,%s';
-        $log_format_success = '%s,%s,%s';
+        $log_format_fail = '%s, %s, %s, %s';
+        $log_format_success = '%s, %s, %s';
 
         if (isset($input['TXNID'])) {
             Log::info(sprintf($log_format_success,$log_action,'success','reference:'.$tigoB2C->reference_id). PHP_EOL);
