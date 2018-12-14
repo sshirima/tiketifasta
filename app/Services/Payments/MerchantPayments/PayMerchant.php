@@ -31,7 +31,7 @@ trait PayMerchant
 
                 $mpesaB2c = $this->createMpesaB2CModel($merchantPayment);
 
-                $response = $this->initializeMpesaB2CTransaction($mpesaB2c);
+                $response = $this->postTransactionMpesaB2C($mpesaB2c);
 
                 if ($response['status']){
 
@@ -72,7 +72,7 @@ trait PayMerchant
 
                 $tigoB2C = $this->createTigoB2CModel($merchantPayment);
 
-                $response = $this->initializeTigoB2CTransaction($tigoB2C);
+                $response = $this->postTransactionTigoB2C($tigoB2C);
 
                 if ($response['status']){
 

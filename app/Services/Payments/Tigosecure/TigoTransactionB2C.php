@@ -20,14 +20,19 @@ trait TigoTransactionB2C
      * @param $tigoB2C
      * @return array|null
      */
-    public function initializeTigoB2CTransaction($tigoB2C)
+    public function postTransactionTigoB2C($tigoB2C)
     {
+        $log_action = 'Posting tigo b2c transaction';
+        $log_data = '';
+        $log_format_fail = '%s,%s,%s,%s';
+        $log_format_success = '%s,%s,%s';
+
         $reply = null;
         $ch = curl_init();
         try {
             //Create TigoB2C
-            $requestContent = $this->b2cInitiatePaymentData($this->getParameterRequestArray($tigoB2C));
-
+            $requestContent = $this->getTigoB2cPostingParamsXml($this->getTigoB2cPostingParamsArray($tigoB2C));
+            $log_data = 'request:'.json_encode($requestContent);
             $url = config('payments.tigo.bc2.url');
 
             curl_setopt($ch, CURLOPT_URL, $url);
@@ -44,48 +49,39 @@ trait TigoTransactionB2C
             if ($response === false) {
                 $info = curl_getinfo($ch);
                 if ($info['http_code'] === 0) {
-                    Log::error('Connection timeout: url={'.$url .'}, request={'.json_encode($requestContent).'}'. PHP_EOL);
+                    $log_status = 'fail';
+                    $log_event = 'connection timed out:'.$url;
+                    Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,$log_data). PHP_EOL);
                     //$this->deleteTigoB2CTransactionModel($tigoB2C, 'Connection timeout: url='.$url);
                 }
             }
 
             //Check HTTP status code
             if (!curl_errno($ch)) {
+                $log_data = $log_data .',response:'.$response;
                 switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
                     case 200:
-                        //Confirm the transaction, set booking and ticket  confirmed send notification to user
                         $parser = new Parser();
-                        $input = $parser->xml($response);
-                        //return array('status'=>true, 'model'=>$tigoB2C,'response'=>$input);
-                        if (isset($input['TXNID'])){
-                            Log::info('Tigo B2C transaction success#request={'.json_encode($requestContent).'},response={'.json_encode($response) .'}'. PHP_EOL);
-                            $this->onTransferSuccess($input, $tigoB2C);
-                            $reply = array('status'=>true, 'model'=>$tigoB2C,'response'=>$input);
-
-                        } else {
-                            Log::error('Tigo B2C transaction failed#txnid not found:request={'.json_encode($requestContent).'},response={'.json_encode($response) .'}' . PHP_EOL);
-                            $input = $this->onTransferFailure($input, $tigoB2C);
-                            $reply = array('status'=>false, 'error'=>$input);
-                        }
-                        //echo $input;
+                        $reply = $this->verifyTigoB2CResponse($tigoB2C, $parser->xml($response), $log_data);
                         break;
                     default:
-                        Log::error('Tigo B2C transaction failed#unexpected HTTP code:request={'.json_encode($requestContent).'},http_code={' . $http_code . '},response={' . $response . '}' . PHP_EOL);
+                        $log_status = 'fail';
+                        $log_event = 'unexpected HTTP code:'.$http_code;
+                        Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,$log_data). PHP_EOL);
                         $this->deleteTigoB2CTransactionModel($tigoB2C, 'Unexpected HTTP code: ' . $http_code);
-                        $reply = array('status'=>false, 'error'=>'Unexpected HTTP code: ' . $http_code);
-                    //echo 'Unexpected HTTP code: ', $http_code, "\n";
+                        $reply = array('status'=>false, 'error'=>$log_event);
                 }
             } else {
-                Log::error('Tigo B2C transaction failed#request={'.json_encode($requestContent).'}, Curl error:' . curl_errno($ch) . '}' . PHP_EOL);
+                $log_status = 'fail';
+                $log_event = 'curl error:'.curl_errno($ch);
+                Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,$log_data). PHP_EOL);
                 $reply = array('status'=>false, 'error'=>'Curl error[Error code:' . curl_errno($ch) . ']');
-                //echo curl_errno($ch);
             }
         } catch (\Exception $ex) {
-            if(config('app.debug_logs')){
-                Log::error('Tigo pesa B2C transaction processing failed#error='.$ex->getTraceAsString());
-            }
-            Log::error('Tigo pesa B2C transaction processing failed#error='.$ex->getMessage());
-            $reply = array('status'=>false, 'error'=>$ex->getMessage());
+            $log_status = 'fail';
+            $log_event = 'exception:'.$ex->getMessage();
+            Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,$log_data). PHP_EOL);
+            $reply = array('status' => false, 'error' => $log_event);
         }
         curl_close($ch);
         return $reply;
@@ -181,5 +177,30 @@ trait TigoTransactionB2C
     public function setTigoB2CTransactionStatus(TigoB2C $tigoB2C, $status){
         $tigoB2C->transaction_status = $status;
         $tigoB2C->update();
+    }
+
+    /**
+     * @param $tigoB2C
+     * @param $input
+     * @param $log_data
+     * @return array
+     */
+    protected function verifyTigoB2CResponse($tigoB2C, $input, $log_data): array
+    {
+        $log_action = 'Verify tigo b2c post response';
+        $log_format_fail = '%s,%s,%s,%s';
+        $log_format_success = '%s,%s,%s';
+
+        if (isset($input['TXNID'])) {
+            Log::info(sprintf($log_format_success,$log_action,'success',$log_data). PHP_EOL);
+            $this->onTransferSuccess($input, $tigoB2C);
+            $reply = array('status' => true, 'model' => $tigoB2C, 'response' => $input);
+
+        } else {
+            Log::error(sprintf($log_format_fail,$log_action,'fail','TXNID not set',$log_data). PHP_EOL);
+            $input = $this->onTransferFailure($input, $tigoB2C);
+            $reply = array('status' => false, 'error' => $input);
+        }
+        return $reply;
     }
 }

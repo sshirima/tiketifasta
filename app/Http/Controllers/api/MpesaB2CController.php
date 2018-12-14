@@ -14,6 +14,7 @@ use App\Services\Payments\MerchantPayments\MerchantPaymentProcessor;
 use App\Services\Payments\Mpesa\MpesaTransactionB2C;
 use App\Services\Payments\PaymentManager;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Nathanmac\Utilities\Parser\Parser;
 
 class MpesaB2CController extends Controller
@@ -25,11 +26,16 @@ class MpesaB2CController extends Controller
      * @return string
      */
     public function confirmB2CTransaction(Request $request){
+        $log_action = 'Receiving mpesa b2c post confirmation';
+        $log_data = '';
+        $log_format_success = '%s,%s,%s,%s';
+        $log_format_fail = '%s,%s,%s';
+
         try{
+            $log_data = 'request:'.$request->getContent();
+            Log::info(sprintf($log_format_success,$log_action,'success',$log_data). PHP_EOL);
 
-            \Log::channel('mpesac2b')->info('Received mpesa B2C callback#request='.json_encode($request->getContent())  . PHP_EOL);
-
-            $response = $this->confirmMpesaB2CTransaction($request);
+            $response = $this->verifyMpesaB2CCallbackRequest($request);
 
             if($response['status']){
 
@@ -38,18 +44,11 @@ class MpesaB2CController extends Controller
                 $merchantPayment = $mpesaB2C->merchantPayment;
 
                 $this->onMerchantPaymentSuccess($merchantPayment);
-            } else{
-                \Log::channel('mpesab2c')->error('Transaction settling failed'.$response['error'] . PHP_EOL);
             }
 
-        } catch (\Exception $exception){
-
-            if(config('app.debug_logs')){
-                \Log::channel('mpesab2c')->error('Transaction settling failed'.$exception->getTraceAsString() . PHP_EOL);
-            }
-
-            \Log::channel('mpesab2c')->error('Transaction settling failed#' . $exception->getMessage() . PHP_EOL);
-
+        } catch (\Exception $ex){
+            $log_event = 'exception:'.$ex->getMessage();
+            Log::info(sprintf($log_format_fail,$log_action,'success',$log_event,$log_data). PHP_EOL);
             return 'false';
         }
         return 'true';

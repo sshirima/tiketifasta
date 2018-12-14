@@ -122,7 +122,7 @@ class TigoB2CController extends BaseController
             $request->session()->forget('otp');
             $request->session()->forget('otp_entry_count');
 
-            $response = $this->initializeTigoB2CTransaction($tigoB2C);
+            $response = $this->postTransactionTigoB2C($tigoB2C);
 
             //No comments
             if ($response['status'] == true) {

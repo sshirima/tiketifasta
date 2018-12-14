@@ -15,7 +15,7 @@ trait TigoTransactionB2CRequest
      * @param $tigoB2C
      * @return array
      */
-    public function getParameterRequestArray($tigoB2C): array
+    public function getTigoB2cPostingParamsArray($tigoB2C): array
     {
         return [
             'type' => config('payments.tigo.bc2.type'),
@@ -28,7 +28,7 @@ trait TigoTransactionB2CRequest
         ];
     }
 
-    public function b2cInitiatePaymentData(array $values){
+    public function getTigoB2cPostingParamsXml(array $values){
         $command = new \SimpleXMLElement('<?xml version="1.0"?><COMMAND></COMMAND>');
         //$result = $xmlDoc->addChild('result');
         $command->addChild('TYPE',$values['type']);
