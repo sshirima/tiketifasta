@@ -65,8 +65,8 @@ class TigoB2CController extends BaseController
             'reference_id' => strtoupper(PaymentManager::random_code(8)),
             'msisdn' => config('payments.tigo.bc2.mfi'),
             'pin' => config('payments.tigo.bc2.pin'),
-            'msisdn1' => $input['amount'],
-            'amount' => $receiver,
+            'msisdn1' => $receiver,
+            'amount' => $input['amount'],
             'language' => config('payments.tigo.bc2.language'),
         ]);
 
