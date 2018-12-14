@@ -38,9 +38,7 @@ class DeletePendingBookings extends Command
      */
     public function handle()
     {
-        if(config('app.debug_logs')){
-            \Log::info('Running scheduled command: '.$this->signature .' at '.date('Y-m-d H:i:s'));
-        }
+        \Log::info('Running scheduled command: '.$this->signature);
 
         try{
             $condition[] = ['created_at', '<', Carbon::now()->subMinutes(5)->toDateTimeString()];

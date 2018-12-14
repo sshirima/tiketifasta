@@ -37,9 +37,8 @@ class DisableExpiredSchedules extends Command
      */
     public function handle()
     {
-        if(config('app.debug_logs')) {
-            \Log::info('Running scheduled command: ' . $this->signature . ' at ' . date('Y-m-d H:i:s'));
-        }
+        \Log::info('Running scheduled command: '.$this->signature);
+
         $days = Day::with(['schedules'])->whereDate('date' ,'<', date('Y-m-d'))->get();
 
         foreach ($days as $day){
