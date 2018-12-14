@@ -75,7 +75,7 @@ trait MpesaTransactionB2C
                 if ($info['http_code'] === 0) {
                     $log_status = 'fail';
                     $log_event = 'connection timed out:'.$url;
-                    Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,$log_data). PHP_EOL);
+                    Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,''). PHP_EOL);
                     //$this->deleteMpesaB2CTransaction($mpesaB2C, 'Connection timeout: url='.$url);
                 }
             }
@@ -89,7 +89,7 @@ trait MpesaTransactionB2C
 
                     case 200:
                         $log_status = 'success';
-                        Log::info(sprintf($log_format_success,$log_action,$log_status,$log_data). PHP_EOL);
+                        Log::info(sprintf($log_format_success,$log_action,$log_status,'reference:'.$mpesaB2C->transaction_id). PHP_EOL);
                         $parser = new Parser();
                         $res = $parser->xml($response);
                         $res = $this->processMpesaB2CInitializationResponse($res, $mpesaB2C);
@@ -195,7 +195,7 @@ trait MpesaTransactionB2C
 
         $mpesaB2C = MpesaB2C::where(['transaction_id' => $trID])->first();
 
-        $log_data = 'request:'.$request_json;
+        $log_data = 'request:'.json_encode($request_json);
 
         if (!isset($mpesaB2C)) {
             $log_event ='transaction not found:'.$trID;

@@ -20,7 +20,7 @@ trait TigoTransactionB2C
      * @param $tigoB2C
      * @return array|null
      */
-    public function postTransactionTigoB2C($tigoB2C)
+    public function postTigoB2CTransaction($tigoB2C)
     {
         $log_action = 'Posting tigo b2c transaction';
         $log_data = '';
@@ -51,8 +51,8 @@ trait TigoTransactionB2C
                 if ($info['http_code'] === 0) {
                     $log_status = 'fail';
                     $log_event = 'connection timed out:'.$url;
-                    Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,$log_data). PHP_EOL);
-                    //$this->deleteTigoB2CTransactionModel($tigoB2C, 'Connection timeout: url='.$url);
+                    Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,''). PHP_EOL);
+                    $this->deleteTigoB2CTransactionModel($tigoB2C, $log_event);
                 }
             }
 
@@ -68,7 +68,7 @@ trait TigoTransactionB2C
                         $log_status = 'fail';
                         $log_event = 'unexpected HTTP code:'.$http_code;
                         Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,$log_data). PHP_EOL);
-                        $this->deleteTigoB2CTransactionModel($tigoB2C, 'Unexpected HTTP code: ' . $http_code);
+                        $this->deleteTigoB2CTransactionModel($tigoB2C, $log_event);
                         $reply = array('status'=>false, 'error'=>$log_event);
                 }
             } else {
@@ -192,7 +192,7 @@ trait TigoTransactionB2C
         $log_format_success = '%s,%s,%s';
 
         if (isset($input['TXNID'])) {
-            Log::info(sprintf($log_format_success,$log_action,'success',$log_data). PHP_EOL);
+            Log::info(sprintf($log_format_success,$log_action,'success','reference:'.$tigoB2C->reference_id). PHP_EOL);
             $this->onTransferSuccess($input, $tigoB2C);
             $reply = array('status' => true, 'model' => $tigoB2C, 'response' => $input);
 

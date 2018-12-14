@@ -48,7 +48,7 @@ class MpesaB2CController extends Controller
 
         } catch (\Exception $ex){
             $log_event = 'exception:'.$ex->getMessage();
-            Log::info(sprintf($log_format_fail,$log_action,'success',$log_event,$log_data). PHP_EOL);
+            Log::error(sprintf($log_format_fail,$log_action,'fail',$log_event,$log_data). PHP_EOL);
             return 'false';
         }
         return 'true';

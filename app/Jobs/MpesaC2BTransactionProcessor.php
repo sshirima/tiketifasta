@@ -60,7 +60,7 @@ class MpesaC2BTransactionProcessor implements ShouldQueue
 
             $ticket = $this->processTicket($mpesaC2B);
 
-            $confirmation = $this->createMpesaC2BConfirmRequest($booking, $mpesaC2B, $ticket);
+            $confirmation = $this->postMpesaC2BTransaction($mpesaC2B, $ticket);
 
             if(!$confirmation['status']){
                 $this->changeBookingPaymentTransactionStatus($bookingPayment, BookingPayment::TRANS_STATUS_FAILED);

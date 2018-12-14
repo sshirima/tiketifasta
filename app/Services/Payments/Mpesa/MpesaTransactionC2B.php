@@ -29,7 +29,7 @@ trait MpesaTransactionC2B
      * @param Request $request
      * @return mixed
      */
-    public function getMpesaC2BValidationResponse(Request $request){
+    public function getMpesaC2BAuthorizationResponse(Request $request){
 
         $parser = new Parser();
 
@@ -44,26 +44,37 @@ trait MpesaTransactionC2B
      */
     public function validateMpesaC2BTransaction(array $request):array
     {
-        $attributes = $this->extractParamsValidationRequest($request);
+        $log_action = 'Verify mpesa b2c post response';
+        $log_format_success = '%s,%s,%s,%s';
+        $log_format_fail = '%s,%s,%s';
+
+        $attributes = $this->getMpesaC2BAuthorizationParamsArray($request);
 
         $mpesaC2B = MpesaC2B::where(['account_reference'=>$attributes['account_reference']])->first();
 
+        $log_data = 'request:'.json_encode($attributes);
+
         if (!isset($mpesaC2B)) {
-            Log::channel('mpesac2b')->error('Transaction not found:'.'['.$attributes['mpesa_receipt'].']'. PHP_EOL );
-            return array('status'=>false,'error'=>'Transaction not found');
+            $log_event ='transaction not found:'.$attributes['mpesa_receipt'];
+            Log::error(sprintf($log_format_fail,$log_action,'fail',$log_event,$log_data). PHP_EOL);
+            return array('status'=>false,'error'=>$log_event);
         }
 
         if ($this->isDuplicateC2B($attributes['mpesa_receipt'])) {
-            Log::channel('mpesac2b')->error('Transaction is duplicated:'.'['.$attributes['mpesa_receipt'].']'. PHP_EOL );
-            return array('status'=>false,'error'=>'Transaction is duplicated');
+            $log_event ='transaction is already authorized:'.$attributes['mpesa_receipt'];
+            Log::error(sprintf($log_format_fail,$log_action,'fail',$log_event,$log_data). PHP_EOL);
+            return array('status'=>false,'error'=>$log_event);
         }
 
         if ($mpesaC2B->amount != $attributes['amount']) {
-            Log::channel('mpesac2b')->error('Paid amount is not equal to ticket price:'.'['. 'Paid='.$attributes['amount'].']'. PHP_EOL );
-            return array('status'=>false,'error'=>'Paid amount is not equal to ticket price');
+            $log_event ='amount mismatch:'.$attributes['amount'];
+            Log::error(sprintf($log_format_fail,$log_action,'fail',$log_event,$log_data). PHP_EOL);
+            return array('status'=>false,'error'=>$log_event);
         }
 
-        $this->updateValidationParameters($attributes, $mpesaC2B);
+        $this->updateAuthorizationParams($attributes, $mpesaC2B);
+
+        Log::error(sprintf($log_format_success,$log_action,'success',$log_data). PHP_EOL);
         
         return array('status'=>$mpesaC2B->update(),'mpesaC2B'=>$mpesaC2B);
     }
@@ -82,19 +93,22 @@ trait MpesaTransactionC2B
     }
 
     /**
-     * @param Booking $booking
      * @param MpesaC2B $mpesaC2B
      * @param Ticket $ticket
      * @return array
      */
-    public function createMpesaC2BConfirmRequest(Booking $booking, MpesaC2B $mpesaC2B, Ticket $ticket){
-
+    public function postMpesaC2BTransaction(MpesaC2B $mpesaC2B, Ticket $ticket){
+        $ch = curl_init();
+        $log_action = 'Posting mpesa c2b transaction';
+        $log_data = '';
+        $log_format_fail = '%s,%s,%s,%s';
+        $log_format_success = '%s,%s,%s';
         try{
 
             $this->setMpesaC2BTransactionStatus($mpesaC2B, MpesaC2B::TRANS_STATUS_POSTED);
-
+            $requestParameters = $this->getMpesaC2BRequestParams($ticket, $mpesaC2B);
             $url = config('payments.mpesa.c2b.confirm_transaction_url');
-            $ch = curl_init();
+
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_POST, true);
 
@@ -104,47 +118,58 @@ trait MpesaTransactionC2B
             curl_setopt($ch, CURLOPT_SSLCERT, '/var/www/html/storage/mpesa/tkj.vodacom.co.tz.cer');
 
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $this->getMpesaC2BRequestParams($ticket, $mpesaC2B));
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $requestParameters);
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 
             curl_setopt($ch, CURLOPT_TIMEOUT, config('payments.mpesa.b2c.timeout'));
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, config('payments.mpesa.b2c.connect_timeout'));
 
+            $log_data = 'request:'.json_encode($requestParameters);
+
             $xmlResponse = curl_exec($ch);
 
             if ($xmlResponse === false) {
                 $info = curl_getinfo($ch);
                 if ($info['http_code'] === 0) {
-                    Log::channel('mpesab2c')->error('Connection timeout: url='.$url  . PHP_EOL);
+                    $log_status = 'fail';
+                    $log_event = 'connection timed out:'.$url;
+                    Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,''). PHP_EOL);
+
                 }
             }
             //Check HTTP status code
             if (!curl_errno($ch)) {
+                $log_data = $log_data .',response:'.$xmlResponse;
                 switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
                     case 200:
-                        //Log::channel('mpesac2b')->info('Error on the response: response='.$xmlResponse . PHP_EOL);
+                        $log_status = 'success';
+                        Log::info(sprintf($log_format_success,$log_action,$log_status,'reference:'.$mpesaC2B->account_reference). PHP_EOL);
                         $parser = new Parser();
                         $jsonResponse = $parser->xml($xmlResponse);
-                        /*$objectResponse = simplexml_load_string($xmlResponse);
-                        $jsonResponse =json_encode($objectResponse);*/
                         $reply = ['status'=>true, 'response'=>$jsonResponse];
                         break;
                     default:
-                        Log::channel('mpesac2b')->error('Unexpected HTTP code: ' . $http_code . '[' . $xmlResponse . ']' . PHP_EOL);
-                        $reply = ['status'=>false, 'error'=>'Unexpected HTTP code: ' . $http_code . '[' . $xmlResponse . ']'];
+                        $log_status = 'fail';
+                        $log_event = 'unexpected HTTP code:'.$http_code;
+                        Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,$log_data). PHP_EOL);
+                        $reply = ['status'=>false, 'error'=>$log_event];
                 }
             } else {
-                Log::channel('mpesac2b')->error('Curl error[Error code:' . curl_errno($ch) . ']' . PHP_EOL);
-                $reply = ['status'=>false, 'response'=>'Curl error[Error code:' . curl_errno($ch) . ']'];
+                $log_status = 'fail';
+                $log_event = 'curl error:'.curl_errno($ch);
+                Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,$log_data). PHP_EOL);
+                $reply = array('status' => false, 'error' => $log_event);
             }
 
-            curl_close($ch);
-        }catch (\Exception $exception){
-            Log::channel('mpesac2b')->error('Error:' . $exception->getMessage() . PHP_EOL);
-            $reply = ['status'=>true, 'response'=>'Error:' . $exception->getMessage()];
-        }
 
+        }catch (\Exception $ex){
+            $log_status = 'fail';
+            $log_event = 'exception:'.$ex->getMessage();
+            Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,$log_data). PHP_EOL);
+            $reply = array('status' => false, 'error' => $log_event);
+        }
+        curl_close($ch);
         return $reply;
     }
 
@@ -241,7 +266,7 @@ trait MpesaTransactionC2B
      * @param $attributes
      * @param $mpesaC2B
      */
-    protected function updateValidationParameters($attributes, $mpesaC2B): void
+    protected function updateAuthorizationParams($attributes, $mpesaC2B): void
     {
         $mpesaC2B->command_id = $attributes['command_id'];
         $mpesaC2B->initiator = $attributes['initiator'];

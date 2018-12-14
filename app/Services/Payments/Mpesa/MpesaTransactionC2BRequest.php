@@ -43,7 +43,7 @@ trait MpesaTransactionC2BRequest
      * @param array $request
      * @return array
      */
-    private function extractParamsValidationRequest(array $request): array
+    private function getMpesaC2BAuthorizationParamsArray(array $request): array
     {
         return [
             'amount' => $request['request']['transaction']['amount'],

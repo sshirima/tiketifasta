@@ -26,11 +26,16 @@ trait TigoTransactionC2B
     public function generateAccessToken()
     {
         $responseArray=null;
+        $log_action = 'Generate tigo_secure access token';
+        $log_data ='';
+        $log_format_success = '%s,%s,%s,%s';
+        $log_format_fail = '%s,%s,%s';
+        $ch = curl_init();
+
         try{
 
             $url = config('payments.tigo.c2b.url_token');
 
-            $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_HTTPHEADER, array('content-type' => 'application/x-www-form-urlencoded'));
@@ -48,34 +53,43 @@ trait TigoTransactionC2B
             if ($response === false) {
                 $info = curl_getinfo($ch);
                 if ($info['http_code'] === 0) {
-                    Log::channel('mpesab2c')->error('Connection timeout: url='.$url  . PHP_EOL);
-                    curl_close($ch);
-                    return ['status'=>false,'error'=>'Generate access token: connection timeout, url='.$url];
+                    $log_status = 'fail';
+                    $log_event = 'connection timed out:'.$url;
+                    Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,''). PHP_EOL);
+                    return ['status'=>false,'error'=>$log_event];
                 }
             }
             // Check HTTP status code
             if (!curl_errno($ch)) {
+                $log_data = $log_data .',response:'.$response;
                 switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
                     case 200:
+                        $log_status = 'success';
+                        Log::info(sprintf($log_format_success,$log_action,$log_status,''). PHP_EOL);
                         $res = json_decode($response);
                         $responseArray= ['status'=>true,'accessToken'=>$res->accessToken];
                         break;
                     default:
-                        Log::channel('tigosecurec2b')->error('Unexpected response from server: response='.$response);
-                        $responseArray= ['status'=>true,'error'=>'Unexpected response from server: http_code='.$http_code];
+                        $log_status = 'fail';
+                        $log_event = 'unexpected HTTP code:'.$http_code;
+                        Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,$log_data). PHP_EOL);
+                        $responseArray= ['status'=>false,'error'=>$log_event];
                 }
             } else {
-                $curlError= curl_errno($ch);
-                $responseArray = ['status'=>false,'error'=>'Curl error='.$curlError];
+                $log_status = 'fail';
+                $log_event = 'curl error:'.curl_errno($ch);
+                Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,$log_data). PHP_EOL);
+                $responseArray = array('status' => false, 'error' => $log_event);
             }
-            curl_close($ch);
+
 
         }catch (\Exception $ex){
-            //Log failure
-            Log::channel('tigosecurec2b')->error('Generate access token procedure fails: message='.$ex->getMessage());
-            $responseArray = ['status'=>false,'error'=>'Generate access token procedure fails: message='.$ex->getMessage()];
+            $log_status = 'fail';
+            $log_event = 'exception:'.$ex->getMessage();
+            Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,$log_data). PHP_EOL);
+            $responseArray = ['status'=>false,'error'=>$log_event];
         }
-
+        curl_close($ch);
         return $responseArray;
     }
 
@@ -114,36 +128,32 @@ trait TigoTransactionC2B
     public function authorizeTigoC2BTransaction($bookingPayment)
     {
         $responseArray=null;
-
+        $log_action = 'Authorize tigosecure c2b transaction';
+        $log_data = '';
+        $log_format_fail = '%s,%s,%s,%s';
+        $log_format_success = '%s,%s,%s';
+        $ch = curl_init();
         try{
             $tokenResponse = $this->generateAccessToken();
 
             if(!$tokenResponse['status']){
-                return ['status'=>false, 'error'=>'Failed to generate access token'];
-            }
-
-            if(array_key_exists('error', $tokenResponse)){
-                Log::channel('tigosecurec2b')->error('Generate access token error: '.$tokenResponse['error']  . PHP_EOL);
-                return  ['status'=>false, 'error'=>'Failed to generate access token'];
+                curl_close($ch);
+                return ['status'=>false, 'error'=>$tokenResponse['error']];
             }
 
             $accessToken = $tokenResponse['accessToken'];
 
             $tigoC2B = $this->createTigoC2B($bookingPayment);
 
-            if (!isset($tigoC2B)){
-                return ['status'=>false,'error'=>'Failed to create TigoC2B model'];
-            }
-
             $this->saveAccessToken($tigoC2B, $accessToken);
 
             $url = config('payments.tigo.c2b.url_authorize');
-            $ch = curl_init();
+            $postFields = json_encode($this->paymentAuthorizationContent($tigoC2B, $accessToken));
+
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_HTTPHEADER, array('content-type: application/json', 'accessToken : ' . $accessToken));
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            $postFields = json_encode($this->paymentAuthorizationContent($tigoC2B, $accessToken));
             curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
 
             curl_setopt($ch, CURLOPT_TIMEOUT, config('payments.mpesa.b2c.timeout'));
@@ -154,35 +164,43 @@ trait TigoTransactionC2B
             if ($response === false) {
                 $info = curl_getinfo($ch);
                 if ($info['http_code'] === 0) {
-                    Log::channel('tigosecurec2b')->error('Connection timeout: url='.$url  . PHP_EOL);
-                    curl_close($ch);
-                    return ['status'=>false,'error'=>'Authorize payment: connection timeout, url='.$url];
+                    $log_status = 'fail';
+                    $log_event = 'connection timed out:'.$url;
+                    Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,''). PHP_EOL);
                 }
             }
             // Check HTTP status code
             if (!curl_errno($ch)) {
                 switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
                     case 200:
+                        $log_status = 'success';
+                        Log::info(sprintf($log_format_success,$log_action,$log_status,'reference:'.$tigoC2B->reference). PHP_EOL);
                         $res = json_decode($response);
                         $this->completeAuthorization($tigoC2B, $res);
                         $responseArray = ['status'=>true, 'redirectUrl'=>$res->redirectUrl];
                         break;
                     default:
-                        Log::channel('tigosecurec2b')->error('Unexpected response from server: response='.$response);
+                        $log_status = 'fail';
+                        $log_event = 'unexpected HTTP code:'.$http_code;
+                        Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,$log_data). PHP_EOL);
                         $responseArray = ['status'=>true,'error'=>'Unexpected response from server: http_code='.$http_code];
 
                 }
             } else {
-                $curlError= curl_errno($ch);
-                $responseArray = ['status'=>false,'error'=>'Curl error='.$curlError];
+                $log_status = 'fail';
+                $log_event = 'curl error:'.curl_errno($ch);
+                Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,$log_data). PHP_EOL);
+                $responseArray = ['status'=>false,'error'=>$log_event];
             }
-            curl_close($ch);
+
 
         }catch (\Exception $ex){
-            Log::channel('tigosecurec2b')->error('Tigo transaction authorization fails: message='.$ex->getMessage());
-            $responseArray = ['status'=>false,'error'=>'Tigo transaction authorization fails: message='.$ex->getMessage()];;
+            $log_status = 'fail';
+            $log_event = 'exception:'.$ex->getMessage();
+            Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,$log_data). PHP_EOL);
+            $responseArray = ['status'=>false,'error'=>$log_event];;
         }
-
+        curl_close($ch);
         return $responseArray;
     }
 
