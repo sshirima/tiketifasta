@@ -425,6 +425,7 @@ trait TigoTransactionC2B
         for ($r = 1; $r <= config('payments.connect_timeout_retry'); $r++) {
             $response = curl_exec($ch);
             if (!($response === false)) {
+                Log::critical($r . ' re-try connection, ' . $url . ', response:'.$response.PHP_EOL);
                 break;
             }
             Log::critical($r . ' re-try connection, ' . $url . PHP_EOL);
