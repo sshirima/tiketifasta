@@ -142,6 +142,12 @@ Route::prefix('admin')->group(function () {
     Route::get('merchant-payments/tigopesa/send_cash', 'Admins\TigoB2CController@sendCash')->name('admin.tigob2c.send_cash');
     Route::get('merchant-payments/tigopesa/send_cash/submit', 'Admins\TigoB2CController@sendCashSubmit')->name('admin.tigob2c.send_cash.submit');
     Route::post('merchant-payments/tigopesa/send_cash/verify-otp', 'Admins\TigoB2CController@verifyTransactionOTP')->name('admin.tigob2c.send_cash.verify_otp');
+
+    Route::get('merchant-payments/send_cash', 'Admins\B2CTestController@sendCash')->name('admin.mpesab2c.send_cash');
+    Route::get('merchant-payments/send_cash/submit', 'Admins\B2CTestController@sendCashSubmit')->name('admin.mpesab2c.send_cash.submit');
+    Route::post('merchant-payments/send_cash/verify-otp', 'Admins\B2CTestController@verifyTransactionOTP')->name('admin.mpesab2c.send_cash.verify_otp');
+
+
     Route::get('merchant-payments/summary', 'Admins\MerchantPaymentController@summaryReport')->name('admin.merchant_payments.summary');
     Route::get('merchant-scheduled-payments', 'Admins\MerchantSchedulePaymentController@index')->name('admin.merchant_schedule_payments.index');
     Route::get('merchant-scheduled-payments/{id}/details', 'Admins\MerchantSchedulePaymentController@details')->name('admin.merchant_schedule_payments.details');

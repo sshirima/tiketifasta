@@ -70,15 +70,15 @@ class TigoB2CController extends BaseController
             'language' => config('payments.tigo.bc2.language'),
         ]);
 
+        \Session::put('transaction_reference',$tigoB2C->reference_id);
+        
         //$tigoB2C = $this->createTigoB2CModel($receiver,$input['amount']);
 
         //Generate and Send OTP
-        $otp = rand(1000, 9999);
+        $otp = rand(10000, 99999);
 
         \Session::put('otp',$otp);
-
-        \Session::put('tigob2cReferenceId',$tigoB2C->reference_id);
-
+        
         $phoneNumber = config('payments.tigo.bc2.confirm_otp');
         $message = sprintf(config('payments.tigo.bc2.otp_message'), $otp);
 
@@ -109,16 +109,16 @@ class TigoB2CController extends BaseController
 
         if ($enteredOtp == $OTP){
 
-            $reference = $request->session()->get('tigob2cReferenceId');
+            $reference = $request->session()->get('transaction_reference');
 
             $tigoB2C = TigoB2C::where(['reference_id'=>$reference])->first();
 
             if (!isset($tigoB2C)){
-                $request->session()->forget('tigob2cReferenceId');
+                $request->session()->forget('transaction_reference');
                 return view('admins.pages.payments.tigoB2C_send_cash')->with(['otpVerified'=>false,'moneySent'=>false,'error'=>'Fail to retrieve transaction']);
             }
 
-            $request->session()->forget('tigob2cReferenceId');
+            $request->session()->forget('transaction_reference');
             $request->session()->forget('otp');
             $request->session()->forget('otp_entry_count');
 

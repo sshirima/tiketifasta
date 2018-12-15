@@ -1,0 +1,1 @@
+<li class="{{Request::is('admin/merchants-payments/mpesa') ? 'active' : ''}}"><a href="{{route('admin.mpesab2c.index')}}" >View transactions</a></li>
