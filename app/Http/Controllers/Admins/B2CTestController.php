@@ -154,7 +154,7 @@ class B2CTestController extends BaseController
 
                 //No comments
                 if ($response['status'] == true) {
-                    return view('admins.pages.payments.mpesa.mpesaB2C_send_cash')->with(['otpVerified'=>true,'moneySent'=>true, 'response'=>$response['response']]);
+                    return view('admins.pages.payments.mpesa.mpesaB2C_send_cash')->with(['otpVerified'=>true,'moneySent'=>true, 'response'=>json_encode($response['response'])]);
                     //return 'Success : ' . json_encode($response['response']);
                 } else {
                     return view('admins.pages.payments.mpesa.mpesaB2C_send_cash')->with(['otpVerified'=>true,'moneySent'=>false,'response'=>$response['error']]);
