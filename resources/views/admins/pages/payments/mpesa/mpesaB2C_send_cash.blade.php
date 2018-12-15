@@ -64,7 +64,7 @@
                                 <div class="container col-md-11 col-md-offset-1">
                                     <div class="alert alert-success"> <i class="fas fa-check-circle"></i> Transfer has been posted...</div>
                                     <div class="alert alert-default">
-                                        {{$response->response->transactionID}}
+                                        {{$response}}
                                     </div>
                                 </div>
                             </div>
