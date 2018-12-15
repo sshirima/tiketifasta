@@ -64,8 +64,7 @@
                                 <div class="container col-md-11 col-md-offset-1">
                                     <div class="alert alert-success"> <i class="fas fa-check-circle"></i> Transfer has been posted...</div>
                                     <div class="alert alert-default">
-                                        Transaction reference: {{isset($response['response']['transactionID'])?$response['response']['transactionID']:'null'}}<br>
-                                        Status: {{isset($response['response']['serviceStatus'])?$response['response']['serviceStatus']:'unknown'}}<br>
+                                        {{$response}}
                                     </div>
                                 </div>
                             </div>
