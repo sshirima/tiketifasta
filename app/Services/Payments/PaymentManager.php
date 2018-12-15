@@ -26,20 +26,6 @@ class PaymentManager
         $this->tigoOnline = $tigoOnline;
     }
 
-    public function initialiazeMPESAPaymentC2B(array $attributes){
-
-        $mpesaC2B = $this->mpesa->initializePaymentC2B($attributes);
-
-        return $mpesaC2B;
-    }
-
-    public function mpesaPaymentReferenceC2B(array $attributes){
-
-        $mpesaC2B = $this->mpesa->initializePaymentC2B($attributes);
-
-        return $mpesaC2B;
-    }
-
     public static function random_code($limit)
     {
         return substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, $limit);

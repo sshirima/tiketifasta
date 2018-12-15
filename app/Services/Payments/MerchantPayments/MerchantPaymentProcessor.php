@@ -25,7 +25,6 @@ trait MerchantPaymentProcessor
      */
     public function processPayments($date)
     {
-
         $report = $this->generateDailyReport($date);
 
         $merchantPayments = $this->generateMerchantPayments($report);

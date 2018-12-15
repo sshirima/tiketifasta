@@ -24,15 +24,15 @@ trait TigoTransactionB2C
     {
         $log_action = 'Posting tigo b2c transaction';
         $log_data = '';
-        $log_format_fail = '%s,%s,%s,%s';
-        $log_format_success = '%s,%s,%s';
+        $log_format_fail = '%s, %s, %s, %s';
+        $log_format_success = '%s, %s, %s';
 
         $reply = null;
         $ch = curl_init();
         try {
             //Create TigoB2C
             $requestContent = $this->getTigoB2cPostingParamsXml($this->getTigoB2cPostingParamsArray($tigoB2C));
-            $log_data = 'request:'.json_encode($requestContent);
+            $log_data = 'request:' . json_encode($requestContent);
             $url = config('payments.tigo.bc2.url');
 
             curl_setopt($ch, CURLOPT_URL, $url);
@@ -46,19 +46,22 @@ trait TigoTransactionB2C
 
             $response = curl_exec($ch);
 
-            if ($response === false) {
-                $info = curl_getinfo($ch);
-                if ($info['http_code'] === 0) {
-                    $log_status = 'fail';
-                    $log_event = 'connection timed out:'.$url;
-                    Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,''). PHP_EOL);
-                    $this->deleteTigoB2CTransactionModel($tigoB2C, $log_event);
+            if($response === false){
+                $log_status = 'fail';
+                $log_event = 'connection timed out:'.$url;
+                Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,''). PHP_EOL);
+
+                $response = $this->retryConnection($ch, $url);
+
+                if($response === false){
+                    curl_close($ch);
+                    return ['status'=>false,'error'=>$log_event];
                 }
             }
 
             //Check HTTP status code
             if (!curl_errno($ch)) {
-                $log_data = $log_data .',response:'.$response;
+                $log_data = $log_data . ',response:' . $response;
                 switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
                     case 200:
                         $parser = new Parser();
@@ -66,21 +69,21 @@ trait TigoTransactionB2C
                         break;
                     default:
                         $log_status = 'fail';
-                        $log_event = 'unexpected HTTP code:'.$http_code;
-                        Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,$log_data). PHP_EOL);
-                        $this->deleteTigoB2CTransactionModel($tigoB2C, $log_event);
-                        $reply = array('status'=>false, 'error'=>$log_event);
+                        $log_event = 'unexpected HTTP code:' . $http_code;
+                        Log::error(sprintf($log_format_fail, $log_action, $log_status, $log_event, $log_data) . PHP_EOL);
+                        //$this->deleteTigoB2CTransactionModel($tigoB2C, $log_event);
+                        $reply = array('status' => false, 'error' => $log_event);
                 }
             } else {
                 $log_status = 'fail';
-                $log_event = 'curl error:'.curl_errno($ch);
-                Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,$log_data). PHP_EOL);
-                $reply = array('status'=>false, 'error'=>'Curl error[Error code:' . curl_errno($ch) . ']');
+                $log_event = 'curl error:' . curl_errno($ch);
+                Log::error(sprintf($log_format_fail, $log_action, $log_status, $log_event, $log_data) . PHP_EOL);
+                $reply = array('status' => false, 'error' => 'Curl error[Error code:' . curl_errno($ch) . ']');
             }
         } catch (\Exception $ex) {
             $log_status = 'fail';
-            $log_event = 'exception:'.$ex->getMessage();
-            Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,$log_data). PHP_EOL);
+            $log_event = 'exception:' . $ex->getMessage();
+            Log::error(sprintf($log_format_fail, $log_action, $log_status, $log_event, $log_data) . PHP_EOL);
             $reply = array('status' => false, 'error' => $log_event);
         }
         curl_close($ch);
@@ -96,23 +99,24 @@ trait TigoTransactionB2C
      * @param $phoneNumber
      * @return array
      */
-    public function confirmReceiverNumber($phoneNumber){
+    public function confirmReceiverNumber($phoneNumber)
+    {
 
-        if (!is_numeric($phoneNumber)){
-            return array('status'=>false,'error'=>'Not numeric number');
+        if (!is_numeric($phoneNumber)) {
+            return array('status' => false, 'error' => 'Not numeric number');
         }
 
-        if ((strlen($phoneNumber) == 10)){
-            if($this->startsWithZero($phoneNumber,'0')){
-                $phoneNumber = '255'.substr($phoneNumber,1,10);
-                return array('status'=>true,'number'=> $phoneNumber);
+        if ((strlen($phoneNumber) == 10)) {
+            if ($this->startsWithZero($phoneNumber, '0')) {
+                $phoneNumber = '255' . substr($phoneNumber, 1, 10);
+                return array('status' => true, 'number' => $phoneNumber);
             } else {
-                return array('status'=>false,'error'=>'Number does not start with zero');
+                return array('status' => false, 'error' => 'Number does not start with zero');
             }
-        } else if((strlen($phoneNumber) == 12)) {
-            return array('status'=>true,'number'=>$phoneNumber);
-        } else{
-            return array('status'=>false,'error'=>'10 or 12 digits number required');
+        } else if ((strlen($phoneNumber) == 12)) {
+            return array('status' => true, 'number' => $phoneNumber);
+        } else {
+            return array('status' => false, 'error' => '10 or 12 digits number required');
         }
     }
 
@@ -136,11 +140,24 @@ trait TigoTransactionB2C
      * @param TigoB2C $tigoB2C
      * @param string $reason
      */
-    private function deleteTigoB2CTransactionModel(TigoB2C $tigoB2C, $reason=''){
-        Log::channel('mpesab2c')->error('TigoB2C model record has been deleted#reason:'.$reason . PHP_EOL);
-            /*$tigoB2C->txn_status = TigoB2C::ERROR_CODE_001;
-            $tigoB2C->txn_message = TigoB2C::ERROR_DESC_001;*/
-            $tigoB2C->delete();
+    private function deleteTigoB2CTransactionModel(TigoB2C $tigoB2C, $reason = '')
+    {
+        Log::channel('mpesab2c')->error('TigoB2C model record has been deleted#reason:' . $reason . PHP_EOL);
+        /*$tigoB2C->txn_status = TigoB2C::ERROR_CODE_001;
+        $tigoB2C->txn_message = TigoB2C::ERROR_DESC_001;*/
+        $tigoB2C->delete();
+    }
+
+    /**
+     * @param $input
+     * @param $tigoB2C
+     */
+    private function onTransactionAlredyExist($input, $tigoB2C): void
+    {
+        $tigoB2C->transaction_status = TigoB2C::TRANS_STATUS_SETTLED;
+        $tigoB2C->txn_status = $input['TXNSTATUS'];
+        $tigoB2C->txn_message = $input['MESSAGE'];
+        $tigoB2C->update();
     }
 
     /**
@@ -174,7 +191,8 @@ trait TigoTransactionB2C
      * @param TigoB2C $tigoB2C
      * @param $status
      */
-    public function setTigoB2CTransactionStatus(TigoB2C $tigoB2C, $status){
+    public function setTigoB2CTransactionStatus(TigoB2C $tigoB2C, $status)
+    {
         $tigoB2C->transaction_status = $status;
         $tigoB2C->update();
     }
@@ -191,16 +209,24 @@ trait TigoTransactionB2C
         $log_format_fail = '%s, %s, %s, %s';
         $log_format_success = '%s, %s, %s';
 
-        if (isset($input['TXNID'])) {
-            Log::info(sprintf($log_format_success,$log_action,'success','reference:'.$tigoB2C->reference_id). PHP_EOL);
-            $this->onTransferSuccess($input, $tigoB2C);
-            $reply = array('status' => true, 'model' => $tigoB2C, 'response' => $input);
+        $txn_status = $input['TXNSTATUS'];
 
-        } else {
-            Log::error(sprintf($log_format_fail,$log_action,'fail','TXNID not set',$log_data). PHP_EOL);
-            $input = $this->onTransferFailure($input, $tigoB2C);
-            $reply = array('status' => false, 'error' => $input);
+        if ($txn_status == '100159') {
+            Log::warning(sprintf($log_format_success, $log_action, 'warning', 'reference:' . $tigoB2C->reference_id.', '.$input['MESSAGE']) . PHP_EOL);
+            $this->onTransactionAlredyExist($input, $tigoB2C);
+            $reply = array('status' => true, 'model' => $tigoB2C, 'response' => $input);
         }
+        else
+            if (isset($input['TXNID'])) {
+                Log::info(sprintf($log_format_success, $log_action, 'success', 'reference:' . $tigoB2C->reference_id) . PHP_EOL);
+                $this->onTransferSuccess($input, $tigoB2C);
+                $reply = array('status' => true, 'model' => $tigoB2C, 'response' => $input);
+
+            } else {
+                Log::error(sprintf($log_format_fail, $log_action, 'fail', 'TXNID not set', $log_data) . PHP_EOL);
+                $input = $this->onTransferFailure($input, $tigoB2C);
+                $reply = array('status' => false, 'error' => $input);
+            }
         return $reply;
     }
 }

@@ -7,6 +7,7 @@
  */
 
 return[
+    'connect_timeout_retry'=>env('CONNECTION_TIMEOUT_RETRY',2),
     'tickets_commission_percentage'=>env('TICKET_COMMISSION_PERCENTAGE'),
     'mpesa'=>[
         'account_name'=>env('MPESA_ACCOUNT_NAME'),

@@ -41,26 +41,29 @@ trait TigoTransactionC2B
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
             $postFields = $this->accessTokenRequestParameters();
-
             curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
 
             curl_setopt($ch, CURLOPT_TIMEOUT, config('payments.mpesa.b2c.timeout'));
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, config('payments.mpesa.b2c.connect_timeout'));
 
             $response = curl_exec($ch);
+            $log_data = 'request:'.json_encode($postFields);
 
-            if ($response === false) {
-                $info = curl_getinfo($ch);
-                if ($info['http_code'] === 0) {
-                    $log_status = 'fail';
-                    $log_event = 'connection timed out:'.$url;
-                    Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,''). PHP_EOL);
+            if($response === false){
+                $log_status = 'fail';
+                $log_event = 'connection timed out:'.$url;
+                Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,''). PHP_EOL);
+
+                $response = $this->retryConnection($ch, $url);
+
+                if($response === false){
                     return ['status'=>false,'error'=>$log_event];
                 }
             }
+
             // Check HTTP status code
             if (!curl_errno($ch)) {
-                $log_data = 'response:'.$response;
+                $log_data = ',response:'.$response;
                 switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
                     case 200:
                         $log_status = 'success';
@@ -408,5 +411,24 @@ trait TigoTransactionC2B
             ],
 
         ];
+    }
+
+    /**
+     * @param $ch
+     * @param $url
+     * @return mixed
+     */
+    protected function retryConnection($ch, $url): mixed
+    {
+        $response = false;
+
+        for ($r = 1; $r <= config('payments.connect_timeout_retry'); $r++) {
+            $response = curl_exec($ch);
+            if (!($response === false)) {
+                break;
+            }
+            Log::critical($r . ' re-try connection, ' . $url . PHP_EOL);
+        }
+        return $response;
     }
 }

@@ -99,7 +99,7 @@ trait MpesaTransactionB2C
                         $log_status = 'fail';
                         $log_event = 'unexpected HTTP code:'.$http_code;
                         Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,$log_data). PHP_EOL);
-                        $this->deleteMpesaB2CTransaction($mpesaB2C, 'Unexpected HTTP code: ' . $http_code);
+                        //$this->deleteMpesaB2CTransaction($mpesaB2C, 'Unexpected HTTP code: ' . $http_code);
                         $reply = array('status' => false, 'error' => $log_event);
                 }
             } else {
