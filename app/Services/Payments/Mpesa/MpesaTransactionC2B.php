@@ -135,7 +135,8 @@ trait MpesaTransactionC2B
                     $log_status = 'fail';
                     $log_event = 'connection timed out:'.$url;
                     Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,''). PHP_EOL);
-
+                    curl_close($ch);
+                    return ['status'=>false,'error'=>$log_event];
                 }
             }
             //Check HTTP status code

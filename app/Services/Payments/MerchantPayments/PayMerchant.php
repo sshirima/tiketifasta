@@ -71,6 +71,7 @@ trait PayMerchant
 
                 $tigoB2C = $this->createTigoB2CModel($merchantPayment);
             }
+
             $response = $this->postTigoB2CTransaction($tigoB2C);
 
             if ($response['status']){
