@@ -191,6 +191,6 @@ class B2CTestController extends BaseController
                     'reentryCount'=>($maxAttempt-$count)]);
             }
         }
-        return 'true';
+        return $operator;
     }
 }
