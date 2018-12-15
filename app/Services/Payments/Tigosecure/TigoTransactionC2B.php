@@ -50,14 +50,15 @@ trait TigoTransactionC2B
             $log_data = 'request:'.json_encode($postFields);
 
             if($response === false){
-                $log_status = 'fail';
-                $log_event = 'connection timed out:'.$url;
-                Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,''). PHP_EOL);
-
-                $response = $this->retryConnection($ch, $url);
-
-                if($response === false){
-                    return ['status'=>false,'error'=>$log_event];
+                $info = curl_getinfo($ch);
+                if ($info['http_code'] === 0) {
+                    $log_status = 'fail';
+                    $log_event = 'connection timed out:'.$url;
+                    Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,''). PHP_EOL);
+                    $response = $this->retryConnection($ch, $url);
+                    if($response === false){
+                        return ['status'=>false,'error'=>$log_event];
+                    }
                 }
             }
 
@@ -422,11 +423,17 @@ trait TigoTransactionC2B
     {
         $response = false;
 
-        for ($r = 1; $r <= config('payments.connect_timeout_retry'); $r++) {
+        for ($r = 1; $r <= 2; $r++) {
             $response = curl_exec($ch);
-            if (!($response === false)) {
-                Log::critical($r . ' re-try connection, ' . $url . ', response:'.$response.PHP_EOL);
-                break;
+            if ($response === false) {
+                $info = curl_getinfo($ch);
+                if ($info['http_code'] === 0) {
+                    Log::critical($r . ' re-try connection, ' . $url . ', response:'.$response.PHP_EOL);
+                    continue;
+                } else {
+                    break;
+                }
+
             }
             Log::critical($r . ' re-try connection, ' . $url . PHP_EOL);
         }

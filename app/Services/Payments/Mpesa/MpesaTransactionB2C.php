@@ -71,15 +71,15 @@ trait MpesaTransactionB2C
             $response = curl_exec($ch);
 
             if($response === false){
-                $log_status = 'fail';
-                $log_event = 'connection timed out:'.$url;
-                Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,''). PHP_EOL);
-
-                $response = $this->retryConnection($ch, $url);
-
-                if($response === false){
-                    curl_close($ch);
-                    return ['status'=>false,'error'=>$log_event];
+                $info = curl_getinfo($ch);
+                if ($info['http_code'] === 0) {
+                    $log_status = 'fail';
+                    $log_event = 'connection timed out:'.$url;
+                    Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,''). PHP_EOL);
+                    $response = $this->retryConnection($ch, $url);
+                    if($response === false){
+                        return ['status'=>false,'error'=>$log_event];
+                    }
                 }
             }
             /*if ($response === false) {
