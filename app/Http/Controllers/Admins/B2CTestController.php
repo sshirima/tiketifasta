@@ -109,7 +109,8 @@ class B2CTestController extends BaseController
 
         //Removing Session variable
         $request->session()->forget('otp');
-        $operator = $request->session()->get('operator');
+        $operator = $request->session()->get('transaction_operator');
+
         if ($enteredOtp == $OTP){
 
             $reference = $request->session()->get('transaction_reference');
