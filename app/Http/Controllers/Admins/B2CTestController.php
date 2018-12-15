@@ -176,7 +176,7 @@ class B2CTestController extends BaseController
 
                 } else {
                     $request->session()->forget('otp_entry_count');
-                    return redirect(route('admin.tigob2c.send_cash'));
+                    return redirect(route('admin.mpesab2c.send_cash'));
                 }
 
             } else {
