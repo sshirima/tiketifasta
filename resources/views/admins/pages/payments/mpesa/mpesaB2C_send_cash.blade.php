@@ -94,11 +94,11 @@
                     <div class="row">
                         <div class="container col-md-6 col-md-offset-1">
                             <form class="form-horizontal" role="form" method="get" action="{{route('admin.mpesab2c.send_cash.submit')}}" accept-charset="UTF-8" style="padding: 20px">
-                                
+
                                 <div class="form-group">
                                     {!! Form::label('operator', __('admin_pages.page_payment_method_fields_label_name'), ['class'=>'col-sm-5 control-label', 'for'=>'operator']) !!}
                                     <div class="col-sm-7">
-                                        {{Form::select('payment_mode',[0=>'Select payment method','mpesa'=>'M-PESA','tigopesa'=>'TIGO-PESA'],null,['class'=>'form-control'])}}
+                                        {{Form::select('operator',[0=>'Select payment method','mpesa'=>'M-PESA','tigopesa'=>'TIGO-PESA'],null,['class'=>'form-control'])}}
                                     </div>
                                 </div>
                                 <div class="form-group">
