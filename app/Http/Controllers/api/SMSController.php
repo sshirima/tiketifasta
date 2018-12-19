@@ -43,7 +43,7 @@ class SmsController extends Controller
             }
 
             $smpp = new Smpp();
-            $smpp->setDebug(0);
+            $smpp->setDebug(1);
 
             $message = 'Test message';
 
