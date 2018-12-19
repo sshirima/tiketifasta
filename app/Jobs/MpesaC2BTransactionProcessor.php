@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Booking;
 use App\Models\BookingPayment;
+use App\Models\MpesaC2B;
 use App\Services\Bookings\AuthorizeBooking;
 use App\Services\Payments\BookingPayments\BookingPaymentProcessor;
 use App\Services\Payments\Mpesa\Mpesa;
@@ -41,7 +42,9 @@ class MpesaC2BTransactionProcessor implements ShouldQueue
             $validation = $this->validateMpesaC2BTransaction($this->request);
 
             if(!$validation['status']){
-                $this->deleteBooking($validation);
+
+                $this->cancelMpesaC2BTransaction();
+
                 return false;
             }
 
@@ -94,17 +97,19 @@ class MpesaC2BTransactionProcessor implements ShouldQueue
     }
 
     /**
-     * @param $response
+     *
      */
-    protected function deleteBooking($response): void
+    private function cancelMpesaC2BTransaction(): void
     {
-        if (array_key_exists('mpesaC2B', $response)) {
+        $cancellation_request = $this->postMpesaC2BTransaction(null, null, $this->request);
 
-            $mpesaC2B = $response['mpesaC2B'];
-
-            $this->deleteBookingByTransaction($mpesaC2B);
-
+        if (!$cancellation_request['status']) {
+            Log::error('Canceling mpesa c2b transaction failed, error:'.$cancellation_request['error'] . PHP_EOL);
         }
+
+        $response = $cancellation_request['response'];
+
+        Log::info('Cancelling mpesa c2b transaction success, transaction_id:'.$response['response']['transactionID'] . PHP_EOL);
     }
 
 

@@ -25,12 +25,12 @@ trait MpesaTransactionC2BRequest
             'spId' => env('MPESA_SPID'),
             'spPassword' => $spPassword,
             'timestamp' => $timestamp,
-            'resultType' => 'Completed',
-            'resultCode' => 0,
+            'resultType' => isset($ticket)?'Completed':'failed',
+            'resultCode' => isset($ticket)?'0':'999',
             'resultDesc' => 'Successful',
-            'serviceReceipt' => $ticket->ticket_ref,//Ticket receipt
+            'serviceReceipt' => isset($ticket)?$ticket->ticket_ref:null,//Ticket receipt
             'serviceDate' => date('Y-m-d H:i:s'),//Ticket ID
-            'serviceID' => $ticket->id,//Ticket ID
+            'serviceID' => isset($ticket)?$ticket->id:null,//Ticket ID
             'originatorConversationID' => $mpesaC2B->og_conversation_id,//Ticket ID
             'conversationID' => $mpesaC2B->conversation_id,//Ticket ID
             'transactionID' => $mpesaC2B->transaction_id,//Ticket ID

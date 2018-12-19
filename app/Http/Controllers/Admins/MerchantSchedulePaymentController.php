@@ -89,8 +89,7 @@ class MerchantSchedulePaymentController extends BaseController
                     'merchant_payment_accounts.account_number','merchants.name as merchant_name',
                     'merchant_payments.transaction_status as transaction_status')
                     ->join('merchant_payment_accounts','merchant_payment_accounts.id','=','merchant_payments.payment_account_id')
-                    ->join('merchants','merchant_payment_accounts.merchant_id','=','merchants.id')
-                ;
+                    ->join('merchants','merchant_payment_accounts.merchant_id','=','merchants.id');
             });
 
         $table = $this->setMerchantReportColumns($table);

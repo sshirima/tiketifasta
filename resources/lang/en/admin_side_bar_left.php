@@ -5,6 +5,8 @@ return [
     'header_title_general' => 'General settings',
     'header_title_account' => 'Accounts',
     'option_dashboard' => 'Dashboard',
+    'option_collection_reports' => 'Collection reports',
+    'option_disbursement_reports' => 'Disbursement reports',
     'option_schedules' => 'Schedules',
     'option_bookings' => 'Bookings',
     'option_tickets' => 'Tickets',

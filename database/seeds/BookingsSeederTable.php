@@ -34,7 +34,7 @@ class BookingsSeederTable extends Seeder
             ->join('trips',function ($join){
                 $join->on('trips.bus_id','=','buses.id')->on('trips.direction','=','schedules.direction');
             })
-            ->whereDate('days.date','=','2018-12-03')
+            ->whereDate('days.date','=','2018-12-21')
             ->get();
         print 'INFO: Fetch schedules, Schedules: ('.count($schedules).')'.PHP_EOL;
         print '====================='.PHP_EOL;
@@ -218,6 +218,7 @@ class BookingsSeederTable extends Seeder
             'amount'=>$booking->price,
             'booking_id'=>$booking->id,
             'method'=>$booking->payment,
+            'transaction_status'=>BookingPayment::TRANS_STATUS_SETTLED,
             'phone_number'=>$booking->phonenumber,
         ]);
     }
@@ -227,6 +228,7 @@ class BookingsSeederTable extends Seeder
             'msisdn'=>$booking->phonenumber,
             'amount'=>$booking->price,
             'account_reference'=>$bookingPayment->payment_ref,
+            'transaction_status'=>MpesaC2B::TRANS_STATUS_SETTLED,
             'booking_payment_id'=>$bookingPayment->id,
         ]);
     }
@@ -241,6 +243,7 @@ class BookingsSeederTable extends Seeder
             TigoOnlineC2B::COLUMN_BOOKING_PAYMENT_ID => $bookingPayment->id,
             TigoOnlineC2B::COLUMN_TAX =>'0',
             TigoOnlineC2B::COLUMN_FEE => '0',
+            'transaction_status'=>MpesaC2B::TRANS_STATUS_SETTLED,
             TigoOnlineC2B::COLUMN_AMOUNT => $booking->price,
         ]);
     }

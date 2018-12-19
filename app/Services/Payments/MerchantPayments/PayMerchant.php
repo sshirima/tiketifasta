@@ -34,7 +34,7 @@ trait PayMerchant
 
             if ($response['status']){
 
-                $this->setMerchantPaymentId($response['model'], $merchantPayment->id);
+                //$this->setMerchantPaymentId($response['model'], $merchantPayment->id);
 
                 $this->onMerchantPaymentInitiated($merchantPayment);
 
@@ -76,7 +76,7 @@ trait PayMerchant
 
             if ($response['status']){
 
-                $this->setMerchantPaymentId($response['model'],$merchantPayment->id );
+                //$this->setMerchantPaymentId($response['model'],$merchantPayment->id );
 
                 $this->onMerchantPaymentSuccess($merchantPayment);
 

@@ -26,8 +26,8 @@
         <ul class="sidebar-menu" data-widget="tree">
             <li class="header">{{__('admin_side_bar_left.header_title_general')}}</li>
             <li class="{{Request::is('admin') ? 'active' : ''}}"><a href="{{route('admin.home')}}"><i class="fas fa-tachometer-alt"></i> <span> {{__('admin_side_bar_left.option_dashboard')}}</span></a></li>
-            {{--<li class="{{Request::is('admin/approvals') ? 'active' : ''}}"><a href="{{route('admin.approvals.index')}}"><i class="fas fa-link"></i> <span> {{__('admin_side_bar_left.option_approvals')}}</span></a></li>
-            --}}
+            <li class="{{Request::is('admin/report/collection*') ? 'active' : ''}}"><a href="{{route('admin.collection_reports.daily')}}"><i class="fas fa-tachometer-alt"></i> <span> {{__('admin_side_bar_left.option_collection_reports')}}</span></a></li>
+            <li class="{{Request::is('admin/report/disbursement*') ? 'active' : ''}}"><a href="{{route('admin.disbursement_reports.daily')}}"><i class="fas fa-tachometer-alt"></i> <span> {{__('admin_side_bar_left.option_disbursement_reports')}}</span></a></li>
             <li class="treeview menu-open">
                 <a href="#">
                     <i class="fas fa-link"></i> <span>Payments</span>

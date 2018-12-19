@@ -184,6 +184,16 @@ Route::prefix('admin')->group(function () {
     Route::get('accounts/merchants', 'Admins\StaffController@index')->name('admin.merchant_accounts.index');
     Route::get('accounts/merchants/reset-password', 'Admins\StaffController@showPasswordResetForm')->name('admin.merchant_accounts.password.reset_form');
     Route::post('accounts/merchants/reset-password', 'Admins\StaffController@sendResetLinkEmail')->name('admin.merchant_accounts.password.send_link');
+
+    Route::get('reports/collections/daily', 'Admins\CollectionReport\DailyReportController@dailyReport')->name('admin.collection_reports.daily');
+    Route::get('reports/collections/merchants', 'Admins\CollectionReport\MerchantReportController@merchantReport')->name('admin.collection_reports.merchants');
+    Route::get('reports/collections/buses', 'Admins\CollectionReport\BusesReportController@busesReport')->name('admin.collection_reports.buses');
+    Route::get('reports/collections/bookings', 'Admins\CollectionReport\BookingReportController@bookingReport')->name('admin.collection_reports.bookings');
+
+    Route::get('reports/disbursement/daily', 'Admins\DisbursementReport\DailyReportController@dailyReport')->name('admin.disbursement_reports.daily');
+    Route::get('reports/disbursement/merchants', 'Admins\DisbursementReport\MerchantReportController@merchantReport')->name('admin.disbursement_reports.merchants');
+    Route::get('reports/disbursement/buses', 'Admins\DisbursementReport\BusesReportController@busesReport')->name('admin.disbursement_reports.buses');
+    Route::get('reports/disbursement/bookings', 'Admins\DisbursementReport\BookingReportController@bookingReport')->name('admin.disbursement_reports.bookings');
 });
 
 Route::prefix('merchant')->group(function () {
@@ -245,4 +255,5 @@ Route::prefix('merchant')->group(function () {
 
     //Tickets
     Route::get('tickets', 'Merchants\TicketController@index')->name('merchant.tickets.index');
+
 });

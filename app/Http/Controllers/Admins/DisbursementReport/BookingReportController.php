@@ -6,25 +6,40 @@
  * Time: 9:53 PM
  */
 
-namespace App\Http\Controllers\Admins;
+namespace App\Http\Controllers\Admins\CollectionReport;
 
+use App\Http\Controllers\Admins\BaseController;
 use App\Models\BookingPayment;
 use Illuminate\Http\Request;
 use Okipa\LaravelBootstrapTableList\TableList;
 
-class BookingPaymentController extends BaseController
+class BookingReportController extends BaseController
 {
+    protected $condition;
+    protected $dateCondition;
 
     public function __construct()
     {
         parent::__construct();
     }
 
-    public function index(Request $request){
+    public function bookingReport(Request $request){
 
         $table = $this->createBookingTable();
 
-        return view('admins.pages.payments.index_booking_payments')->with(['table'=>$table]);
+        if ($request->has('date')) {
+            $this->dateCondition = $request->input('date');
+        }
+
+        if ($request->has('bus_number')) {
+            $this->condition[] = ['buses.reg_number','=',$request->get('bus_number')];
+        }
+
+        if($request->has('merchant_name')){
+            $this->condition[] = ['merchants.name','=',$request->get('merchant_name')];
+        }
+
+        return view('admins.pages.reports.collection_reports')->with(['table'=>$table]);
     }
 
     /**
@@ -32,6 +47,8 @@ class BookingPaymentController extends BaseController
      */
     protected function createBookingTable()
     {
+        $this->condition[] =['booking_payments.transaction_status','=', BookingPayment::TRANS_STATUS_SETTLED];
+
         $table = app(TableList::class)
             ->setModel(BookingPayment::class)
             ->setRowsNumber(20)
@@ -49,6 +66,8 @@ class BookingPaymentController extends BaseController
                     ->join('locations as B', 'B.id', '=', 'trips.destination')
                     ->join('buses', 'buses.id', '=', 'trips.bus_id')
                     ->join('merchants', 'merchants.id', '=', 'buses.merchant_id')
+                    ->where($this->condition)
+                    ->whereDate('booking_payments.created_at', '=', $this->dateCondition);
                 ;
             });
 
@@ -71,18 +90,7 @@ class BookingPaymentController extends BaseController
             ->isCustomHtmlElement(function ($entity, $column) {
             return $entity['merchant_name'].'('.$entity['reg_number'].')';
         });
-        /*$table->addColumn('reg_number')->setTitle('Bus number')->isSortable()->isSearchable()->setCustomTable('buses')
-            ->isCustomHtmlElement(function ($entity, $column) {
-                return ;
-            });*/
-       /* $table->addColumn('name')->setTitle('From')->isSortable()->isSearchable()->setCustomTable('locations')
-            ->isCustomHtmlElement(function ($entity, $column) {
-                return $entity['from'];
-            });
-        $table->addColumn('name')->setTitle('To')->isSortable()->isSearchable()->setCustomTable('locations')
-            ->isCustomHtmlElement(function ($entity, $column) {
-                return $entity['to'];
-            });*/
+
         $table->addColumn('method')->setTitle('Paid via')->isSortable()->isSearchable();
 
         $table->addColumn('created_at')->setTitle('Created')->sortByDefault('desc')->isSortable()->isSearchable();
@@ -91,7 +99,6 @@ class BookingPaymentController extends BaseController
             ->isCustomHtmlElement(function ($entity, $column) {
                 return $this->getBookingPaymentLabelByStatus( $entity['transaction_status']);
             });
-        //$table->addColumn('updated_at')->setTitle('Updated')->isSortable()->isSearchable();
 
         return $table;
     }

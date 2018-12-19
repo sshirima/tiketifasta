@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
         //$this->call(AssignBusRouteSeederTable::class);
         //$this->call(AssignScheduleSeederTable::class);
         //$this->call(BookingsSeederTable::class);
-        //$this->call(MerchantPaymentSeederTable::class);
+        $this->call(MerchantPaymentSeederTable::class);
 
         /*$bus = \App\Models\Bus::with(['merchant','merchant.paymentAccounts:merchant_id,payment_mode,account_number'])->select('buses.merchant_id')->find(1);
 
@@ -59,6 +59,6 @@ class DatabaseSeeder extends Seeder
 
         //$response = $this->verifyTicketByReference('FC08NLUQVA8G');
 
-        print json_encode(\Carbon\Carbon::now()->subDay(1)->format('Y-m-d')).PHP_EOL;
+        //print json_encode(\Carbon\Carbon::now()->subDay(1)->format('Y-m-d')).PHP_EOL;
     }
 }

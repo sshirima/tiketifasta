@@ -57,26 +57,27 @@ trait MpesaTransactionC2B
         if (!isset($mpesaC2B)) {
             $log_event ='transaction not found:'.$attributes['mpesa_receipt'];
             Log::error(sprintf($log_format_fail,$log_action,'fail',$log_event,$log_data). PHP_EOL);
-            return array('status'=>false,'error'=>$log_event);
+            return array('status'=>false,'error'=>$log_event,'mpesaC2B'=>$mpesaC2B);
         }
+
+        $this->updateAuthorizationParams($attributes, $mpesaC2B);
+        $mpesaC2B->update();
 
         if ($this->isDuplicateC2B($attributes['mpesa_receipt'])) {
             $log_event ='transaction is already authorized:'.$attributes['mpesa_receipt'];
             Log::error(sprintf($log_format_fail,$log_action,'fail',$log_event,$log_data). PHP_EOL);
-            return array('status'=>false,'error'=>$log_event);
+            return array('status'=>false,'error'=>$log_event,'mpesaC2B'=>$mpesaC2B);
         }
 
         if ($mpesaC2B->amount != $attributes['amount']) {
             $log_event ='amount mismatch:'.$attributes['amount'];
             Log::error(sprintf($log_format_fail,$log_action,'fail',$log_event,$log_data). PHP_EOL);
-            return array('status'=>false,'error'=>$log_event);
+            return array('status'=>false,'error'=>$log_event,'mpesaC2B'=>$mpesaC2B);
         }
-
-        $this->updateAuthorizationParams($attributes, $mpesaC2B);
 
         Log::info(sprintf($log_format_success,$log_action,'success',$mpesaC2B->account_reference). PHP_EOL);
         
-        return array('status'=>$mpesaC2B->update(),'mpesaC2B'=>$mpesaC2B);
+        return array('status'=>true,'mpesaC2B'=>$mpesaC2B);
     }
 
     /**
@@ -95,18 +96,28 @@ trait MpesaTransactionC2B
     /**
      * @param MpesaC2B $mpesaC2B
      * @param Ticket $ticket
+     * @param null $requestArray
      * @return array
      */
-    public function postMpesaC2BTransaction(MpesaC2B $mpesaC2B, Ticket $ticket){
+    public function postMpesaC2BTransaction(MpesaC2B $mpesaC2B, Ticket $ticket, $requestArray=null){
         $ch = curl_init();
-        $log_action = 'Posting mpesa c2b transaction';
+        $log_action = isset($mpesaC2B)?'Posting mpesa c2b transaction':'Cancelling mpesa c2b transaction';
         $log_data = '';
         $log_format_fail = '%s, %s, %s, %s';
         $log_format_success = '%s, %s, %s';
         try{
+            if(isset($mpesaC2B)){
 
-            $this->setMpesaC2BTransactionStatus($mpesaC2B, MpesaC2B::TRANS_STATUS_POSTED);
-            $requestParameters = $this->getMpesaC2BRequestParams($ticket, $mpesaC2B);
+                $this->setMpesaC2BTransactionStatus($mpesaC2B, MpesaC2B::TRANS_STATUS_POSTED);
+
+                $requestParameters = $this->getMpesaC2BRequestParams($ticket, $mpesaC2B);
+            } else {
+
+                list($timestamp, $spPassword) = $this->getEncriptedPassword();
+
+                $requestParameters = $this->c2bConfirmRequestToXml($this->getFailRequestArray($requestArray, $spPassword, $timestamp));
+            }
+
             $url = config('payments.mpesa.c2b.confirm_transaction_url');
 
             curl_setopt($ch, CURLOPT_URL, $url);
@@ -145,7 +156,7 @@ trait MpesaTransactionC2B
                 switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
                     case 200:
                         $log_status = 'success';
-                        Log::info(sprintf($log_format_success,$log_action,$log_status,'reference:'.$mpesaC2B->account_reference). PHP_EOL);
+                        Log::info(sprintf($log_format_success,$log_action,$log_status,'reference:'.isset($mpesaC2B)?$mpesaC2B->account_reference:null). PHP_EOL);
                         $parser = new Parser();
                         $jsonResponse = $parser->xml($xmlResponse);
                         $reply = ['status'=>true, 'response'=>$jsonResponse];
@@ -181,9 +192,7 @@ trait MpesaTransactionC2B
      */
     private function getMpesaC2BRequestParams($ticket, $mpesaC2B)
     {
-        $timestamp = date('YmdHis');
-
-        $spPassword = $this->encryptSPPassword(env('MPESA_SPID'), env('MPESA_PASSWORD'), $timestamp);
+        list($timestamp, $spPassword) = $this->getEncriptedPassword();
 
         return $this->c2bConfirmRequestToXml($this->getMpesaC2BConfirmRequestArray($ticket, $mpesaC2B, $spPassword, $timestamp));
     }
@@ -293,6 +302,43 @@ trait MpesaTransactionC2B
             'amount' => $bookingPayment->amount,
             'account_reference' => $bookingPayment->payment_ref,
             'booking_payment_id' => $bookingPayment->id,
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    private function getEncriptedPassword(): array
+    {
+        $timestamp = date('YmdHis');
+
+        $spPassword = $this->encryptSPPassword(env('MPESA_SPID'), env('MPESA_PASSWORD'), $timestamp);
+        return array($timestamp, $spPassword);
+    }
+
+    /**
+     * @param $requestArray
+     * @param $spPassword
+     * @param $timestamp
+     * @return array
+     */
+    private function getFailRequestArray($requestArray, $spPassword, $timestamp): array
+    {
+        return [
+            'spId' => env('MPESA_SPID'),
+            'spPassword' => $spPassword,
+            'timestamp' => $timestamp,
+            'resultType' => 'failed',
+            'resultCode' => '999',
+            'resultDesc' => 'failure',
+            'serviceReceipt' => null,//Ticket receipt
+            'serviceDate' => null,//Ticket date
+            'serviceID' => null,//Ticket ID
+            'originatorConversationID' => isset($requestArray['og_conversation_id']) ? $requestArray['og_conversation_id'] : null,//Ticket ID
+            'conversationID' => isset($requestArray['og_conversation_id']) ? $requestArray['conversation_id'] : null,//Ticket ID
+            'transactionID' => isset($requestArray['og_conversation_id']) ? $requestArray['transaction_id'] : null,//Ticket ID
+            'initiator' => null,//$this->mpesaC2B->reference,//Ticket ID
+            'initiatorPassword' => null, //$this->mpesaC2B->reference,//Ticket ID
         ];
     }
 }

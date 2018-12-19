@@ -32,24 +32,22 @@ class SmsController extends Controller
             if ((strlen($phoneNumber) == 10)){
                 if($this->startsWithZero($phoneNumber,'0')){
                     $phoneNumber = '255'.substr($phoneNumber,1,10);
-                    return array('status'=>true,'number'=> $phoneNumber);
+                    //return array('status'=>true,'number'=> $phoneNumber);
                 } else {
                     return array('status'=>false,'error'=>'Number does not start with zero');
                 }
             } else if((strlen($phoneNumber) == 12)) {
-                return array('status'=>true,'number'=>$phoneNumber);
-            } else{
+                //return array('status'=>true,'number'=>$phoneNumber);
+            } else {
                 return array('status'=>false,'error'=>'10 or 12 digits number required');
             }
 
-            /*$smpp = new Smpp();
+            $smpp = new Smpp();
             $smpp->setDebug(0);
 
-            $format = config('smsc.format');
+            $message = 'Test message';
 
-            $message = sprintf($format,'Samson','TKB4G667');
-
-            $smpp->open(config('smsc.tigo.snmp.account.host'), config('smsc.tigo.snmp.account.port'), config('smsc.tigo.snmp.account.username'), config('smsc.tigo.snmp.account.password'));
+            $smpp->open('41.223.4.174', '6691', 'tfinance', 'td52fina');
 
             //echo json_encode($connection);
 
@@ -59,10 +57,10 @@ class SmsController extends Controller
                 print 'Message sent';
             } else {
                 print 'Sending message failed';
-            }*/
-            //$smpp->close();
+            }
+            $smpp->close();
 
-            //return 'Sent';
+            return 'Sent';
 
         }catch (\Exception $exception){
             $message = $exception->getMessage();
