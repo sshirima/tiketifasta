@@ -7,8 +7,8 @@
 @section('content-head')
     <section class="content-header">
         <h1>
-            Total collections:
-            <small>Collection from ---- to -----</small>
+            Total disbursement:
+            <small>Disbursement from ---- to -----</small>
         </h1>
         <ol class="breadcrumb">
 

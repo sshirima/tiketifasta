@@ -8,23 +8,14 @@
 
 return [
     'format'=>'Dear %s, You have booked Bus number:%s, From:%s to %s, Travelling on:%s, Ticket ref:%s.Thank you',
-    'voda'=>[],
-    'tigo'=>[
-        'snmp'=>[
-            'account'=>[
-                'username'=>env('TIGO_SMPP_USERNAME'),
-                'password'=>env('TIGO_SMPP_PASSWORD'),
-                'port'=>env('TIGO_SMPP_PORT'),
-                'host'=>env('TIGO_SMPP_HOST'),
-            ],
-            'settings'=>[
-                'sender'=>env('TIGO_SMPP_SENDER'),
-                'source_ton'=>env('TIGO_SMPP_SOURCE_NPI'),
-                'destination_ton'=>env('TIGO_SMPP_SOURCE_TON'),
-                'source_npi'=>env('TIGO_SMPP_SENDER'),
-                'destination_npi'=>env('TIGO_SMPP_DESTINATION_NPI'),
-            ],
-        ],
-    ],
-    'airtel'=>[],
+    'smpp_sender_id'=>env('SMPP_SENDER_ID'),
+    'voda_smpp_system_id'=>env('VODA_SMPP_SYSTEM_ID'),
+    'voda_smpp_password'=>env('VODA_SMPP_PASSWORD'),
+    'voda_smpp_port'=>env('VODA_SMPP_PORT'),
+    'voda_smpp_host'=>env('VODA_SMPP_HOST'),
+    'tigo_smpp_system_id'=>env('TIGO_SMPP_SYSTEM_ID'),
+    'tigo_smpp_password'=>env('TIGO_SMPP_PASSWORD'),
+    'tigo_smpp_port'=>env('TIGO_SMPP_PORT'),
+    'tigo_smpp_host'=>env('TIGO_SMPP_HOST'),
+
 ];

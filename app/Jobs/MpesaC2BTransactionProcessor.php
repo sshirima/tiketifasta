@@ -85,7 +85,6 @@ class MpesaC2BTransactionProcessor implements ShouldQueue
             $this->changeBookingPaymentTransactionStatus($bookingPayment, BookingPayment::TRANS_STATUS_SETTLED);
 
             $this->confirmTicket($ticket, $bookingPayment);
-            //ConfirmMpesaC2B::dispatch($mpesaC2B, $bookingPayment);
 
         } catch (Exception $ex){
 

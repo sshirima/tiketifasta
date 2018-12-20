@@ -15,6 +15,11 @@ class SentSMS extends Model
     const COLUMN_OPERATOR = 'operator';
     const COLUMN_IS_SENT = 'is_sent';
 
+    const OPERATORS = ['VODACOM','TIGO','AIRTEL','HALOTEL'];
+
+    const OPERATOR_VODACOM = 'VODACOM';
+    const OPERATOR_TIGO = 'TIGO';
+
     const TABLE = 'sent_sms';
     /**
      * The attributes that are mass assignable.

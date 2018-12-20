@@ -31,7 +31,7 @@ trait SendSMS
         $numCheck = $this->checkNumber($phoneNumber);
 
         if ($numCheck['status'] == false){
-            \Log::channel('sms_logs')->error($numCheck['error'] . PHP_EOL);
+            \Log::error('SMS receiver number invalid, message:'.$numCheck['error'] . PHP_EOL);
             return false;
         }
 
@@ -152,20 +152,33 @@ trait SendSMS
 
                 $sentSMS = $this->createSentSMSModel('TIGO',$phoneNumber, $message);
 
-                $smpp->open(config('smsc.tigo.snmp.account.host'), config('smsc.tigo.snmp.account.port'), config('smsc.tigo.snmp.account.username'), config('smsc.tigo.snmp.account.password'));
+                $smpp->open(config('smsc.tigo_smpp_host'), config('smsc.tigo_smpp_port'), config('smsc.tigo_smpp_system_id'), config('smsc.tigo_smpp_password'));
 
-                $sendSMSStatus = $smpp->send_long(config('smsc.tigo.snmp.settings.sender'), $phoneNumber, $message);
+                $sendSMSStatus = $smpp->send_long(config('smsc.smpp_sender_id'), $phoneNumber, $message);
 
                 //Save SMS
                 $sentSMS->is_sent = $sendSMSStatus;
                 $sentSMS->update();
 
                 return ['status'=>$sendSMSStatus];
-            } else {
+            } if ($operator == 'mpesa'){
+                $sentSMS = $this->createSentSMSModel('VODACOM',$phoneNumber, $message);
+
+                $smpp->open(config('smsc.voda_smpp_host'), config('smsc.voda_smpp_port'), config('smsc.voda_smpp_system_id'), config('smsc.voda_smpp_password'));
+
+                $sendSMSStatus = $smpp->send_long(config('smsc.smpp_sender_id'), $phoneNumber, $message);
+
+                //Save SMS
+                $sentSMS->is_sent = $sendSMSStatus;
+                $sentSMS->update();
+
+                return ['status'=>$sendSMSStatus];
+            }
+            else {
                 return ['status'=>false,'error'=>'Invalid operator'];
             }
         }catch (\Exception $ex){
-            \Log::channel('sms_logs')->error($ex->getMessage() . PHP_EOL);
+            \Log::error('Sending message, failed, error:'.$ex->getMessage() . PHP_EOL);
             return ['status'=>false, 'error'=>$ex->getMessage()];
         }
     }

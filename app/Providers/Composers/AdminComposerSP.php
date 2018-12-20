@@ -59,6 +59,7 @@ class AdminComposerSP extends ServiceProvider
                 'admins.pages.payments.merchant_scheduled_payments',
                 'admins.pages.payments.merchant_unpaid_transactions',
                 'admins.pages.reports.collection_reports',
+                'admins.pages.reports.disbursement_reports',
                 'admins.pages.scheduled_tasks.index',
                 'admins.pages.staff.email',
             ],

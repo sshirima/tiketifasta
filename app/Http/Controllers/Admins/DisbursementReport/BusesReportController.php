@@ -6,7 +6,7 @@
  * Time: 9:53 PM
  */
 
-namespace App\Http\Controllers\Admins\CollectionReport;
+namespace App\Http\Controllers\Admins\DisbursementReport;
 
 use App\Http\Controllers\Admins\BaseController;
 use App\Models\BookingPayment;

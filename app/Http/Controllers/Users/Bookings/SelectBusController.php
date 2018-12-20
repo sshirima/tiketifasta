@@ -158,6 +158,7 @@ class SelectBusController extends Controller
                 $this->changeBookingPaymentTransactionStatus($bookingPayment, BookingPayment::TRANS_STATUS_AUTHORIZED);
                 return redirect($bookingPaymentResponse['redirectUrl']);//($bookingPayment['redirectUrl']);
             }
+
             $error = 'Something went wrong on the request, please contact the support team';
             return redirect()->back()->with(['error'=>$error]);
 

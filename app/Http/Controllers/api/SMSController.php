@@ -21,7 +21,7 @@ class SmsController extends Controller
     public function send(Request $request)
     {
         // One number
-        try{
+        /*try{
             $input = $request->all();
             $phoneNumber = $input['phonenumber'];
 
@@ -65,7 +65,7 @@ class SmsController extends Controller
         }catch (\Exception $exception){
             $message = $exception->getMessage();
             return $message;
-        }
+        }*/
 
         // Multiple numbers
         //$smpp->sendBulk([1234567890, 0987654321], 'Hi!');
