@@ -332,8 +332,8 @@ trait MpesaTransactionC2B
             'serviceDate' => null,//Ticket date
             'serviceID' => null,//Ticket ID
             'originatorConversationID' => isset($requestArray['og_conversation_id']) ? $requestArray['og_conversation_id'] : null,//Ticket ID
-            'conversationID' => isset($requestArray['og_conversation_id']) ? $requestArray['conversation_id'] : null,//Ticket ID
-            'transactionID' => isset($requestArray['og_conversation_id']) ? $requestArray['transaction_id'] : null,//Ticket ID
+            'conversationID' => isset($requestArray['conversation_id']) ? $requestArray['conversation_id'] : null,//Ticket ID
+            'transactionID' => isset($requestArray['transaction_id']) ? $requestArray['transaction_id'] : null,//Ticket ID
             'initiator' => null,//$this->mpesaC2B->reference,//Ticket ID
             'initiatorPassword' => null, //$this->mpesaC2B->reference,//Ticket ID
         ];
