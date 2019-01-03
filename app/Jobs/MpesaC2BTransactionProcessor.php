@@ -100,7 +100,9 @@ class MpesaC2BTransactionProcessor implements ShouldQueue
      */
     private function cancelMpesaC2BTransaction()
     {
-        $cancellation_request = $this->postMpesaC2BTransaction(null, null, $this->request);
+        $attributes = $this->getMpesaC2BAuthorizationParamsArray($this->request);
+
+        $cancellation_request = $this->postMpesaC2BTransaction(null, null, $attributes);
 
         if (!$cancellation_request['status']) {
             Log::error('Canceling mpesa c2b transaction failed, error:'.$cancellation_request['error'] . PHP_EOL);

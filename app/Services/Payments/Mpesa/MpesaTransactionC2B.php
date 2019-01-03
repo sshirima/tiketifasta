@@ -321,7 +321,7 @@ trait MpesaTransactionC2B
      */
     private function getFailRequestArray($requestArray, $spPassword, $timestamp): array
     {
-        Log::warning('Mpesa request: '.json_encode($requestArray) . PHP_EOL);
+        //Log::warning('Mpesa request: '.json_encode($requestArray) . PHP_EOL);
         return [
             'spId' => env('MPESA_SPID'),
             'spPassword' => $spPassword,
