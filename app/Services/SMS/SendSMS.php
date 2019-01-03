@@ -130,7 +130,7 @@ trait SendSMS
     protected function createSentSMSModel($operator, $phoneNumber, $message)
     {
         $sentSMS = SentSMS::create([
-            'sender' => config('smsc.tigo.snmp.settings.sender'),
+            'sender' => config('smsc.smpp_sender_id'),
             'receiver' => $phoneNumber,
             'message' => $message,
             'operator' => $operator
