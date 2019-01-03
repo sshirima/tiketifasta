@@ -8,9 +8,11 @@
 
 namespace App\Services\Tickets;
 
+use App\Jobs\SendTicketSMSJob;
 use App\Models\BookingPayment;
 use App\Models\Ticket;
 use App\Services\SMS\SendSMS;
+use Illuminate\Support\Facades\Log;
 
 trait TicketManager
 {
@@ -66,7 +68,9 @@ trait TicketManager
      * @return bool
      */
     public function confirmTicket(Ticket $ticket, $transaction){
-        $this->sendConfirmationMessageToCustomer($ticket, $transaction);
+        Log::info('Dispatching SendTicketSMSJob...');
+        SendTicketSMSJob::dispatch($ticket, $transaction);
+        //$this->sendConfirmationMessageToCustomer($ticket, $transaction);
         $ticket->status = Ticket::STATUS_CONFIRMED;
         return $ticket->update();
     }
