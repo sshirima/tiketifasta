@@ -12,6 +12,7 @@ namespace App\Services\SMS;
 use App\Models\SentSMS;
 use App\Models\Ticket;
 use App\Models\TigoOnlineC2B;
+use Illuminate\Support\Facades\Log;
 
 trait SendSMS
 {
@@ -148,7 +149,9 @@ trait SendSMS
         $smpp = new Smpp();
 
         try{
+            Log::info('Sending ticket SMS,success, phone_number:'.$phoneNumber);
             if ($operator == 'tigopesa') {
+
 
                 $sentSMS = $this->createSentSMSModel('TIGO',$phoneNumber, $message);
 
@@ -160,8 +163,13 @@ trait SendSMS
                 $sentSMS->is_sent = $sendSMSStatus;
                 $sentSMS->update();
 
+                if (!$sendSMSStatus){
+                    Log::info('Sending SMS on tigo failed, phone_number:'.$phoneNumber);
+                }
+
                 return ['status'=>$sendSMSStatus];
             } if ($operator == 'mpesa'){
+
                 $sentSMS = $this->createSentSMSModel('VODACOM',$phoneNumber, $message);
 
                 $smpp->open(config('smsc.voda_smpp_host'), config('smsc.voda_smpp_port'), config('smsc.voda_smpp_system_id'), config('smsc.voda_smpp_password'));
@@ -171,6 +179,10 @@ trait SendSMS
                 //Save SMS
                 $sentSMS->is_sent = $sendSMSStatus;
                 $sentSMS->update();
+
+                if (!$sendSMSStatus){
+                    Log::info('Sending SMS on Vodacom failed, phone_number:'.$phoneNumber);
+                }
 
                 return ['status'=>$sendSMSStatus];
             }

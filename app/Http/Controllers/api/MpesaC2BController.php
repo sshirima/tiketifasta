@@ -48,7 +48,7 @@ class MpesaC2BController extends Controller
             MpesaC2BTransactionProcessor::dispatch($parser->xml($request->getContent()));
 
         } catch (Exception $ex) {
-            $log_event = 'exception:'.$ex->getMessage();
+            $log_event = 'exception: '.$ex->getMessage();
             Log::error(sprintf($log_format_fail,$log_action,'fail',$log_event,$log_data). PHP_EOL);
         }
 

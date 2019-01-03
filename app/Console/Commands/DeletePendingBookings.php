@@ -56,7 +56,7 @@ class DeletePendingBookings extends Command
                 Log::info('Delete pending booking, success, id:'.$bookings->id);
             }
         }catch(\Exception $ex){
-            Log::error('Delete pending booking, failed, exception'.$ex->getMessage() );
+            Log::error('Delete pending booking, failed, exception: '.$ex->getMessage() );
         }
 
         //$this->info('');
