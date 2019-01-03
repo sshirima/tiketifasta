@@ -113,6 +113,8 @@ trait MpesaTransactionC2B
                 $requestParameters = $this->c2bConfirmRequestToXml($this->getFailRequestArray($requestArray, $spPassword, $timestamp));
             }
 
+            Log::info('Parameters: '.json_encode($requestParameters). PHP_EOL);
+            
             $url = config('payments.mpesa.c2b.confirm_transaction_url');
 
             curl_setopt($ch, CURLOPT_URL, $url);
