@@ -21,7 +21,7 @@ class SmsController extends Controller
     public function send(Request $request)
     {
         // One number
-        /*try{
+        try{
             $input = $request->all();
             $phoneNumber = $input['phonenumber'];
 
@@ -47,7 +47,7 @@ class SmsController extends Controller
 
             $message = 'Test message';
 
-            $smpp->open('41.223.4.174', '6691', 'tfinance', 'td52fina');
+            $smpp->open(config('smsc.voda_smpp_host'), config('smsc.voda_smpp_port'), config('smsc.voda_smpp_system_id'), config('smsc.voda_smpp_password'));
 
             //echo json_encode($connection);
 
@@ -65,7 +65,7 @@ class SmsController extends Controller
         }catch (\Exception $exception){
             $message = $exception->getMessage();
             return $message;
-        }*/
+        }
 
         // Multiple numbers
         //$smpp->sendBulk([1234567890, 0987654321], 'Hi!');
