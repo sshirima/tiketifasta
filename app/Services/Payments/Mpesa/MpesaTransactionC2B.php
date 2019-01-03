@@ -113,7 +113,7 @@ trait MpesaTransactionC2B
                 $requestParameters = $this->c2bConfirmRequestToXml($this->getFailRequestArray($requestArray, $spPassword, $timestamp));
             }
 
-            Log::info('Parameters: '.json_encode($requestParameters). PHP_EOL);
+            //Log::info('Parameters: '.json_encode($requestParameters). PHP_EOL);
 
             $url = config('payments.mpesa.c2b.confirm_transaction_url');
 
@@ -130,23 +130,23 @@ trait MpesaTransactionC2B
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 
-            curl_setopt($ch, CURLOPT_TIMEOUT, config('payments.mpesa.b2c.timeout'));
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, config('payments.mpesa.b2c.connect_timeout'));
+            /*curl_setopt($ch, CURLOPT_TIMEOUT, config('payments.mpesa.b2c.timeout'));
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, config('payments.mpesa.b2c.connect_timeout'));*/
 
             $log_data = 'request:'.json_encode($requestParameters);
 
             $xmlResponse = curl_exec($ch);
 
-            if ($xmlResponse === false) {
+            /*if ($xmlResponse === false) {
                 $info = curl_getinfo($ch);
                 if ($info['http_code'] === 0) {
                     $log_status = 'fail';
-                    $log_event = 'connection timed out:'.$url;
+                    $log_event = 'Connection timed out:'.$url;
                     Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,''). PHP_EOL);
                     curl_close($ch);
                     return ['status'=>false,'error'=>$log_event];
                 }
-            }
+            }*/
             //Check HTTP status code
             if (!curl_errno($ch)) {
                 $log_data = $log_data .',response:'.$xmlResponse;
