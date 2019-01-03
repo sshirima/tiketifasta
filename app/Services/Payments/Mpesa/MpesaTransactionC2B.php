@@ -137,7 +137,7 @@ trait MpesaTransactionC2B
 
             $xmlResponse = curl_exec($ch);
 
-            /*if ($xmlResponse === false) {
+            if ($xmlResponse === false) {
                 $info = curl_getinfo($ch);
                 if ($info['http_code'] === 0) {
                     $log_status = 'fail';
@@ -146,7 +146,8 @@ trait MpesaTransactionC2B
                     curl_close($ch);
                     return ['status'=>false,'error'=>$log_event];
                 }
-            }*/
+            }
+            
             //Check HTTP status code
             if (!curl_errno($ch)) {
                 $log_data = $log_data .',response:'.$xmlResponse;
