@@ -64,7 +64,7 @@ trait MpesaTransactionC2B
         $mpesaC2B->update();
 
         if ($this->isDuplicateC2B($attributes['mpesa_receipt'])) {
-            $log_event ='transaction is already authorized:'.$attributes['mpesa_receipt'];
+            $log_event ='Transaction is already authorized:'.$attributes['mpesa_receipt'];
             Log::error(sprintf($log_format_fail,$log_action,'fail',$log_event,$log_data). PHP_EOL);
             return array('status'=>false,'error'=>$log_event,'mpesaC2B'=>$mpesaC2B);
         }
@@ -114,7 +114,7 @@ trait MpesaTransactionC2B
             }
 
             Log::info('Parameters: '.json_encode($requestParameters). PHP_EOL);
-            
+
             $url = config('payments.mpesa.c2b.confirm_transaction_url');
 
             curl_setopt($ch, CURLOPT_URL, $url);

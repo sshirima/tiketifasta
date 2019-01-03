@@ -63,6 +63,8 @@ class MpesaC2BController extends BaseController
 
         $table->addColumn('initiator')->setTitle('Paid by')->isSearchable()->isSortable();
 
+        $table->addColumn('mpesa_receipt')->setTitle('Mpesa Recipient')->isSearchable();
+
         $table->addColumn('created_at')->setTitle('Transaction date')->isSearchable()->isSortable()->sortByDefault('desc');
 
         $table->addColumn('transaction_status')->setTitle('Status')->isSortable()->isCustomHtmlElement(function($entity, $column){
