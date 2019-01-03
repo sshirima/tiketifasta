@@ -60,9 +60,6 @@ trait MpesaTransactionC2B
             return array('status'=>false,'error'=>$log_event,'mpesaC2B'=>$mpesaC2B);
         }
 
-        $this->updateAuthorizationParams($attributes, $mpesaC2B);
-        $mpesaC2B->update();
-
         if ($this->isDuplicateC2B($attributes['mpesa_receipt'])) {
             $log_event ='Transaction is already authorized:'.$attributes['mpesa_receipt'];
             Log::error(sprintf($log_format_fail,$log_action,'fail',$log_event,$log_data). PHP_EOL);
@@ -74,6 +71,9 @@ trait MpesaTransactionC2B
             Log::error(sprintf($log_format_fail,$log_action,'fail',$log_event,$log_data). PHP_EOL);
             return array('status'=>false,'error'=>$log_event,'mpesaC2B'=>$mpesaC2B);
         }
+
+        $this->updateAuthorizationParams($attributes, $mpesaC2B);
+        $mpesaC2B->update();
 
         Log::info(sprintf($log_format_success,$log_action,'success',$mpesaC2B->account_reference). PHP_EOL);
         
