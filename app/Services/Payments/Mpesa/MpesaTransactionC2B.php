@@ -93,12 +93,7 @@ trait MpesaTransactionC2B
         return $mpesaC2B->update();
     }
 
-    /**
-     * @param MpesaC2B $mpesaC2B
-     * @param Ticket $ticket
-     * @param null $requestArray
-     * @return array
-     */
+    
     public function postMpesaC2BTransaction(MpesaC2B $mpesaC2B, Ticket $ticket, $requestArray=null){
         $ch = curl_init();
         $log_action = isset($mpesaC2B)?'Posting mpesa c2b transaction':'Cancelling mpesa c2b transaction';
