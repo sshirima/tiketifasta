@@ -68,9 +68,9 @@ trait TicketManager
      * @return bool
      */
     public function confirmTicket(Ticket $ticket, $transaction){
-        Log::info('Dispatching SendTicketSMSJob...');
-        SendTicketSMSJob::dispatch($ticket, $transaction);
-        //$this->sendConfirmationMessageToCustomer($ticket, $transaction);
+        /*Log::info('Dispatching SendTicketSMSJob...');
+        SendTicketSMSJob::dispatch($ticket, $transaction);*/
+        $this->sendConfirmationMessageToCustomer($ticket, $transaction);
         $ticket->status = Ticket::STATUS_CONFIRMED;
         return $ticket->update();
     }
