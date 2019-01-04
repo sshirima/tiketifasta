@@ -130,8 +130,8 @@ trait MpesaTransactionC2B
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 
-            /*curl_setopt($ch, CURLOPT_TIMEOUT, config('payments.mpesa.b2c.timeout'));
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, config('payments.mpesa.b2c.connect_timeout'));*/
+            curl_setopt($ch, CURLOPT_TIMEOUT, config('payments.mpesa.b2c.timeout'));
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, config('payments.mpesa.b2c.connect_timeout'));
 
             $log_data = 'request:'.json_encode($requestParameters);
 
@@ -147,7 +147,7 @@ trait MpesaTransactionC2B
                     return ['status'=>false,'error'=>$log_event];
                 }
             }
-            
+
             //Check HTTP status code
             if (!curl_errno($ch)) {
                 $log_data = $log_data .',response:'.$xmlResponse;
@@ -324,20 +324,18 @@ trait MpesaTransactionC2B
     {
         //Log::warning('Mpesa request: '.json_encode($requestArray) . PHP_EOL);
         return [
-            'spId' => env('MPESA_SPID'),
+            'spId' => config('payments.mpesa.c2b.spid'),
             'spPassword' => $spPassword,
             'timestamp' => $timestamp,
             'resultType' => 'failed',
             'resultCode' => '999',
-            'resultDesc' => 'failure',
-            'serviceReceipt' => null,//Ticket receipt
-            'serviceDate' => null,//Ticket date
-            'serviceID' => null,//Ticket ID
+            'resultDesc' => 'failed',
+            'serviceReceipt' => PaymentManager::random_code(8),//Ticket receipt
+            'serviceDate' => date('Y-m-d H:i:s'),//Ticket ID
+            'serviceID' => random_int(1000000, 9999999),//Ticket ID
             'originatorConversationID' => isset($requestArray['og_conversation_id']) ? $requestArray['og_conversation_id'] : null,//Ticket ID
             'conversationID' => isset($requestArray['conversation_id']) ? $requestArray['conversation_id'] : null,//Ticket ID
             'transactionID' => isset($requestArray['transaction_id']) ? $requestArray['transaction_id'] : null,//Ticket ID
-            'initiator' => null,//$this->mpesaC2B->reference,//Ticket ID
-            'initiatorPassword' => null, //$this->mpesaC2B->reference,//Ticket ID
         ];
     }
 }

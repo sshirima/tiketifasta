@@ -22,7 +22,7 @@ trait MpesaTransactionC2BRequest
     private function getMpesaC2BConfirmRequestArray($ticket, $mpesaC2B, $spPassword, $timestamp): array
     {
         return [
-            'spId' => env('MPESA_SPID'),
+            'spId' =>config('payments.mpesa.c2b.spid'),
             'spPassword' => $spPassword,
             'timestamp' => $timestamp,
             'resultType' => isset($ticket)?'Completed':'failed',

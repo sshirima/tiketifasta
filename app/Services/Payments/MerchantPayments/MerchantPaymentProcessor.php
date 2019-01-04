@@ -103,7 +103,7 @@ trait MerchantPaymentProcessor
                 if (!$report['status']) {
                     \Log::error('Error#' . $report['error']);
                 } else {
-                    \Log::info('INFO: Success# Transfer to merchant account success');
+                    \Log::info('Transfer funds to merchant account success');
                 }
             }
         } catch (\Exception $exception) {
