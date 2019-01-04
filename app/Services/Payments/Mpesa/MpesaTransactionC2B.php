@@ -154,7 +154,9 @@ trait MpesaTransactionC2B
                 switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
                     case 200:
                         $log_status = 'success';
-                        Log::info(sprintf($log_format_success,$log_action,$log_status,'reference:'.isset($mpesaC2B)?$mpesaC2B->account_reference:$requestArray['mpesa_receipt']). PHP_EOL);
+                        if(isset($mpesaC2B)){
+                            Log::info(sprintf($log_format_success,$log_action,$log_status,'reference:'.$mpesaC2B->account_reference));
+                        }
                         $parser = new Parser();
                         $jsonResponse = $parser->xml($xmlResponse);
                         $reply = ['status'=>true, 'response'=>$jsonResponse];
