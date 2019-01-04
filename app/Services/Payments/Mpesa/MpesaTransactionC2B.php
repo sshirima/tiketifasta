@@ -175,7 +175,7 @@ trait MpesaTransactionC2B
 
         }catch (\Exception $ex){
             $log_status = 'fail';
-            $log_event = 'exception:'.$ex->getMessage();
+            $log_event = 'exception:'.$ex->getTraceAsString();
             Log::error(sprintf($log_format_fail,$log_action,$log_status,$log_event,$log_data). PHP_EOL);
             $reply = array('status' => false, 'error' => $log_event);
         }
