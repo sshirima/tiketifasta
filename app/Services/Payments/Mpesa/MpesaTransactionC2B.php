@@ -155,7 +155,9 @@ trait MpesaTransactionC2B
                     case 200:
                         $log_status = 'success';
                         if(isset($mpesaC2B)){
-                            Log::info(sprintf($log_format_success,$log_action,$log_status,'reference:'.$mpesaC2B->account_reference));
+                            Log::info(sprintf($log_format_success,$log_action,$log_status,'reference: '.$mpesaC2B->account_reference));
+                        } else{
+                            Log::info(sprintf($log_format_success,$log_action,$log_status,'reference: '.$requestArray['mpesa_receipt']));
                         }
                         $parser = new Parser();
                         $jsonResponse = $parser->xml($xmlResponse);
