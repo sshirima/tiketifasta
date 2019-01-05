@@ -52,6 +52,7 @@ class SmsController extends Controller
             //echo json_encode($connection);
 
             $res = $smpp->send_long(config('smsc.smpp_sender_id'),$phoneNumber, $message);*/
+            echo 'host:'.config('smsc.tigo_smpp_host').', port:'. config('smsc.tigo_smpp_port').', systemId: '. config('smsc.tigo_smpp_system_id').', password: '. config('smsc.tigo_smpp_password');
             $smpp->open(config('smsc.tigo_smpp_host'), config('smsc.tigo_smpp_port'), config('smsc.tigo_smpp_system_id'), config('smsc.tigo_smpp_password'));
 
             $res = $smpp->send_long(config('smsc.smpp_sender_id'), $phoneNumber, $message);
