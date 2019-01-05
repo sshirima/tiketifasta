@@ -166,7 +166,6 @@ return [
         Nathanmac\Utilities\Parser\ParserServiceProvider::class,
         Nathanmac\Utilities\Responder\ResponderServiceProvider::class,
         LaravelSmpp\LaravelSmppServiceProvider::class,
-        Eyewitness\Eye\EyeServiceProvider::class,
         Arcanedev\LogViewer\LogViewerServiceProvider::class,
         //Composer Service provider
         App\Providers\Composers\AdminComposerSP::class,

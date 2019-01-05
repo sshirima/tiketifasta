@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6d659006d7508a230ce32d85ab45fca9",
+    "content-hash": "d8e90c027b62b41d545db9ea35608a20",
     "packages": [
         {
             "name": "almasaeed2010/adminlte",
@@ -1091,115 +1091,6 @@
                 "parser"
             ],
             "time": "2018-03-08T01:11:30+00:00"
-        },
-        {
-            "name": "eyewitness/cron-expression",
-            "version": "v3.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/eyewitness/cron-expression.git",
-                "reference": "0665701f70761398e333cd999fa4f6b0f95b3c1b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/eyewitness/cron-expression/zipball/0665701f70761398e333cd999fa4f6b0f95b3c1b",
-                "reference": "0665701f70761398e333cd999fa4f6b0f95b3c1b",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.0.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~6.4"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Eyewitness\\Cron\\": "src/Eyewitness/Cron/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Michael Dowling",
-                    "email": "mtdowling@gmail.com",
-                    "homepage": "https://github.com/mtdowling"
-                },
-                {
-                    "name": "Chris Tankersley",
-                    "email": "chris@ctankersley.com",
-                    "homepage": "https://github.com/dragonmantank"
-                }
-            ],
-            "description": "CRON for PHP: Calculate the next or previous run date and determine if a CRON expression is due",
-            "keywords": [
-                "cron",
-                "schedule"
-            ],
-            "time": "2018-02-07T04:37:19+00:00"
-        },
-        {
-            "name": "eyewitness/eye",
-            "version": "dev-beta",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/eyewitness/eye.git",
-                "reference": "3d6364ebef7e01e5ce535506baf4e3d5b7cc7eba"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/eyewitness/eye/zipball/3d6364ebef7e01e5ce535506baf4e3d5b7cc7eba",
-                "reference": "3d6364ebef7e01e5ce535506baf4e3d5b7cc7eba",
-                "shasum": ""
-            },
-            "require": {
-                "eyewitness/cron-expression": "~3.0",
-                "guzzlehttp/guzzle": "5.*|6.*",
-                "laravel/framework": "~5.1",
-                "nesbot/carbon": "*"
-            },
-            "require-dev": {
-                "fzaninotto/faker": "~1.4",
-                "mockery/mockery": "~1.0",
-                "orchestra/testbench": "~3.5",
-                "phpunit/phpunit": "~6.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Eyewitness\\Eye\\EyeServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Eyewitness\\Eye\\": "app"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Laurence",
-                    "email": "laurence@eyewitness.io"
-                }
-            ],
-            "description": "Eyewitness.io client for Laravel 5 applications",
-            "homepage": "https://github.com/eyewitness/eye",
-            "keywords": [
-                "cron",
-                "eyewitness",
-                "laravel 5",
-                "monitor",
-                "queue"
-            ],
-            "time": "2018-10-05T05:33:20+00:00"
         },
         {
             "name": "fideloper/proxy",
@@ -3743,16 +3634,16 @@
         },
         {
             "name": "symfony/contracts",
-            "version": "v1.0.0",
+            "version": "v1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/contracts.git",
-                "reference": "4a33574d5771f4b04334cd4f7d43de96a92efb62"
+                "reference": "1aa7ab2429c3d594dd70689604b5cf7421254cdf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/contracts/zipball/4a33574d5771f4b04334cd4f7d43de96a92efb62",
-                "reference": "4a33574d5771f4b04334cd4f7d43de96a92efb62",
+                "url": "https://api.github.com/repos/symfony/contracts/zipball/1aa7ab2429c3d594dd70689604b5cf7421254cdf",
+                "reference": "1aa7ab2429c3d594dd70689604b5cf7421254cdf",
                 "shasum": ""
             },
             "require": {
@@ -3807,7 +3698,7 @@
                 "interoperability",
                 "standards"
             ],
-            "time": "2018-10-31T08:00:32+00:00"
+            "time": "2018-12-05T08:06:11+00:00"
         },
         {
             "name": "symfony/css-selector",
@@ -4535,21 +4426,21 @@
         },
         {
             "name": "symfony/translation",
-            "version": "v4.2.0",
+            "version": "v4.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/translation.git",
-                "reference": "ff9a878c9b8f8bcd4d9138e2d32f508c942773d9"
+                "reference": "c0e2191e9bed845946ab3d99767513b56ca7dcd6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/translation/zipball/ff9a878c9b8f8bcd4d9138e2d32f508c942773d9",
-                "reference": "ff9a878c9b8f8bcd4d9138e2d32f508c942773d9",
+                "url": "https://api.github.com/repos/symfony/translation/zipball/c0e2191e9bed845946ab3d99767513b56ca7dcd6",
+                "reference": "c0e2191e9bed845946ab3d99767513b56ca7dcd6",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.1.3",
-                "symfony/contracts": "^1.0",
+                "symfony/contracts": "^1.0.2",
                 "symfony/polyfill-mbstring": "~1.0"
             },
             "conflict": {
@@ -4604,7 +4495,7 @@
             ],
             "description": "Symfony Translation Component",
             "homepage": "https://symfony.com",
-            "time": "2018-11-27T07:20:32+00:00"
+            "time": "2018-12-06T10:45:32+00:00"
         },
         {
             "name": "symfony/var-dumper",
@@ -6520,9 +6411,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "eyewitness/eye": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
