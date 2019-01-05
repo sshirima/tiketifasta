@@ -50,11 +50,6 @@ return [
             'path' => storage_path('logs/laravel.log'),
             'level' => 'debug',
         ],
-        'tigoussdb2c' => [
-            'driver' => 'daily',
-            'path' => storage_path('logs/laravel.log'),
-            'level' => 'debug',
-        ],
 
         'single' => [
             'driver' => 'single',
