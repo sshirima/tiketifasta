@@ -21,7 +21,7 @@ class SmsController extends Controller
     public function send(Request $request)
     {
         // One number
-        /*try{
+        try{
             $input = $request->all();
             $phoneNumber = $input['phonenumber'];
 
@@ -47,11 +47,14 @@ class SmsController extends Controller
 
             $message = 'Test message';
 
-            $smpp->open(config('smsc.voda_smpp_host'), config('smsc.voda_smpp_port'), config('smsc.voda_smpp_system_id'), config('smsc.voda_smpp_password'));
+            /*$smpp->open(config('smsc.voda_smpp_host'), config('smsc.voda_smpp_port'), config('smsc.voda_smpp_system_id'), config('smsc.voda_smpp_password'));
 
             //echo json_encode($connection);
 
-            $res = $smpp->send_long(config('smsc.smpp_sender_id'),$phoneNumber, $message);
+            $res = $smpp->send_long(config('smsc.smpp_sender_id'),$phoneNumber, $message);*/
+            $smpp->open(config('smsc.tigo_smpp_host'), config('smsc.tigo_smpp_port'), config('smsc.tigo_smpp_system_id'), config('smsc.tigo_smpp_password'));
+
+            $res = $smpp->send_long(config('smsc.smpp_sender_id'), $phoneNumber, $message);
 
             if ($res == true){
                 print 'Message sent';
@@ -65,7 +68,7 @@ class SmsController extends Controller
         }catch (\Exception $exception){
             $message = $exception->getMessage();
             return $message;
-        }*/
+        }
 
         // Multiple numbers
         //$smpp->sendBulk([1234567890, 0987654321], 'Hi!');
