@@ -55,11 +55,6 @@ return [
             'path' => storage_path('logs/laravel.log'),
             'level' => 'debug',
         ],
-        'sms_logs' => [
-            'driver' => 'daily',
-            'path' => storage_path('logs/laravel.log'),
-            'level' => 'debug',
-        ],
 
         'single' => [
             'driver' => 'single',
