@@ -1,7 +1,5 @@
 <?php
 use \koolreport\widgets\koolphp\Table;
-use \koolreport\widgets\google\BarChart;
-use \koolreport\widgets\google\ColumnChart;
 ?>
 
     <div class="text-center">

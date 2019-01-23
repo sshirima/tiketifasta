@@ -8,12 +8,8 @@
 
 namespace App\Reports\Admin\Tickets;
 
-
-use App\Models\BookingPayment;
-use App\Models\Ticket;
 use Illuminate\Support\Facades\DB;
 use koolreport\processes\Limit;
-use \koolreport\clients\Bootstrap; // Use Bootstrap service
 
 class TicketsCountByDate extends \koolreport\KoolReport
 {
@@ -22,12 +18,21 @@ class TicketsCountByDate extends \koolreport\KoolReport
 
     public function settings()
     {
+        if(env('APP_ENV') == 'production'){
+            $conn ="mysql:host=".'172.31.2.175'.";dbname=".env('DB_DATABASE_PROD');
+            $un = env('DB_USERNAME_PROD');
+            $ps = env('DB_PASSWORD_PROD');
+        } else {
+            $conn = "mysql:host=".env('DB_HOST').";dbname=".env('DB_DATABASE');
+            $un = env('DB_USERNAME');
+            $ps = env('DB_PASSWORD');
+        }
         return array(
             "dataSources"=>array(
                 "database"=>array(
-                    "connectionString"=>"mysql:host=".env('DB_HOST', '127.0.0.1').";dbname=".env('DB_DATABASE', 'forge'),
-                    "username"=>env('DB_USERNAME', 'forge'),
-                    "password"=>env('DB_PASSWORD', ''),
+                    "connectionString"=>$conn,
+                    "username"=>$un,
+                    "password"=>$ps,
                     "charset"=>"utf8"
                 )
             )
