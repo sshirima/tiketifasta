@@ -21,12 +21,21 @@ class C2BCollectionsByDate extends \koolreport\KoolReport
 
     public function settings()
     {
+        if(env('APP_ENV') == 'production'){
+            $conn ="mysql:host=".env('DB_CONNECTION_PROD', '127.0.0.1').";dbname=".env('DB_DATABASE_PROD', 'forge');
+            $un = env('DB_USERNAME_PROD');
+            $ps = env('DB_PASSWORD_PROD');
+        } else {
+            $conn = "mysql:host=".env('DB_HOST', '127.0.0.1').";dbname=".env('DB_DATABASE', 'forge');
+            $un = env('DB_USERNAME');
+            $ps = env('DB_PASSWORD');
+        }
         return array(
             "dataSources"=>array(
                 "database"=>array(
-                    "connectionString"=>"mysql:host=".env('DB_HOST', '127.0.0.1').";dbname=".env('DB_DATABASE', 'forge'),
-                    "username"=>env('DB_USERNAME', 'forge'),
-                    "password"=>env('DB_PASSWORD', ''),
+                    "connectionString"=>$conn,
+                    "username"=>$un,
+                    "password"=>$ps,
                     "charset"=>"utf8"
                 )
             )
