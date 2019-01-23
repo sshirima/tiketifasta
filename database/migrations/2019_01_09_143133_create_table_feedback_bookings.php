@@ -18,7 +18,7 @@ class CreateTableFeedbackBookings extends Migration
             $table->unsignedTinyInteger('score');
             $table->unsignedInteger('booking_id');
             $table->unsignedInteger('user_id')->nullable();
-            $table->timestamp('created_at');
+            $table->timestamp('created_at')->nullable();
 
             $table->foreign('booking_id')->references('id')->on('bookings')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
