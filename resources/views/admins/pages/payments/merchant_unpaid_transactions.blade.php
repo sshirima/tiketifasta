@@ -23,7 +23,7 @@
     <section class="content container-fluid">
         <div class="nav-tabs-custom">
             <div class="nav nav-tabs">
-                @include('admins.pages.payments.merchant_payments_options_fields')
+                @include('admins.pages.payments.payments_disbursement_panel')
             </div>
             <div class="tab-content">
                 @if(isset($table))

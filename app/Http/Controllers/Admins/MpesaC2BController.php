@@ -42,7 +42,7 @@ class MpesaC2BController extends BaseController
                 $query->select('mpesa_c2b.id as id','account_reference','mpesa_receipt','initiator','mpesa_c2b.amount as amount','mpesa_c2b.msisdn as msisdn',
                     'booking_payment_id','service_receipt','transaction_id','og_conversation_id','stage','service_status',
                     'mpesa_c2b.authorized_at as authorized_at','mpesa_c2b.created_at as created_at',
-                    'mpesa_c2b.transaction_status as transaction_status')
+                    'mpesa_c2b.transaction_status as transaction_status','mpesa_c2b.msisdn as msisdn')
                     ->join('booking_payments', 'booking_payments.id', '=', 'mpesa_c2b.booking_payment_id');
             });
 
@@ -61,7 +61,7 @@ class MpesaC2BController extends BaseController
 
         $table->addColumn('amount')->setTitle('Amount')->isSearchable()->isSortable();
 
-        $table->addColumn('initiator')->setTitle('Paid by')->isSearchable()->isSortable();
+        $table->addColumn('msisdn')->setTitle('Paid by')->isSearchable()->isSortable();
 
         $table->addColumn('mpesa_receipt')->setTitle('Mpesa Recipient')->isSearchable();
 
@@ -70,17 +70,6 @@ class MpesaC2BController extends BaseController
         $table->addColumn('transaction_status')->setTitle('Status')->isSortable()->isCustomHtmlElement(function($entity, $column){
             return $this->getTransactionStatusLabel($entity['transaction_status']);}
             );
-        //$table->addColumn('mpesa_receipt')->setTitle('Mpesa Recipient')->isSearchable();
-        //$table->addColumn('service_receipt')->setTitle('Service ID')->isSearchable();
-        //$table->addColumn('transaction_id')->setTitle('Transaction ID')->isSearchable()->isSortable();
-        //$table->addColumn('og_conversation_id')->setTitle('Conversation ID')->isSearchable();
-        /*$table->addColumn('stage')->setTitle('Stage')->isCustomHtmlElement(function($entity, $column){
-            return $entity['stage']== '0'?
-                '<div class="label label-success">'.'0(OK)'.'</div>':'<div class="label label-warning">'.$entity['stage'].'(Pending)'.'</div>';
-        });*/
-        //$table->addColumn('authorized_at')->setTitle('Confirmed at')->isSearchable()->isSortable();
-
-
 
         return $table;
     }

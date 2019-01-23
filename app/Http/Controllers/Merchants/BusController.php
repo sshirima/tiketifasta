@@ -34,7 +34,7 @@ class BusController extends BaseController
 
         $table = $this->createBusesTable();
 
-        return view('merchants.pages.buses.index')->with(['busesTable' => $table]);
+        return view('merchants.pages.buses.index')->with(['table' => $table]);
     }
 
     /**
@@ -80,6 +80,7 @@ class BusController extends BaseController
         $table = app(TableList::class)
             ->setModel(Bus::class)
             ->setRowsNumber(10)
+            ->enableRowsNumberSelector()
             ->setRoutes([
                 'index' => ['alias' => 'merchant.buses.index', 'parameters' => []],
                 'edit' => ['alias' => 'merchant.buses.edit', 'parameters' => ['id']],

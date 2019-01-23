@@ -138,6 +138,7 @@ class RouteController extends BaseController
         $this->routeRepo->setConditions($request);
 
         $routeTable = $this->routeRepo->instantiateRouteTable();
+        $routeTable->enableRowsNumberSelector();
 
         $this->setRouteTableColumn($routeTable);
 

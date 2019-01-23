@@ -8,6 +8,8 @@
 
 namespace App\Http\Controllers\Admins;
 
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class AdminController extends BaseController
 {
@@ -18,8 +20,14 @@ class AdminController extends BaseController
     }
 
     public function homepage(){
-        $this->getDefaultViewData();
-        return view('admins.pages.home')->with($this->viewData);
+        $process = new Process('whoami');
+        $process->run();
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+        $data= $process->getOutput();
+
+        return view('admins.pages.home')->with(['data'=>$data]);
     }
 
 }

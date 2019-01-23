@@ -25,13 +25,11 @@
 
 @section('content-body')
     <section class="content container-fluid">
-        <div class="box box-success">
-            <div class="box-header">
-                <h3>
-                    {{__('admin_pages.page_bustype_create_form_title')}}
-                </h3>
+        <div class="nav-tabs-custom">
+            <div class="nav nav-tabs">
+                @include('admins.pages.buses.buses_panel')
             </div>
-            <div class="box-body">
+            <div class="tab-content">
                 <div class="row">
                     <div class="container col-md-12">
                         <form class="form-horizontal" role="form" method="post" action="{{route('admin.bustype.store')}}" accept-charset="UTF-8" style="padding: 20px">

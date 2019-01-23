@@ -52,6 +52,30 @@ return [
             'root' => storage_path('mpesa'),
         ],
 
+        'backups' => [
+            'driver' => 'local',
+            'root' => storage_path('app/backups'),
+        ],
+
+        'bus_images' => [
+            'driver' => 'local',
+            'root' => storage_path('public/images'),
+        ],
+
+        'ftp' => [
+            'driver'   => 'ftp',
+            'host'     => '192.168.104.40',
+            'username' => 'analyser',
+            'password' => '##Vcom**',
+
+            // Optional FTP Settings...
+            // 'port'     => 21,
+            // 'root'     => '',
+            // 'passive'  => true,
+            // 'ssl'      => true,
+            // 'timeout'  => 30,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

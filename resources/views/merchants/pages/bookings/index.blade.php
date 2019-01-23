@@ -25,10 +25,10 @@
     <section class="content container-fluid">
         <div class="nav-tabs-custom">
             <div class="nav nav-tabs">
-                @include('merchants.pages.bookings.booking_panel')
+                @include('merchants.pages.schedules.schedule_panel')
             </div>
             <div class="tab-content">
-                {!! $bookingTable->render() !!}
+                {!! $table->render() !!}
             </div>
         </div>
     </section>

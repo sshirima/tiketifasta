@@ -17,7 +17,8 @@ class Ticket extends Model
     const STATUS_VALID = 'VALID';
     const STATUS_CONFIRMED = 'CONFIRMED';
     const STATUS_EXPIRED = 'EXPIRED';
-    const STATUSES = array('VALID','CONFIRMED','EXPIRED');
+    const STATUS_BOARDED = 'BOARDED';
+    const STATUSES = array('VALID','CONFIRMED','EXPIRED','BOARDED');
 
     protected $table = self::TABLE;
 

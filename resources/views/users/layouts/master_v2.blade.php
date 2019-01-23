@@ -20,20 +20,45 @@
                     <li class="nav-item {{Request::is('about-us') ? 'active' : ''}}">
                         <a class="nav-link " href="{{route('user.about_us')}}">About</a>
                     </li>
-                    <li class="nav-item {{Request::is('verify-ticket') ? 'active' : ''}}">
+                    {{--<li class="nav-item {{Request::is('verify-ticket') ? 'active' : ''}}">
                         <a class="nav-link" href="{{route('user.verify.ticket.form')}}">Verify ticket</a>
+
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item {{Request::is('merchant/onboarding-form') ? 'active' : ''}}">
+                        <a class="nav-link" href="{{route('merchant.onboarding.form')}}">Boarding</a>
+                    </li>--}}
+                   {{-- <li class="nav-item">
                         <a class="nav-link " href="{{route('merchant.home')}}">Merchant</a>
-                    </li>
+                    </li>--}}
                     <li class="nav-item  {{Request::is('contact-us') ? 'active' : ''}}">
                         <a class="nav-link" href="{{route('user.contact_us')}}">Contact</a>
                     </li>
-                    <li class="nav-item">
+                    {{--<li class="nav-item">
                         <a class="nav-link" href="{{route('register')}}">Register</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{route('login')}}">Login</a>
+                    </li>--}}
+                    <li class="nav-item dropdown {{Request::is('merchant/onboarding-form') ? 'active' : ''||
+                    Request::is('verify-ticket') ? 'active' : ''}}">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                            Tickets
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{{route('merchant.onboarding.form')}}">Boarding</a>
+                            <a class="dropdown-item" href="{{route('user.verify.ticket.form')}}">Verify ticket</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown ">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                            Accounts
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{{route('register')}}">Register</a>
+                            <a class="dropdown-item" href="{{route('login')}}">Login</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{{route('merchant.home')}}">Merchant | Sign in</a>
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -43,7 +68,8 @@
 
 
 @section('footer')
-    <footer class="footer" style="background-color:#ececec">
+    <div class="push"></div>
+    <footer class="footer" style="background-color:#ececec;">
         <div class="container">
             <div class="pull-right hidden-xs">
                 <b>Version</b> 1.0.0

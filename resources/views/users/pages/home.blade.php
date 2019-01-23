@@ -19,10 +19,10 @@ Home
                           accept-charset="UTF-8" style="padding: 20px">
                         <div class="form-row">
                             <div class="col-12 col-md-3 mb-2 mb-md-0">
-                                <input type="text" class="form-control form-control-lg" placeholder="From:" name="from">
+                                <input type="text" class="typeahead form-control form-control-lg" id="from" placeholder="From:" name="from">
                             </div>
                             <div class="col-12 col-md-3 mb-2 mb-md-0">
-                                <input type="text" class="form-control form-control-lg" placeholder="To:" name="to">
+                                <input type="text" class="typeahead  form-control form-control-lg" id="to" placeholder="To:" name="to">
                             </div>
                             <div class="col-12 col-md-3 mb-2 mb-md-0 date-field">
                                 <input type="text" class="form-control form-control-lg" placeholder="Date:" id="datepicker" name="date">
@@ -44,8 +44,23 @@ Home
 
 @section('import_js')
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.1/bootstrap3-typeahead.min.js"></script>
+
+
+    <script src="{{ URL::asset('js/users/home.js') }}"></script>
     <script src="{{ URL::asset('adminlte/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
 
-   <script src="{{ URL::asset('js/users/home.js') }}"></script>
+    <script type="text/javascript">
+        var path = "{{ route('auto_complete_query') }}";
+        $('input.typeahead').typeahead({
+            source:  function (query, process) {
+                return $.get(path, { query: query }, function (data) {
+                    return process(data);
+                });
+            }
+        });
+    </script>
 
 @endsection

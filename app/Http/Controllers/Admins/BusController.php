@@ -12,17 +12,22 @@ use App\Http\Controllers\Buses\BusBaseController;
 use App\Http\Requests\Admin\Buses\UpdateBusRequest;
 use App\Http\Requests\Admin\CreateBusRequest;
 use App\Models\Bus;
+use App\Models\BusImage;
 use App\Repositories\Admin\Buses\BusRepository;
 use App\Repositories\Admin\Buses\BusSeatRepository;
 use App\Services\Buses\AuthorizeBuses;
+use App\Services\Images\BusImagesHandler;
 use App\Services\Merchants\CheckMerchantContractStatus;
 use App\Services\Trips\TripsAnalyser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+use Laracasts\Flash\Flash;
 use Okipa\LaravelBootstrapTableList\TableList;
+use Illuminate\Support\Facades\Storage;
 
 class BusController extends BaseController
 {
-    use BusBaseController, CheckMerchantContractStatus, AuthorizeBuses, TripsAnalyser;
+    use BusBaseController, CheckMerchantContractStatus, AuthorizeBuses, TripsAnalyser, BusImagesHandler;
 
     protected $seatRepository;
 
@@ -57,7 +62,15 @@ class BusController extends BaseController
 
         $this->busRepository->createBusSeats($bus);
 
-        $this->createFlashResponse($bus,__('admin_page_buses.create_success'),__('admin_page_buses.create_fail'));
+        //Store bus images
+        $images = $this->storeBusImages($request, $bus);
+
+        if (!$images['status']){
+            $bus->delete();
+            Flash::error('Failed to save images: '.array_key_exists('error', $images)?$images['error']:'');
+        } else {
+            $this->createFlashResponse($bus,__('admin_page_buses.create_success'),__('admin_page_buses.create_fail'));
+        }
 
         return redirect(route('admin.buses.index'));
     }
@@ -96,7 +109,25 @@ class BusController extends BaseController
     }
 
     public function destroy($id){
-        return 'buses';
+
+        $bus = $this->busRepository->findWithoutFail($id);
+
+        if(!isset($bus)){
+            Flash::error('Bus not found, id='.$id);
+            return redirect()->back();
+        }
+
+        $images = $bus->images;
+
+        foreach ($images as $key=>$image){
+            $this->deleteImage($image[BusImage::COL_NAME]);
+        }
+
+        $bus->delete();
+
+        Flash::success('Bus deleted successful, id='.$id);
+
+       return redirect()->back();
     }
     /**
      * @param Request $request

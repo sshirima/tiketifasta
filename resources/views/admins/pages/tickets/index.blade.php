@@ -25,7 +25,7 @@
     <section class="content container-fluid">
         <div class="nav-tabs-custom">
             <div class="nav nav-tabs">
-                @include('admins.pages.tickets.tickets_panel')
+                @include('admins.pages.schedules.schedule_panel')
             </div>
             <div class="tab-content">
                 {!! $ticketsTable->render() !!}

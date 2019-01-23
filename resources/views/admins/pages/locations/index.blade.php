@@ -21,14 +21,12 @@
 
 @section('content-body')
     <section class="content container-fluid">
-        <div class="box box-primary">
-            {{--<div class="box-header">
-                <div class="btn btn-success pull-right" data-toggle="modal">
-                    <a href="#" style="color: white"><i class="fas fa-plus"></i> {{__('merchant_page_location.panel_nav_tab_new_product')}}</a>
-                </div>
-            </div>--}}
-            <div class="box-body">
-                {{$table}}
+        <div class="nav-tabs-custom">
+            <div class="nav nav-tabs">
+                @include('admins.pages.buses.buses_panel')
+            </div>
+            <div class="tab-content">
+                {!! $table->render() !!}
             </div>
         </div>
     </section>

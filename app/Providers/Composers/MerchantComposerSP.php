@@ -38,6 +38,13 @@ class MerchantComposerSP extends ServiceProvider
                 'merchants.pages.profile.show',
                 'merchants.pages.profile.edit',
                 'merchants.pages.auth.changepass',
+                'merchants.pages.routes.index',
+                'merchants.pages.payments.index_all_c2b',
+                'merchants.pages.payments.index_tigopesa_c2b',
+                'merchants.pages.payments.index_mpesa_c2b',
+                'merchants.pages.payments.index_all_b2c',
+                'merchants.pages.payments.index_tigopesa_b2c',
+                'merchants.pages.payments.index_mpesa_b2c',
             ],
             MerchantComposer::class
         );

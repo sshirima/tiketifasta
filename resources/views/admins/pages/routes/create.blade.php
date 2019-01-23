@@ -26,14 +26,18 @@
 
 @section('content-body')
     <section class="content container-fluid">
-        <div class="box box-success">
-
-            <div class="box-body">
-                <div class="col-md-6">
-                    <form class="form-horizontal" role="form" method="post"
-                          action="{{route('admin.routes.store')}}" accept-charset="UTF-8" style="padding: 20px">
-                        @include('admins.pages.routes.fields')
-                    </form>
+        <div class="nav-tabs-custom">
+            <div class="nav nav-tabs">
+                @include('admins.pages.buses.buses_panel')
+            </div>
+            <div class="tab-content">
+                <div class="row">
+                    <div class="col-md-6">
+                        <form class="form-horizontal" role="form" method="post"
+                              action="{{route('admin.routes.store')}}" accept-charset="UTF-8" style="padding: 20px">
+                            @include('admins.pages.routes.fields')
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

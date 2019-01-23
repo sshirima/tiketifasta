@@ -10,6 +10,7 @@ namespace App\Services\Trips;
 
 
 
+use App\Models\Bus;
 use App\Models\Schedule;
 use App\Models\Trip;
 
@@ -43,7 +44,8 @@ trait SearchTripsService
         $conditions[] = ['schedules.status', '=', 1];
 
 
-        return Schedule::select('trips.id as trip_id', 'A.name as from', 'trips.price', 'B.name as to', 'trips.bus_id', 'days.date', 'trips.arrival_time', 'trips.depart_time', 'schedules.id as schedule_id')
+        $results = Schedule::select('trips.id as trip_id', 'A.name as from', 'trips.price', 'B.name as to',
+            'trips.bus_id', 'days.date', 'trips.arrival_time', 'trips.depart_time', 'schedules.id as schedule_id')
             ->join('days','days.id','=','schedules.day_id')
             ->join('buses','buses.id','=','schedules.bus_id')
             ->join('trips', function ($join){
@@ -53,6 +55,26 @@ trait SearchTripsService
             ->join('locations as A', 'A.id', '=', 'trips.source')
             ->join('locations as B', 'B.id', '=', 'trips.destination')
             ->where($conditions)->get();
+
+        foreach ($results as $result){
+            $images = $result->bus->images;
+            $url = '[%s]';
+            if(count($images) > 0){
+                foreach ($images as $key=>$image){
+                    $result->bus->images[] = asset('images/buses/').'T547DFG_1.png';
+                    if ($key == 0){
+                        $url = '"'.asset('images/buses/'.$image).'"';
+                    } else {
+                        $url = $url. ',"'.asset('images/buses/'.$image).'"';
+                    }
+                }
+            } else {
+                $result->bus->image_urls = sprintf($url,'"'.asset('images/buses/').'/no_picture.png"' );
+                //$result->bus->image_urls[] = asset('images/buses/').'T547DFG_1.png';
+            }
+        }
+
+        return $results;
     }
 
     /**

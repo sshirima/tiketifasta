@@ -38,16 +38,16 @@ class Kernel extends ConsoleKernel
             ->dailyAt('02:00');
 
          $schedule->command('merchants:contract-disable')
-             ->dailyAt('02:00');
+             ->everyFiveMinutes();
 
          $schedule->command('buses-schedules:disable')
-              ->dailyAt('02:00');
+              ->everyFiveMinutes();
 
         $schedule->command('bookings:delete-pendings')
             ->everyFiveMinutes();
 
         $schedule->command('bookings:expire')
-            ->dailyAt('02:00');
+            ->everyFiveMinutes();
     }
 
     /**

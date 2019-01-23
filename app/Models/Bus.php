@@ -30,7 +30,13 @@ class Bus extends Model
     const CONDITION_DEFAULT_MAINTANANCE = 'MAINTANANCE';
     const CONDITION_DEFAULT_ACCIDENT= 'ACCIDENT';
 
+    const CLASS_NORMAL = 'NORMAL';
+    const CLASS_SEMI_LUXURY = 'SEMI-LUXURY';
+    const CLASS_LUXURY = 'LUXURY';
+    const CLASS_SUPER_LUXURY = 'SUPER-LUXURY';
+
     const DEFAULT_CONDITIONS = [self::CONDITION_DEFAULT_OPERATIONAL,self::CONDITION_DEFAULT_MAINTANANCE,self::CONDITION_DEFAULT_ACCIDENT];
+    const BUS_CLASSES = [self::CLASS_NORMAL, self::CLASS_SEMI_LUXURY,self::CLASS_LUXURY,self::CLASS_SUPER_LUXURY];
 
     const ID = self::TABLE.'.'.self::COLUMN_ID;
     const REG_NUMBER = self::TABLE.'.'.self::COLUMN_REG_NUMBER;
@@ -90,6 +96,13 @@ class Bus extends Model
      */
     public function busTrips(){
         return $this->hasMany(Trip::class,Trip::COLUMN_BUS_ID,self::COLUMN_ID);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function images(){
+        return $this->hasMany(BusImage::class,BusImage::COL_BUS_ID,self::COLUMN_ID);
     }
 
     /**

@@ -3,12 +3,18 @@
       action="{{route('booking.store', [$trip->bus->id,$trip->schedule_id,$trip->trip_id])}}"
       accept-charset="UTF-8">
     <div class="row">
-        <strong class="col-sm-4 control-label">Title </strong>
-        <div class="col-sm-8">
+        <strong class="col-sm-2 control-label">Name: </strong>
+        <div class="col-sm-2">
             {!! Form::select('title',['mr'=>'Mr.','mrs'=>'Mrs.','miss'=>'Miss.','rev'=>'Rev.','dr'=>'Dr.'] ,null, ['class' => 'form-control']) !!}
         </div>
-    </div><br>
-    <div class="row">
+        <div class="col-sm-4">
+            {!! Form::text('firstname',old('firstname'), ['class' => 'form-control', 'required', 'placeholder'=>'First name']) !!}
+        </div>
+        <div class="col-sm-4">
+            {!! Form::text('lastname',old('lastname'), ['class' => 'form-control', 'required', 'placeholder'=>'Last name']) !!}
+        </div>
+    </div>
+    {{--<div class="row">
         <strong class="col-sm-4 control-label">First name: </strong>
         <div class="col-sm-8">
             {!! Form::text('firstname',old('firstname'), ['class' => 'form-control', 'required', 'placeholder'=>'Type first name...']) !!}
@@ -19,28 +25,41 @@
         <div class="col-sm-8">
             {!! Form::text('lastname',old('lastname'), ['class' => 'form-control', 'required', 'placeholder'=>'Type last name...']) !!}
         </div>
-    </div><br>
+    </div>--}}
+    <br>
     <div class="row">
-        <strong class="col-sm-4">Phone number: </strong>
-        <div class="col-sm-8">
-            {!! Form::text('phonenumber',old('phonenumber'), ['class' => 'form-control', 'required', 'placeholder'=>'Type phone number...']) !!}
+        <strong class="col-sm-2">Contacts: </strong>
+        <div class="col-sm-5">
+            {!! Form::text('phonenumber',old('phonenumber'), ['class' => 'form-control', 'required', 'placeholder'=>'Phone number']) !!}
+        </div>
+        <div class="col-sm-5">
+            {!! Form::email('email',old('email'), ['class' => 'form-control', 'placeholder'=>'Email address']) !!}
         </div>
     </div><br>
-    <div class="row">
+    {{--<div class="row">
         <strong class="col-sm-4">Email: </strong>
         <div class="col-sm-8">
             {!! Form::email('email',old('email'), ['class' => 'form-control', 'required','placeholder'=>'Type email...']) !!}
         </div>
+    </div><br>--}}
+    <div class="row">
+        <strong class="col-sm-2">Locations: </strong>
+        <div class="col-sm-5">
+            {!! Form::text('boarding_location',old('boarding_location'), ['class' => 'typeahead  form-control', 'required', 'placeholder'=>'Boarding location']) !!}
+        </div>
+        <div class="col-sm-5">
+            {!! Form::text('dropping_location',old('dropping_location'), ['class' => 'typeahead  form-control', 'placeholder'=>'Dropping location']) !!}
+        </div>
     </div><br>
     <div class="row">
-        <strong class="col-sm-4">Payment via: </strong>
-        <div class="col-sm-8">
+        <strong class="col-sm-2">Payment via: </strong>
+        <div class="col-sm-5">
             {!! Form::select('payment',$paymentOptions,old('payment'), ['class' => 'form-control']) !!}
         </div>
     </div><br>
     <div class="row">
-        <strong class="col-sm-4"></strong>
-        <div class="col-sm-8">
+        <strong class="col-sm-2"></strong>
+        <div class="col-sm-5">
             <div class="checkbox">
                 <label class="icheckbox_square-blue" >
                     <input name="agree_terms" type="checkbox" value="remember">
@@ -50,8 +69,8 @@
         </div>
     </div><br>
     <div class="row">
-        <strong class="col-sm-4"> </strong>
-        <div class="col-sm-8">
+        <strong class="col-sm-2"> </strong>
+        <div class="col-sm-5">
             <button type="submit" class="btn btn-primary">Submit</button>
         </div>
     </div><br>

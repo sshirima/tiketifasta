@@ -162,45 +162,6 @@ class SelectBusController extends Controller
             $error = 'Something went wrong on the request, please contact the support team';
             return redirect()->back()->with(['error'=>$error]);
 
-            /*if (isset($res['booking']) && isset($res['paymentModel'])){
-
-                if ($booking->payment == 'tigopesa') {
-
-                    $tigoOnlineC2B = $res['paymentModel'];
-
-                    $response = $this->authorizeTigoC2BTransaction($tigoOnlineC2B);
-
-                    if ($response['status_code'] == 200) {
-
-                        $res = json_decode($response['response']);
-
-                        if (isset($res->authCode)) {
-                            $tigoOnlineC2B->auth_code = $res->authCode;
-                            $tigoOnlineC2B->authorized_at = $this->convertDate($tigoOnlineC2B->creationDateTime,'Y-m-d H:i:s');
-                            $tigoOnlineC2B->update();
-                            return redirect($res->redirectUrl);
-                        } else {
-                            //Log auth code not found
-                            $tigoOnlineC2B->delete();
-                            $bookingPayment = $booking->bookingPayment;
-                            $bookingPayment->delete();
-                            $booking->delete();
-                            Log::channel('tigosecurec2b')->error('Auth code not found[' . 'Response:' . $response['response'] . ']' . PHP_EOL);
-                            $error = 'Tigo pesa payment authorization failed';
-                            return view('users.pages.bookings.booking_confirmation')->with(['error' => $error, 'bookingPayment' => $bookingPayment, 'booking' => null, 'trip' => $trip]);
-                        }
-
-                    } else {
-                        //Log Payment authorization failed
-                        Log::channel('tigosecurec2b')->error('Authorization failed[' . 'StatusCode:' . $response['status_code'] . ']' . PHP_EOL);
-                        $error = 'Tigo pesa payment authorization failed';
-                        return view('users.pages.bookings.booking_confirmation')->with(['error' => $error, 'bookingPayment' => $bookingPayment, 'booking' => null, 'trip' => $trip]);
-                    }
-                }
-            } else {
-                return view('users.pages.bookings.booking_confirmation')->with(['error' => 'Failed to create bookings, please retry','trip' => $trip]);
-            }*/
-
         } catch (\Exception  $exception) {
             $error = $exception->getMessage();
             $this->cancelBooking($exception->getMessage(), null);

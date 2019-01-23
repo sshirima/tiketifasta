@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Admins\DisbursementReport;
 
 use App\Http\Controllers\Admins\BaseController;
 use App\Models\BookingPayment;
+use App\Models\MerchantPayment;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
 use Okipa\LaravelBootstrapTableList\TableList;
@@ -39,7 +40,7 @@ class DailyReportController extends BaseController
             $this->routeParameters['bus_number'] = $request->get('bus_number');
         }
 
-        return view('admins.pages.reports.collection_reports')->with(['table'=>$table]);
+        return view('admins.pages.reports.disbursement_reports')->with(['table'=>$table]);
     }
 
     /**
@@ -47,24 +48,24 @@ class DailyReportController extends BaseController
      */
     protected function createBookingTable()
     {
-        $this->condition[] =['booking_payments.transaction_status','=', BookingPayment::TRANS_STATUS_SETTLED];
+        $this->condition[] =['merchant_payments.transaction_status','=', MerchantPayment::TRANS_STATUS_SETTLED];
 
         $table = app(TableList::class)
-            ->setModel(Schedule::class)
-            ->setRowsNumber(20)
+            ->setModel(MerchantPayment::class)
+            ->setRowsNumber(10)
             ->enableRowsNumberSelector()
             ->setRoutes([
-                'index' => ['alias' => 'admin.collection_reports.daily', 'parameters' => []],
+                'index' => ['alias' => 'admin.merchant_schedule_payments.index', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {
-                $query->select(\DB::Raw('DATE(booking_payments.created_at) paid_date'),
-                    \DB::raw('sum(booking_payments.amount) as total_amount'))
-                    ->join('bookings', 'bookings.schedule_id', '=', 'schedules.id')
-                    ->join('buses', 'buses.id', '=', 'schedules.bus_id')
-                    ->join('merchants', 'merchants.id', '=', 'buses.merchant_id')
-                    ->join('tickets', 'tickets.booking_id', '=', 'bookings.id')
-                    ->join('booking_payments', 'booking_payments.booking_id', '=', 'bookings.id')
+                $query->select(\DB::Raw('DATE(merchant_payments.created_at) paid_date'),
+                    \DB::raw('sum(merchant_payments.net_amount) as total_collected'),
+                    \DB::raw('sum(merchant_payments.merchant_amount) as merchant_payments'),
+                    \DB::raw('sum(merchant_payments.commission_amount) as total_commission')
+                )
+                    ->join('merchant_payment_accounts','merchant_payment_accounts.id','=','merchant_payments.payment_account_id')
+                    ->join('merchants','merchant_payment_accounts.merchant_id','=','merchants.id')
                     ->where($this->condition)
-                    ->groupBy(\DB::raw("DATE(booking_payments.created_at)"));
+                    ->groupBy(\DB::raw("DATE(merchant_payments.created_at)"));
             });
 
         $table = $this->setTableColumns($table);
@@ -78,14 +79,21 @@ class DailyReportController extends BaseController
      */
     private function setTableColumns($table)
     {
-        $table->addColumn('created_at')->setTitle('Payment date')->isSortable()->isSearchable()->setCustomTable('booking_payments')->isCustomHtmlElement(function ($entity, $column) {
+        $table->addColumn('created_at')->setTitle('Payment date')->isSortable()->isSearchable()->setCustomTable('merchant_payments')->isCustomHtmlElement(function ($entity, $column) {
             $this->routeParameters['date'] = $entity['paid_date'];
-            return '<a href="' . route('admin.collection_reports.bookings', $this->routeParameters) . '">' . $entity['paid_date'] . '</a>';;
+            return '<a href="' . route('admin.disbursement_reports.merchants', $this->routeParameters) . '">' . $entity['paid_date'] . '</a>';;
         });
 
-        $table->addColumn('amount')->setTitle('Collected amount')->isSortable()->isCustomHtmlElement(function ($entity, $column) {
-            return $entity['total_amount'];
-            //return '<a href="' . route('admin.merchant_payments.merchant_report', ['merchantId' => $entity['merchant_id'], 'date' => date('Y-m-d', strtotime($entity['date_created']))]) . '">' . $entity['merchant_name'] . '</a>';
+        $table->addColumn('net_amount')->setTitle('Total collection')->isSortable()->isCustomHtmlElement(function ($entity, $column) {
+            return $entity['total_collected'];
+        });
+
+        $table->addColumn('merchant_amount')->setTitle('Merchant payments')->isSortable()->isCustomHtmlElement(function ($entity, $column) {
+            return $entity['merchant_payments'];
+        });
+
+        $table->addColumn('commission_amount')->setTitle('Commission amount')->isSortable()->isCustomHtmlElement(function ($entity, $column) {
+            return $entity['total_commission'];
         });
 
         return $table;

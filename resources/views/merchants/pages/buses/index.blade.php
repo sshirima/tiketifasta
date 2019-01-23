@@ -7,7 +7,7 @@
 
 @section('content-head')
     <section class="content-header">
-        <h1>
+        {{--<h1>
             {{__('merchant_page_buses.content_header_title')}}
             <small>{{__('merchant_page_buses.content_header_sub_title')}}</small>
         </h1>
@@ -16,19 +16,19 @@
                 <a href="{{route('merchant.buses.index')}}"> {{__('merchant_page_buses.navigation_link_index')}}</a>
             </li>
             <li class="active">{{__('merchant_page_buses.navigation_link_view')}}</li>
-        </ol>
+        </ol>--}}
     </section>
 @endsection
 
 @section('content-body')
     @include('flash::message')
     <section class="content container-fluid">
-        <div class="box box-success">
-            {{--<div class="box-header">
-                <h3>{{__('merchant_pages.page_bus_index_form_title')}}</h3>
-            </div>--}}
-            <div class="box-body">
-                {!! $busesTable->render() !!}
+        <div class="nav-tabs-custom">
+            <div class="nav nav-tabs">
+                @include('merchants.pages.buses.buses_panel')
+            </div>
+            <div class="tab-content">
+                {!! $table->render() !!}
             </div>
         </div>
     </section>

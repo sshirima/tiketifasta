@@ -34,7 +34,7 @@ class BookingsSeederTable extends Seeder
             ->join('trips',function ($join){
                 $join->on('trips.bus_id','=','buses.id')->on('trips.direction','=','schedules.direction');
             })
-            ->whereDate('days.date','=','2018-12-21')
+            ->whereDate('days.date','=','2019-01-21')
             ->get();
         print 'INFO: Fetch schedules, Schedules: ('.count($schedules).')'.PHP_EOL;
         print '====================='.PHP_EOL;

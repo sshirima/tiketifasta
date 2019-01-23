@@ -167,6 +167,7 @@ return [
         Nathanmac\Utilities\Responder\ResponderServiceProvider::class,
         LaravelSmpp\LaravelSmppServiceProvider::class,
         Arcanedev\LogViewer\LogViewerServiceProvider::class,
+        Intervention\Image\ImageServiceProvider::class,
         //Composer Service provider
         App\Providers\Composers\AdminComposerSP::class,
         App\Providers\Composers\MerchantComposerSP::class,
@@ -222,6 +223,7 @@ return [
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
         'Parser' => Nathanmac\Utilities\Parser\Facades\Parser::class,
+        'Image' => Intervention\Image\Facades\Image::class,
 
     ],
 

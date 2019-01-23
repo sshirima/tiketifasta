@@ -23,6 +23,7 @@ class MerchantPayment extends Model
     const COLUMN_PAYMENT_MODE = 'payment_mode';
     const COLUMN_PAYMENT_STAGE = 'payment_stage';
     const COLUMN_TRANSFER_STATUS = 'transfer_status';
+    const COLUMN_TRANSACTION_STATUS = 'transaction_status';
 
     const PAYMENT_STATUS = ['PROCESSING_INITIATED','TRANSFER_INITIATED','TRANSFER_FAIL','TRANSFER_SUCCESS'];
 

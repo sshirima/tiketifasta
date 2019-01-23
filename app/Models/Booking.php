@@ -30,6 +30,8 @@ class Booking extends Model
     const COLUMN_CREATED_AT = 'created_at';
     const COLUMN_UPDATED_AT = 'updated_at';
     const COLUMN_PAYMENT_REF = 'payment_ref';
+    const COLUMN_BOARDING_LOCATION = 'boarding_location';
+    const COLUMN_DROPPING_LOCATION = 'dropping_location';
 
     const ID = self::TABLE.'.'.'id';
     const TITLE = self::TABLE.'.'.'title';
@@ -53,7 +55,7 @@ class Booking extends Model
     protected $fillable = [
         self::COLUMN_TITLE,self::COLUMN_FIRST_NAME,self::COLUMN_LAST_NAME,self::COLUMN_PHONE_NUMBER,self::COLUMN_PAYMENT_REF
         ,self::COLUMN_PAYMENT,self::COLUMN_EMAIL,self::COLUMN_SCHEDULE_ID,self::COLUMN_SEAT_ID,self::COLUMN_TRIP_ID,
-        self::COLUMN_PRICE,self::COLUMN_STATUS
+        self::COLUMN_PRICE,self::COLUMN_STATUS, self::COLUMN_BOARDING_LOCATION, self::COLUMN_DROPPING_LOCATION
     ];
 
     protected $table= self::TABLE;

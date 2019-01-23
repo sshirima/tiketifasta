@@ -18,3 +18,22 @@
         {{Form::select('merchant_id',$merchants,isset($bus)?$bus[\App\Models\Bus::COLUMN_MERCHANT_ID]:null,['class'=>'form-control select2',isset($bus)?'disabled':''])}}
     </div>
 </div>
+
+<div class="form-group">
+    {!! Form::label('class', 'Class', ['class'=>'col-sm-5 control-label', 'for'=>'class']) !!}
+    <div class="col-sm-7">
+        {{Form::select('class',\App\Models\Bus::BUS_CLASSES,isset($bus)?$bus[\App\Models\Bus::COLUMN_CLASS]:null,['class'=>'form-control select2',isset($bus)?'disabled':''])}}
+    </div>
+</div>
+
+@if(isset($bus))
+
+    @else
+    <div class="form-group">
+        {!! Form::label('bus_images','Bus pictures', ['class'=>'col-sm-5 control-label', 'for'=>'merchant_id']) !!}
+        <div class="col-sm-7">
+            {!! Form::file('bus_images[]',['multiple'=>true]) !!}
+        </div>
+    </div>
+@endif
+

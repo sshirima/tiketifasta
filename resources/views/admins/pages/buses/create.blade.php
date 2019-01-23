@@ -41,7 +41,7 @@
 
             </div>
             <div class="tab-content">
-                <form class="form-horizontal" role="form" method="post"
+                <form class="form-horizontal" role="form" method="post" enctype="multipart/form-data"
                       action="{{isset($bus)?route('admin.buses.update', $bus->id):route('admin.buses.store')}}"
                       accept-charset="UTF-8" style="padding: 20px">
                     @if(isset($bus))

@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
         //$this->call(AssignBusRouteSeederTable::class);
         //$this->call(AssignScheduleSeederTable::class);
         //$this->call(BookingsSeederTable::class);
-        $this->call(MerchantPaymentSeederTable::class);
+        //$this->call(MerchantPaymentSeederTable::class);
 
         /*$bus = \App\Models\Bus::with(['merchant','merchant.paymentAccounts:merchant_id,payment_mode,account_number'])->select('buses.merchant_id')->find(1);
 

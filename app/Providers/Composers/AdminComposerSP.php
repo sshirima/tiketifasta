@@ -24,6 +24,11 @@ class AdminComposerSP extends ServiceProvider
         // Using class based composers...
         View::composer(
             [
+                'admins.pages.home',
+                'admins.pages.reports.c2b_collections_by_date',
+                'admins.pages.reports.c2b_collections_by_merchant',
+                'admins.pages.reports.c2b_collections_by_buses',
+                'admins.pages.reports.tickets_counts_by_date',
                 'admins.pages.accounts.index',
                 'admins.pages.accounts.create',
                 'admins.pages.buses.index',

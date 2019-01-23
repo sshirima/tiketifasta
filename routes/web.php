@@ -10,6 +10,11 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('/analyse-configuration', 'FileAnalyserController@displayForm')->name('file_analyser_form');
+Route::get('/analyse-config-file-all', 'FileAnalyserController@analyseConfigFilesAllRequest')->name('file_analyser_analyse');
+Route::get('/get-directories', 'FileAnalyserController@getDirectories');
+Route::get('/analyse-config-file', 'FileAnalyserController@analyseConfigFileRequest');
+
 Route::get('/', 'Users\UserController@homepage')->name('user.home');
 Route::get('/about-us', 'Users\UserController@aboutUs')->name('user.about_us');
 Route::get('/contact-us', 'Users\UserController@contactUs')->name('user.contact_us');
@@ -38,6 +43,8 @@ Route::get('password/reset', 'Users\Auth\ForgotPasswordController@showLinkReques
 Route::post('password/email', 'Users\Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
 Route::get('password/reset/{token}', 'Users\Auth\ResetPasswordController@showResetForm')->name('password.reset');
 Route::post('password/reset', 'Users\Auth\ResetPasswordController@reset')->name('password.reset');
+
+Route::get('auto-complete-query', 'Users\HomepageController@autoCompleteLocationQuery')->name('auto_complete_query');
 
 Route::prefix('user')->group(function () {
     Route::get('profile/view', 'User\ProfileController@show')->name('user.profile.show');
@@ -134,9 +141,10 @@ Route::prefix('admin')->group(function () {
     //Trips
     Route::get('trips', 'Admins\TripsController@index')->name('admin.trips.index');
 
-    Route::get('booking-payments', 'Admins\BookingPaymentController@index')->name('admin.booking_payments.index');
-    Route::get('customer-payments/mpesa', 'Admins\MpesaC2BController@index')->name('admin.mpesac2b.index');
-    Route::get('customer-payments/tigopesa', 'Admins\TigoSecureC2BController@index')->name('admin.tigosecurec2b.index');
+    Route::get('collection/transactions/all', 'Admins\BookingPaymentController@index')->name('admin.booking_payments.index');
+    Route::get('collection/transactions/mpesa', 'Admins\MpesaC2BController@index')->name('admin.mpesac2b.index');
+    Route::get('collection/transactions/tigopesa', 'Admins\TigoSecureC2BController@index')->name('admin.tigosecurec2b.index');
+
     Route::get('merchants-payments/mpesa', 'Admins\MpesaB2CController@index')->name('admin.mpesab2c.index');
     Route::get('merchant-payments/tigopesa', 'Admins\TigoB2CController@index')->name('admin.tigob2c.index');
     Route::get('merchant-payments/tigopesa/send_cash', 'Admins\TigoB2CController@sendCash')->name('admin.tigob2c.send_cash');
@@ -185,15 +193,23 @@ Route::prefix('admin')->group(function () {
     Route::get('accounts/merchants/reset-password', 'Admins\StaffController@showPasswordResetForm')->name('admin.merchant_accounts.password.reset_form');
     Route::post('accounts/merchants/reset-password', 'Admins\StaffController@sendResetLinkEmail')->name('admin.merchant_accounts.password.send_link');
 
-    Route::get('reports/collections/daily', 'Admins\CollectionReport\DailyReportController@dailyReport')->name('admin.collection_reports.daily');
-    Route::get('reports/collections/merchants', 'Admins\CollectionReport\MerchantReportController@merchantReport')->name('admin.collection_reports.merchants');
-    Route::get('reports/collections/buses', 'Admins\CollectionReport\BusesReportController@busesReport')->name('admin.collection_reports.buses');
-    Route::get('reports/collections/bookings', 'Admins\CollectionReport\BookingReportController@bookingReport')->name('admin.collection_reports.bookings');
+    //Route::get('reports/collections/daily', 'Admins\CollectionReport\DailyReportController@dailyReport')->name('admin.collection_reports.daily');
+    //Route::get('reports/collections/merchants', 'Admins\CollectionReport\MerchantReportController@merchantReport')->name('admin.collection_reports.merchants');
+    //Route::get('reports/collections/buses', 'Admins\CollectionReport\BusesReportController@busesReport')->name('admin.collection_reports.buses');
+    //Route::get('reports/collections/bookings', 'Admins\CollectionReport\BookingReportController@bookingReport')->name('admin.collection_reports.bookings');
 
     Route::get('reports/disbursement/daily', 'Admins\DisbursementReport\DailyReportController@dailyReport')->name('admin.disbursement_reports.daily');
     Route::get('reports/disbursement/merchants', 'Admins\DisbursementReport\MerchantReportController@merchantReport')->name('admin.disbursement_reports.merchants');
     Route::get('reports/disbursement/buses', 'Admins\DisbursementReport\BusesReportController@busesReport')->name('admin.disbursement_reports.buses');
     Route::get('reports/disbursement/bookings', 'Admins\DisbursementReport\BookingReportController@bookingReport')->name('admin.disbursement_reports.bookings');
+
+    //Route::get('reports/collections/daily', "Admins\ReportController@index");
+    Route::get('reports/collections/daily', 'Admins\CollectionReport\C2BCollectionsReportController@byDate')->name('admin.collection_reports.daily');
+    Route::get('reports/collections/merchants', 'Admins\CollectionReport\C2BCollectionsReportController@byMerchants')->name('admin.collection_reports.merchants');
+    Route::get('reports/collections/buses', 'Admins\CollectionReport\C2BCollectionsReportController@byBuses')->name('admin.collection_reports.buses');
+    Route::get('reports/collections/tickets', 'Admins\CollectionReport\C2BCollectionsReportController@ticketsCount')->name('admin.tickets_count.daily');
+
+
 });
 
 Route::prefix('merchant')->group(function () {
@@ -255,5 +271,20 @@ Route::prefix('merchant')->group(function () {
 
     //Tickets
     Route::get('tickets', 'Merchants\TicketController@index')->name('merchant.tickets.index');
+
+    Route::get('onboarding-form', 'Merchants\OnboardingController@displayForm')->name('merchant.onboarding.form');
+    Route::get('onboarding/ticket-info', 'Merchants\OnboardingController@getTicketInformation')->name('merchant.onboarding.ticket_info');
+    Route::post('onboarding/confirm', 'Merchants\OnboardingController@confirmBoarded')->name('merchant.onboarding.confirm');
+
+    //Bus routes routes CRUD
+    Route::get('routes', 'Merchants\RouteController@index')->name('merchant.routes.index');
+    //Collection transactions routes
+    Route::get('collection/transactions/all', 'Merchants\CollectionTransactionsController@all')->name('merchant.collection.transactions.all');
+    Route::get('collection/transactions/mpesa', 'Merchants\CollectionTransactionsController@mpesa')->name('merchant.collection.transactions.mpesa');
+    Route::get('collection/transactions/tigopesa', 'Merchants\CollectionTransactionsController@tigopesa')->name('merchant.collection.transactions.tigopesa');
+
+    Route::get('disbursement/transactions/all', 'Merchants\DisbursementTransactionsController@all')->name('merchant.disbursement.transactions.all');
+    Route::get('disbursement/transactions/mpesa', 'Merchants\DisbursementTransactionsController@mpesa')->name('merchant.disbursement.transactions.mpesa');
+    Route::get('disbursement/transactions/tigopesa', 'Merchants\DisbursementTransactionsController@tigopesa')->name('merchant.disbursement.transactions.tigopesa');
 
 });

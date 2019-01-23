@@ -41,6 +41,7 @@ class CreateBusRequest extends FormRequest
             Bus::COLUMN_REG_NUMBER => 'required|max:255|unique:buses',
             Bus::COLUMN_BUSTYPE_ID => 'required|numeric|min:1',
             Bus::COLUMN_MERCHANT_ID => 'required|numeric|min:1',
+            'bus_images.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ];
     }
 

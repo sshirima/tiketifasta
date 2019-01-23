@@ -24,11 +24,12 @@ class ScheduleController extends BaseController
     }
 
     public function index(Request $request){
+
         $this->setMerchantId();
 
         $table = $this->createSchedulesTable();
 
-        return view('merchants.pages.schedules.index')->with(['schedulesTable' => $table]);
+        return view('merchants.pages.schedules.index')->with(['table' => $table]);
     }
 
     public function create(Request $request){
@@ -55,13 +56,14 @@ class ScheduleController extends BaseController
         $table = app(TableList::class)
             ->setModel(Schedule::class)
             ->setRowsNumber(10)
+            ->enableRowsNumberSelector()
             ->setRoutes([
                 'index' => ['alias' => 'merchant.schedules.index', 'parameters' => []],
                 'destroy' => ['alias' => 'merchant.schedules.remove', 'parameters' => ['id']],
                 'create' => ['alias' => 'merchant.schedules.create', 'parameters' => []],
             ])->addQueryInstructions(function ($query) {
                 $query->select('schedules.id as id','buses.reg_number as reg_number','schedules.status as status',
-                    'days.date as date','routes.route_name as route_name','schedules.direction as direction')
+                    'days.date as date','routes.route_name as route_name','schedules.direction as direction','merchants.name as merchant_name')
                     ->join('buses', 'buses.id', '=', 'schedules.bus_id')
                     ->join('routes', 'routes.id', '=', 'buses.route_id')
                     ->join('days', 'days.id', '=', 'schedules.day_id')
@@ -80,14 +82,18 @@ class ScheduleController extends BaseController
      */
     private function setTableColumns($table)
     {
-        $table->addColumn('date')->setTitle('Date')->isSearchable()->sortByDefault()->useForDestroyConfirmation()->setCustomTable('days');
+        $table->addColumn('date')->setTitle('Date')->useForDestroyConfirmation()->isSortable()->isSearchable()->sortByDefault()->setCustomTable('days');
 
-        $table->addColumn('reg_number')->setTitle('Bus number')->isSortable()->isSearchable()->setCustomTable('buses');
+        $table->addColumn('name')->setTitle('Company')->isSortable()->isSearchable()->setCustomTable('merchants')->isCustomHtmlElement(function ($entity, $column) {
+            return $entity['merchant_name'];
+        });;
 
         $table->addColumn('route_name')->setTitle('Route name')->isSortable()->isSearchable()->setCustomTable('routes');
 
+        $table->addColumn('reg_number')->setTitle('Bus number')->isSortable()->isSearchable()->setCustomTable('buses');
+
         $table->addColumn('direction')->setTitle('Direction')->isCustomHtmlElement(function ($entity, $column) {
-            return $entity['direction'] == 'GO'?'<div class="label label-success"> Going </div>':'<div class="label label-info"> Return </div>';
+            return $entity['direction'] == 'GO'?'<div class="label label-default"> Going </div>':'<div class="label label-info"> Return </div>';
         });
 
         $table->addColumn('status')->setTitle('Status')->isCustomHtmlElement(function ($entity, $column) {

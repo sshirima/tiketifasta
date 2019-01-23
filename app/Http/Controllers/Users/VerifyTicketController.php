@@ -30,11 +30,19 @@ class VerifyTicketController extends Controller
 {
     use TicketVerification;
 
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function displayForm()
     {
         return view('users.pages.ticket_verification');
     }
 
+    /**
+     * @param VerifyTicketRequest $request
+     *
+     * @return $this
+     */
     public function verifyReference(VerifyTicketRequest $request)
     {
 

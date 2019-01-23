@@ -19,6 +19,11 @@ trait TicketManager
 
     use SendSMS;
 
+    /**
+     * @param $transaction
+     *
+     * @return mixed
+     */
     public function processTicket($transaction){
 
         $bookingPayment = $transaction->bookingPayment;
@@ -61,6 +66,21 @@ trait TicketManager
         }
     }
 
+    /**
+     * @param Ticket $ticket
+     */
+    public function setTicketBoarded(Ticket $ticket){
+        $this->setTicketStatus($ticket, Ticket::STATUS_BOARDED);
+    }
+
+    /**
+     * @param Ticket $ticket
+     * @param $status
+     */
+    public function setTicketStatus(Ticket $ticket, $status){
+        $ticket->status = $status;
+        $ticket->update();
+    }
 
     /**
      * @param Ticket $ticket
