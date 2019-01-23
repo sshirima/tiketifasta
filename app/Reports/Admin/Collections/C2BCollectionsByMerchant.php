@@ -22,11 +22,11 @@ class C2BCollectionsByMerchant extends \koolreport\KoolReport
     public function settings()
     {
         if(env('APP_ENV') == 'production'){
-            $conn ="mysql:host=".env('DB_CONNECTION_PROD', '127.0.0.1').";dbname=".env('DB_DATABASE_PROD', 'forge');
+            $conn ="mysql:host=".'172.31.2.175'.";dbname=".env('DB_DATABASE_PROD');
             $un = env('DB_USERNAME_PROD');
             $ps = env('DB_PASSWORD_PROD');
         } else {
-            $conn = "mysql:host=".env('DB_HOST', '127.0.0.1').";dbname=".env('DB_DATABASE', 'forge');
+            $conn = "mysql:host=".env('DB_HOST').";dbname=".env('DB_DATABASE');
             $un = env('DB_USERNAME');
             $ps = env('DB_PASSWORD');
         }
