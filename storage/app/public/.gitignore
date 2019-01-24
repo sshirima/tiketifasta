@@ -1,2 +1,4 @@
 *
 !.gitignore
+/public/images
+/public/koolreport_assets
