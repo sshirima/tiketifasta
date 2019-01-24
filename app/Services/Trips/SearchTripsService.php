@@ -66,7 +66,7 @@ trait SearchTripsService
                     if ($key == 0){
                         $imgs = '"'.asset('images/buses/').'/'.$image->image_name.'"';
                     } else {
-                        $imgs = $url. ',"'.asset('images/buses/').'/'.$image->image_name.'"';
+                        $imgs = $imgs. ',"'.asset('images/buses/').'/'.$image->image_name.'"';
                     }
                 }
                 $result->bus->image_urls = sprintf($url,$imgs);
