@@ -46,7 +46,7 @@
                                                      {{--data-images = "{{'["'.asset('images/buses/T547DFG_1.png').'","'.asset('images/buses/T547DFG_1.png').'"]'}}"--}}
                                                      data-target="#busPicturesModal"
                                                      style="width:80px;height: 50px"
-                                                     src="{{count($trip->bus->images)>0?asset('images/buses/').$trip->bus->images[0]->image_name:asset('images/buses/').'/no_picture.png'}}"
+                                                     src="{{count($trip->bus->images)>0?asset('images/buses').'/'.$trip->bus->images[0]->image_name:asset('images/buses/').'/no_picture.png'}}"
                                                      alt="...">
                                             </a>
                                         </td>

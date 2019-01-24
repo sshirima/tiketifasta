@@ -63,7 +63,7 @@ class BusSchedulingController extends BaseController
         }
 
         //return json_encode($report);
-        return redirect(route('merchant.buses.schedules.create', $busId));
+        return redirect(route('admin.buses.schedules', $busId));
     }
 
     /**

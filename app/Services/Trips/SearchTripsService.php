@@ -60,14 +60,16 @@ trait SearchTripsService
             $images = $result->bus->images;
             $url = '[%s]';
             if(count($images) > 0){
+                $imgs = '';
                 foreach ($images as $key=>$image){
-                    $result->bus->images[] = asset('images/buses/').'T547DFG_1.png';
+                    //$result->bus->images[] = asset('images/buses/').'/T547DFG_1.png';
                     if ($key == 0){
-                        $url = '"'.asset('images/buses/'.$image).'"';
+                        $imgs = '"'.asset('images/buses/').'/'.$image.'"';
                     } else {
-                        $url = $url. ',"'.asset('images/buses/'.$image).'"';
+                        $imgs = $url. ',"'.asset('images/buses/').'/'.$image.'"';
                     }
                 }
+                $result->bus->image_urls = sprintf($url,$imgs);
             } else {
                 $result->bus->image_urls = sprintf($url,'"'.asset('images/buses/').'/no_picture.png"' );
                 //$result->bus->image_urls[] = asset('images/buses/').'T547DFG_1.png';

@@ -30,6 +30,7 @@ trait BusImagesHandler
                 $reply['status'] = true;
             }
         }catch (\Exception $ex){
+            \Log::error($ex->getTraceAsString());
             $reply['error'] = 'error: '.$ex->getMessage();
         }
         return $reply;
@@ -39,7 +40,8 @@ trait BusImagesHandler
     private function storeImage($image, $imageName){
         $imageName = $imageName . '.' . $image->getClientOriginalExtension();
 
-        $imagePath = public_path('images/buses/'. $imageName);
+        $imagePath = public_path('images/buses/'.$imageName);
+        //$imagePath = 'var/www/html/'. $imageName;
 
         $this->resizeImage($image,900,600)->save($imagePath);
 
