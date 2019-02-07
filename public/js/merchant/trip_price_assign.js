@@ -50,7 +50,7 @@ function savePrice(tripId) {
                 'price-value': $('input[id=price-value-'+tripId+']').val(),
                 '_token': $('input[name=_token]').val()
             },
-            success: function(trip, textStatus, xhr)  {
+            success: function(trip, textStatus, xhr){
                 $.toaster({ priority : 'success', title : 'Success', message : 'Updated success'});
                 $('button[name=update-price-'+tripId+']').removeClass('btn-success').addClass('btn-primary').html('Update')
                 $('input[id=price-value-'+tripId+']').prop('disabled',true);

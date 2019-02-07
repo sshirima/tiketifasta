@@ -75,7 +75,6 @@ trait SearchTripsService
                 //$result->bus->image_urls[] = asset('images/buses/').'T547DFG_1.png';
             }
         }
-
         return $results;
     }
 

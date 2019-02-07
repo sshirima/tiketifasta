@@ -9,8 +9,8 @@
             <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="navbar-collapse collapse" id="navbarCollapse" style="">
-                <ul class="navbar-nav mr-auto ">
+            <div class="navbar-collapse collapse" id="navbarCollapse">
+                <ul class="navbar-nav mr-auto">
 
                 </ul>
                 <ul class="navbar-nav navbar-right">
@@ -18,7 +18,7 @@
                         <a class="nav-link" href="{{route('user.home')}}">Home <span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item {{Request::is('about-us') ? 'active' : ''}}">
-                        <a class="nav-link " href="{{route('user.about_us')}}">About</a>
+                        <a class="nav-link" href="{{route('user.about_us')}}">About</a>
                     </li>
                     {{--<li class="nav-item {{Request::is('verify-ticket') ? 'active' : ''}}">
                         <a class="nav-link" href="{{route('user.verify.ticket.form')}}">Verify ticket</a>
@@ -51,11 +51,20 @@
                     </li>
                     <li class="nav-item dropdown ">
                         <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                            Accounts
+                            @if(Auth::guard('web')->check())
+                                <span> <i class="far fa-user"></i> {{$user->firstname}}</span>
+                            @else
+                                Accounts
+                            @endif
                         </a>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="{{route('register')}}">Register</a>
-                            <a class="dropdown-item" href="{{route('login')}}">Login</a>
+                            @if(Auth::guard('web')->check())
+                                <a class="dropdown-item" href="{{route('user.dashboard.show')}}">Dashboard</a>
+                                <a class="dropdown-item" href="{{route('logout')}}">Logout</a>
+                            @else
+                                <a class="dropdown-item" href="{{route('register')}}">Register</a>
+                                <a class="dropdown-item" href="{{route('login')}}">Login</a>
+                            @endif
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="{{route('merchant.home')}}">Merchant | Sign in</a>
                         </div>

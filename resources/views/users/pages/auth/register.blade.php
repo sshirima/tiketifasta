@@ -41,7 +41,6 @@
                         </div> <!-- /.form-group -->
                         <button type="submit" class="btn btn-success btn-block">{{__('page_auth_register.label_register')}}</button>
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
-
                     </form>
                 </div>
             </div>

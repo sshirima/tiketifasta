@@ -8,26 +8,23 @@
 
 namespace App\Http\Controllers\Admins;
 
-use Symfony\Component\Process\Process;
-use Symfony\Component\Process\Exception\ProcessFailedException;
+use App\Domain\Admin\Dashboard\DashboardAggregate;
 
 class AdminController extends BaseController
 {
 
-    public function __construct()
+    private  $dashboard;
+    public function __construct(DashboardAggregate $dashboard)
     {
         parent::__construct();
+        $this->dashboard = $dashboard;
     }
 
     public function homepage(){
-        $process = new Process('whoami');
-        $process->run();
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
-        $data= $process->getOutput();
 
-        return view('admins.pages.home')->with(['data'=>$data]);
+        $data = $this->dashboard->getDashBoardData();
+
+        return view('admins.pages.home', compact('data'));
     }
 
 }

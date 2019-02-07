@@ -16,6 +16,7 @@ Route::get('/get-directories', 'FileAnalyserController@getDirectories');
 Route::get('/analyse-config-file', 'FileAnalyserController@analyseConfigFileRequest');
 
 Route::get('/', 'Users\UserController@homepage')->name('user.home');
+Route::get('/home', 'Users\UserController@homepage');
 Route::get('/about-us', 'Users\UserController@aboutUs')->name('user.about_us');
 Route::get('/contact-us', 'Users\UserController@contactUs')->name('user.contact_us');
 Route::get('/testimonials', 'Users\UserController@testimonials')->name('user.testimonials');
@@ -47,6 +48,7 @@ Route::post('password/reset', 'Users\Auth\ResetPasswordController@reset')->name(
 Route::get('auto-complete-query', 'Users\HomepageController@autoCompleteLocationQuery')->name('auto_complete_query');
 
 Route::prefix('user')->group(function () {
+    Route::get('dashboard', 'Users\DashboardController@showDashboard')->name('user.dashboard.show');
     Route::get('profile/view', 'User\ProfileController@show')->name('user.profile.show');
     Route::get('profile/edit', 'User\ProfileController@edit')->name('user.profile.edit');
     Route::put('profile/update/{id}', 'User\ProfileController@update')->name('user.profile.update');
@@ -209,6 +211,7 @@ Route::prefix('admin')->group(function () {
     Route::get('reports/collections/buses', 'Admins\CollectionReport\C2BCollectionsReportController@byBuses')->name('admin.collection_reports.buses');
     Route::get('reports/collections/tickets', 'Admins\CollectionReport\C2BCollectionsReportController@ticketsCount')->name('admin.tickets_count.daily');
 
+    Route::post('monitor/server', 'Admins\MonitorSystemController@pingServerIp')->name('admin.monitor.ping');
 
 });
 

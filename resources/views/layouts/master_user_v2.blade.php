@@ -63,14 +63,14 @@
 <!-- Footer -->
 @yield('footer')
 
-<!-- jQuery 3 -->
 {{--<script src="{{asset('landing_page/vendor/jquery/jquery.min.js')}}"></script>--}}
 <script src="https://code.jquery.com/jquery-3.3.1.js"
         integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous">
-
 </script>
+
 <!-- Bootstrap 3.3.7 -->
 <script src="{{asset('landing_page/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
 @yield('import_js')
 </body>
 </html>

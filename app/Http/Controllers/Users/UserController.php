@@ -15,19 +15,52 @@ use Illuminate\Support\Facades\Auth;
 class UserController extends BaseController
 {
 
+    protected $user;
+
+    public function __construct()
+    {
+
+    }
+
+    /**
+     * @return $this
+     */
     public function homepage(){
-        return view('users.pages.home');
+        $this->checkAuth();
+        return view('users.pages.home')->with(['user'=>$this->user]);
     }
 
+    /**
+     * @return $this
+     */
     public function contactUs(){
-        return view('users.pages.contact_us');
+        $this->checkAuth();
+        return view('users.pages.contact_us')->with(['user'=>$this->user]);
     }
 
+    /**
+     * @return $this
+     */
     public function aboutUs(){
-        return view('users.pages.about_us');
+        $this->checkAuth();
+        return view('users.pages.about_us')->with(['user'=>$this->user]);
     }
+
+    /**
+     * @return $this
+     */
     public function testimonials(){
-        return view('users.pages.testimonials');
+        $this->checkAuth();
+        return view('users.pages.testimonials')->with(['user'=>$this->user]);
+    }
+
+    /**
+     *
+     */
+    public function checkAuth(){
+        if(Auth::guard('web')->check()){
+            $this->user = Auth::guard('web')->user();
+        }
     }
 
 }
