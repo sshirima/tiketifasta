@@ -5,6 +5,7 @@
 @endsection
 
 @section('content-body')
+
     <div class="row"  style="padding: 5px">
         <div class="col-lg-4 col-xs-6">
             <!-- small box -->

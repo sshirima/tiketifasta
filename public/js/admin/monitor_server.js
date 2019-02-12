@@ -2,6 +2,7 @@ $( document ).ready(function () {
 
     timeout = server_ips.length;
     $('#system_status').html('<div class="fa-1x"><i class="fas fa-spinner fa-pulse"></i> Running system check</div>');
+
     server_ips.forEach(function (item, index) {
         pingServerIp(item);
     });
@@ -17,7 +18,7 @@ function pingServerIp(ip) {
         type: 'POST',
         url: 'admin/monitor/server',
         data: {
-            'ip': ip,
+            'host': ip,
             '_token': $('input[name=_token]').val()
         },
         success: function(data, status, xhr){
