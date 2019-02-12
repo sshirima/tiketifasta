@@ -45,16 +45,7 @@ class CreateTableThirdPartServers extends Migration
             [
                 ThirdpartServer::COLUMN_IP_ADDRESS => '41.223.4.174',
                 ThirdpartServer::COLUMN_SERVER_NAME => 'Vodacom SMS Server',
-                ThirdpartServer::COLUMN_PORT => '30009',
-                ThirdpartServer::COLUMN_AVAILABILITY_STATUS => 0
-            ]
-        );
-
-        DB::table(ThirdpartServer::TABLE)->insert(
-            [
-                ThirdpartServer::COLUMN_IP_ADDRESS => '41.222.176.233',
-                ThirdpartServer::COLUMN_SERVER_NAME => 'Tigopesa B2C server testing',
-                ThirdpartServer::COLUMN_PORT => '30009',
+                ThirdpartServer::COLUMN_PORT => '6691',
                 ThirdpartServer::COLUMN_AVAILABILITY_STATUS => 0
             ]
         );
@@ -63,7 +54,7 @@ class CreateTableThirdPartServers extends Migration
             [
                 ThirdpartServer::COLUMN_IP_ADDRESS => '41.222.176.143',
                 ThirdpartServer::COLUMN_SERVER_NAME => 'Tigopesa B2C server production',
-                ThirdpartServer::COLUMN_PORT => '30009',
+                ThirdpartServer::COLUMN_PORT => '8080',
                 ThirdpartServer::COLUMN_AVAILABILITY_STATUS => 0
             ]
         );
@@ -72,7 +63,7 @@ class CreateTableThirdPartServers extends Migration
             [
                 ThirdpartServer::COLUMN_IP_ADDRESS => '41.222.182.51',
                 ThirdpartServer::COLUMN_SERVER_NAME => 'Tigo SMS Server',
-                ThirdpartServer::COLUMN_PORT => '30009',
+                ThirdpartServer::COLUMN_PORT => '10501',
                 ThirdpartServer::COLUMN_AVAILABILITY_STATUS => 0
             ]
         );
