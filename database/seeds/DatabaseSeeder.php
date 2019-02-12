@@ -4,7 +4,7 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-use App\Domain\Admin\Dashboard\DashboardRepository;
+use \App\Domain\Admin\MonitorSystem\Services\RunCommandsHostServer;
     /**
      * Run the database seeds.
      *
@@ -20,7 +20,11 @@ use App\Domain\Admin\Dashboard\DashboardRepository;
         //$this->call(AssignScheduleSeederTable::class);
         //$this->call(BookingsSeederTable::class);
         //$this->call(MerchantPaymentSeederTable::class);
-        //$this->pingHost('41.222.182.51', 3);
+        //print json_encode($this->telnetIp('127.0.0.1', 443));
+        $mon = new \App\Domain\Admin\MonitorSystem\MonitorSystemAggregate(new \App\Domain\Admin\MonitorSystem\MonitorSystemRepository());
 
+        print  json_encode($mon->getListOfServersToMonitor());
+        /*$ip = '127.0.0.1';
+        print "Server $ip status>>".config('monitor_system.servers.127.0.0.1.status').PHP_EOL;*/
     }
 }

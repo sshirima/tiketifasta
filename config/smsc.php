@@ -7,7 +7,7 @@
  */
 
 return [
-    'format'=>'Dear %s, You have booked Bus number:%s, From:%s to %s, Travelling on:%s, Ticket ref:%s.Thank you',
+    'format'=>'Dear %s, You have booked Bus number:%s, From:%s to %s, Travelling on:%s, Ticket Ref:%s.Thank you',
     'smpp_sender_id'=>env('SMPP_SENDER_ID'),
     'voda_smpp_system_id'=>env('VODA_SMPP_SYSTEM_ID'),
     'voda_smpp_password'=>env('VODA_SMPP_PASSWORD'),

@@ -212,6 +212,7 @@ Route::prefix('admin')->group(function () {
     Route::get('reports/collections/tickets', 'Admins\CollectionReport\C2BCollectionsReportController@ticketsCount')->name('admin.tickets_count.daily');
 
     Route::post('monitor/server', 'Admins\MonitorSystemController@pingServerIp')->name('admin.monitor.ping');
+    Route::get('monitor/server/telnet', 'Admins\MonitorSystemController@telnetServerIp')->name('admin.monitor.telnet');
 
 });
 

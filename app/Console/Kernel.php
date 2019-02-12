@@ -48,6 +48,9 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('bookings:expire')
             ->everyFiveMinutes();
+
+        $schedule->command('monitor-servers:telnet')
+            ->everyFiveMinutes();
     }
 
     /**

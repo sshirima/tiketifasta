@@ -9,6 +9,9 @@
 namespace App\Domain\Admin\MonitorSystem\Services;
 
 
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
+
 trait RunCommandsHostServer
 {
     /**
@@ -35,7 +38,7 @@ trait RunCommandsHostServer
                     continue;
                 }
             }
-            $response = ['status'=>$this->getResponseStatus($echo_response,$echo_timeout),
+            $response = ['status'=>$this->getPingStatusFromCommandOutput($echo_response,$echo_timeout),
                 'host'=>$host, 'echo_response'=>$echo_response,'echo_timeout'=>$echo_timeout/*,'output'=>$output*/];
         }catch(\Exception $ex){
             $response = ['status'=>false,'error'=>$ex->getMessage()];
@@ -45,11 +48,45 @@ trait RunCommandsHostServer
     }
 
     /**
+     * @param $host
+     * @param $port
+     * @return array
+     */
+    protected function telnetIp($host, $port){
+        $hasTelnet = false;
+        try{
+
+            $process = new Process("telnet $host $port");
+            $process->setTimeout(60);
+            $process->setIdleTimeout(5);
+            $process->run();
+
+            $iterator = $process->getIterator($process::ITER_SKIP_ERR | $process::ITER_KEEP_OUTPUT);
+
+            /*if (!$process->isSuccessful()) {
+                throw new ProcessFailedException($process);
+            }*/
+
+            $output = $process->getOutput();
+
+            if(preg_match("/Connected to $host/i", $output)){
+                $hasTelnet = true;
+            }
+
+            $response = ['status'=>$hasTelnet, 'host'=>$host,'message'=>$output];
+        }catch (\Exception $ex){
+            $response = ['status'=>$hasTelnet, 'host'=>$host, 'error'=>$ex->getMessage()];
+        }
+        return $response;
+    }
+
+
+    /**
      * @param $echo_response
      * @param $echo_timeout
      * @return bool
      */
-    private function getResponseStatus($echo_response, $echo_timeout){
+    private function getPingStatusFromCommandOutput($echo_response, $echo_timeout){
         $status = false;
         if($echo_response == 0 && $echo_timeout ==0){
             return $status;

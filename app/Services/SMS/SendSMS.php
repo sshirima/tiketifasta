@@ -59,7 +59,7 @@ trait SendSMS
 
         $date = $bookingPayment->booking->schedule->day->date;
         $time = $bookingPayment->booking->trip->depart_time;
-        $formattedDate = date('Y:m:d G:i', strtotime($date.' '.$time));
+        $formattedDate = date('M, d', strtotime($date.' '.$time))." at ".date('G:i', strtotime($date.' '.$time));
         //$formattedDate = \DateTime::createFromFormat('Y-m-d G:i', $date.' '.$time)->format('Y:m:d G:i');
 
         $from = $bookingPayment->booking->trip->from->name;
@@ -151,7 +151,6 @@ trait SendSMS
         try{
             Log::info('Sending ticket SMS,success, phone_number:'.$phoneNumber);
             if ($operator == 'tigopesa') {
-
 
                 $sentSMS = $this->createSentSMSModel('TIGO',$phoneNumber, $message);
 
