@@ -66,6 +66,13 @@ class Schedule extends Model
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function bookedSeats(){
+        return $this->belongsToMany(Seat::class,ScheduleSeat::TABLE,ScheduleSeat::COLUMN_SCHEDULE_ID,ScheduleSeat::COLUMN_SEAT_ID);
+    }
+
+    /**
      * Scope a query to only include popular users.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query

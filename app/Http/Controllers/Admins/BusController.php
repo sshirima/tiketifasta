@@ -146,6 +146,13 @@ class BusController extends BaseController
             $bus->go_trip = $this->checkTripConsistent($bus->trips,'GO');
 
             $bus->return_trip = $this->checkTripConsistent($bus->trips,'RETURN');
+
+            $st_status = $this->checkTripsStations($bus->trips);
+
+            $bus->stations_status = $st_status['status'];
+            if(!$st_status['status']){
+                $bus->station_error_message = $st_status['station_error_message'];
+            }
         }
 
         return view('admins.pages.buses.authorize')->with(['bus'=>$bus]);

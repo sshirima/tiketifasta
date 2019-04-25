@@ -21,7 +21,7 @@ class RegisterMerchantMail extends Mailable
     {
         $this->account = $account;
         $this->merchant = $merchant;
-        $this->password =$password;
+        $this->password = $password;
     }
 
     /**

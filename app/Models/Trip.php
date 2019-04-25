@@ -77,6 +77,14 @@ class Trip extends Model
         return $this->belongsTo(Bus::class,self::COLUMN_BUS_ID,Bus::COLUMN_ID);
     }
 
+    public function droppingPoints(){
+        return $this->hasMany(Station::class,Station::COLUMN_LOCATION_ID,self::COLUMN_DESTINATION);
+    }
+
+    public function boadingPoints(){
+        return $this->hasMany(Station::class,Station::COLUMN_LOCATION_ID,self::COLUMN_SOURCE);
+    }
+
     /**
      * Scope a query to only include popular users.
      *

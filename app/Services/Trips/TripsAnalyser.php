@@ -9,6 +9,7 @@
 namespace App\Services\Trips;
 
 
+use App\Models\Station;
 use App\Services\DateTime\TimesOperations;
 
 trait TripsAnalyser
@@ -78,6 +79,21 @@ trait TripsAnalyser
             }
         }
         return $result_array;
+    }
+
+
+    public function checkTripsStations($trips){
+        foreach ($trips as $trip){
+            $dp = $trip->droppingPoints;
+            if(count($dp) == 0){
+                return ['status'=>false,'station_error_message'=>'No dropping points, location'.$trip->to->name];
+            }
+            $bp = Station::where(['location_id'=>$trip->source])->count();
+            if(count($bp) == 0){
+                return  ['status'=>false,'station_error_message'=>'No boarding points, location='.$trip->from->name];
+            }
+        }
+        return  ['status'=>true];
     }
 
     /**

@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\CreateBookingRequest;
 use App\Models\BookingPayment;
 use App\Models\Bus;
+use App\Models\Schedule;
 use App\Models\Seat;
 use App\Services\Bookings\AuthorizeBooking;
 use App\Services\Bookings\BookingManager;
@@ -21,14 +22,13 @@ use App\Services\Payments\BookingPayments\BookingPaymentProcessor;
 use App\Services\Payments\PaymentManager;
 use App\Services\Trips\TripsManager;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Laracasts\Flash\Flash;
 use Log;
 
 class SelectBusController extends Controller
 {
     use BookingPaymentProcessor, AuthorizeBooking;
-
-    private $selectedSeat;
 
     private $tripsManager;
     private $bookingManager;
@@ -47,6 +47,7 @@ class SelectBusController extends Controller
      */
     public function search(Request $request)
     {
+
         $input = $request->all();
 
         if ($request->has('date')) {
@@ -64,9 +65,12 @@ class SelectBusController extends Controller
 
         if ($dateIsValid) {
 
-            $trips = $this->tripsManager->findTripForBookings($date, $input['from'], $input['to']);
+            $from = array_key_exists('from', $input)?$input['from']:'';
+            $to = array_key_exists('to', $input)?$input['to']:'';
 
-            return view('users.pages.bookings.select_bus')->with(['trips' => $trips]);
+            $trips = $this->tripsManager->findTripForBookings($date, $from, $to);
+
+            return view('users.pages.bookings.select_bus')->with(['trips' => $trips, 'input'=>$input]);
 
         } else {
             return view('users.pages.bookings.select_bus')->with(['date_error' => 1]);
@@ -82,12 +86,11 @@ class SelectBusController extends Controller
      */
     public function selectBus(Request $request, $busId, $scheduleId, $tripId)
     {
-
         $trip = $this->tripsManager->selectTripForBooking($tripId, $scheduleId);
 
         $seats = $this->getBusSeats(Seat::seatArrangementArray($trip->bus->busType->seat_arrangement), $trip->bus->bookedSeats);
 
-        return view('users.pages.bookings.select_seats')->with(['trip' => $trip, 'seats' => $seats]);
+        return view('users.pages.bookings.select_seats')->with(['trip' => $trip, 'seats' => $seats,'schedule'=>Schedule::find($scheduleId)]);
     }
 
     /**
@@ -99,11 +102,23 @@ class SelectBusController extends Controller
      */
     public function selectSeat(Request $request, $busId, $scheduleId, $tripId)
     {
-        $trip = $this->tripsManager->getSelectedTripDetails($scheduleId, $tripId, $request->all()['seat']);
+        $seat = $request->all()['seat'];
+
+        $trip = $this->tripsManager->getSelectedTripDetails($scheduleId, $tripId, $seat);
+
+
+        $status = $this->bookingManager->reserveSeat($seat, $busId, $scheduleId);
+
+        if(!$status['status']){
+            return redirect()->back()->withErrors($status['error']);
+        }
 
         $payOptions = $this->getPaymentOptions($busId);
 
-        return view('users.pages.bookings.booking_details')->with(['trip' => $trip,'paymentOptions'=>$payOptions]);
+        return view('users.pages.bookings.booking_details')->with(['trip' => $trip,
+            'boarding_points'=>$this->tripsManager->getStations($trip->from_id),
+            'dropping_points'=>$this->tripsManager->getStations($trip->to_id),
+            'paymentOptions'=>$payOptions]);
     }
 
     /**
@@ -118,7 +133,8 @@ class SelectBusController extends Controller
         try {
             $input = $request->all();
 
-            $res = $this->bookingManager->processNewBooking($input, $busId, $scheduleId, $tripId);
+            $seat = Seat::select(['*'])->where([Seat::COLUMN_BUS_ID => $busId, Seat::COLUMN_SEAT_NAME => $input['seat']])->first();
+            $res = $this->bookingManager->processNewBooking($input, $seat, $scheduleId, $tripId);
 
             if(!$res['status']){
                 $this->cancelBooking($res['error'], null);
@@ -241,6 +257,16 @@ class SelectBusController extends Controller
             $payOptions[$account->payment_mode] = $this->getPaymentModeDisplayLabel($account->payment_mode);
         }
         return $payOptions;
+    }
+
+    /**
+     * @param Request $request
+     */
+    private function checkLanguage(Request $request){
+        if($request->has('locale')){
+            $locale = $request->get('locale');
+            App::setLocale($locale);
+        }
     }
 
 }

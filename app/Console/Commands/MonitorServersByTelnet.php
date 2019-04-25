@@ -60,8 +60,8 @@ class MonitorServersByTelnet extends Command
                 //print $server['ip_address'] . ":" . $server['port_number'] . ">>Timeout" . ", output:" . json_encode($output) . PHP_EOL;
             }
 
-            /*$a = false;//$output['status'];
-            $b = 1;//$server['availability_status'];
+            /*$a = $output['status'];
+            $b = $server['availability_status'];
 
             if ((!$a && $b) || ($a && !$b)) {
 
@@ -69,12 +69,16 @@ class MonitorServersByTelnet extends Command
 
                 $this->monitorSystemAggregate->setServerAvailabilityStatus($server['ip_address'], $output['status']);
 
-                $this->notifyViaSMS($server, $output['status']);
+                //$this->notifyViaSMS($server, $output['status']);
             }*/
         }
     }
 
-    private function notifyViaSMS($server, $status){
+    /*private function sendEmailNotification(){
+        $this->notifyUserAggregate->sendEmailOnAvailabilityStatusChange();
+    }*/
+
+    /*private function notifyViaSMS($server, $status){
         $configs = $this->monitorSystemAggregate->getSMSNotificationConfigs();
 
         print "Allow config:".json_encode($configs).PHP_EOL;
@@ -95,5 +99,5 @@ class MonitorServersByTelnet extends Command
         }
 
         return true;
-    }
+    }*/
 }

@@ -1,7 +1,7 @@
 @extends('merchants.layouts.master-auth')
 
 @section('title')
-    {{ __('page_auth_email.page_title') }}
+    @lang('Merchant') | {{ __('Password reset') }}
 @endsection
 
 @section('contents')
@@ -9,7 +9,7 @@
         <div class="row">
             <div class="col-md-6 col-md-offset-3">
                 <div class="panel panel-default">
-                    <div class="panel-heading">{{__('page_auth_email.panel_heading')}}</div>
+                    <div class="panel-heading">{{__('Password reset')}}</div>
 
                     <div class="panel-body">
                         @if (session('status'))
@@ -22,7 +22,7 @@
                             {{ csrf_field() }}
 
                             <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-                                <label for="email" class="col-md-4 control-label">{{__('page_auth_email.email_address')}}</label>
+                                <label for="email" class="col-md-4 control-label">{{__('Email address')}}</label>
 
                                 <div class="col-md-6">
                                     <input id="email" type="email" class="form-control" name="email"
@@ -39,7 +39,7 @@
                             <div class="form-group">
                                 <div class="col-md-6 col-md-offset-4">
                                     <button type="submit" class="btn btn-primary">
-                                        {{__('page_auth_email.button_password_reset')}}
+                                        {{__('Reset password')}}
                                     </button>
                                 </div>
                             </div>

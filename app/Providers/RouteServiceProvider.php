@@ -24,8 +24,10 @@ class RouteServiceProvider extends ServiceProvider
     public function boot()
     {
         //
-
         parent::boot();
+        /*Route::bind('lang',function ($name){
+            in_array($name,config('app.languages'))? app()->setlocale($name) : abort(404);
+        });*/
     }
 
     /**

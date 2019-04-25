@@ -8,15 +8,15 @@ $(document).ready(function() {
             map: seatArrangement.split(",")
             ,
             seats: {
-                f: {
+                /*f: {
                     price   : 0,
                     classes : 'first-class', //your custom CSS class
                     category: 'First Class'
-                },
+                },*/
                 e: {
                     price   : ticketPrices,
                     classes : 'economy-class', //your custom CSS class
-                    category: 'Economy Class'
+                    category: 'Available'
                 }
 
             },
@@ -31,16 +31,15 @@ $(document).ready(function() {
             legend : {
                 node : $('#legend'),
                 items : [
-                    [ 'f', 'available',   'First Class' ],
-                    [ 'e', 'available',   'Economy Class'],
-                    [ 'f', 'unavailable', 'Already Booked']
+                    [ 'e', 'available',   'Available'],
+                    [ 'f', 'unavailable',   'Unavailable']
                 ]
             },
             click: function () {
                 if (this.status() == 'available') {
                     //let's create a new <li> which we'll add to the cart items
                     if ((sc.find('selected').length) == 0){
-                    $('<li>'+this.data().category+' Seat # '+this.settings.label+': <b>'+this.data().price+' (Tsh)</b> <a href="#" class="cancel-cart-item">[cancel]</a></li>')
+                    $('<li>Selected Seat # '+this.settings.label+': <b>'+this.data().price+' (Tsh)</b> <a href="#" class="cancel-cart-item">[cancel]</a></li>')
                         .attr('id', 'cart-item-'+this.settings.id)
                         .attr('name', this.settings.label)
                         .data('seatId', this.settings.id)

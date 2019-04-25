@@ -9,7 +9,8 @@
 namespace App\Http\Controllers\Users;
 
 
-use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends BaseController
@@ -23,37 +24,51 @@ class UserController extends BaseController
     }
 
     /**
+     * @param Request $request
      * @return $this
      */
-    public function homepage(){
+    public function homepage(Request $request){
         $this->checkAuth();
+        $this->checkLanguage($request);
         return view('users.pages.home')->with(['user'=>$this->user]);
     }
 
     /**
      * @return $this
      */
-    public function contactUs(){
+    public function contactUs(Request $request){
         $this->checkAuth();
+        $this->checkLanguage($request);
         return view('users.pages.contact_us')->with(['user'=>$this->user]);
     }
 
     /**
      * @return $this
      */
-    public function aboutUs(){
+    public function aboutUs(Request $request){
         $this->checkAuth();
+        $this->checkLanguage($request);
         return view('users.pages.about_us')->with(['user'=>$this->user]);
     }
 
     /**
      * @return $this
      */
-    public function testimonials(){
+    public function testimonials(Request $request){
         $this->checkAuth();
+        $this->checkLanguage($request);
         return view('users.pages.testimonials')->with(['user'=>$this->user]);
     }
 
+    /**
+     * @param Request $request
+     */
+    private function checkLanguage(Request $request){
+        if($request->has('locale')){
+            $locale = $request->get('locale');
+            App::setLocale($locale);
+        }
+    }
     /**
      *
      */

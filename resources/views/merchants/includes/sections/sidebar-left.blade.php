@@ -10,13 +10,13 @@
             <div class="pull-left info">
                 <p>{{$merchant[\App\Models\Staff::COLUMN_FIRST_NAME].' '.$merchant[\App\Models\Staff::COLUMN_LAST_NAME]}}</p>
                 <!-- Status -->
-                <a href="#"><i class="fa fa-circle text-success"></i> {{__('merchant_side_bar_left.status_online')}}</a>
+                <a href="#"><i class="fa fa-circle text-success"></i> {{__('Online')}}</a>
             </div>
         </div>
 
         <form action="#" method="get" class="sidebar-form">
             <div class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="{{__('merchant_side_bar_left.field_input_placeholder_search')}}">
+                <input type="text" name="q" class="form-control" placeholder="{{__('Search')}}">
                 <span class="input-group-btn">
               <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
               </button>
@@ -24,7 +24,7 @@
             </div>
         </form>
         <ul class="sidebar-menu" data-widget="tree">
-            <li class="header">{{__('merchant_side_bar_left.header_title_general')}}</li>
+            <li class="header">{{__('General settings')}}</li>
             <li class="{{Request::is('merchant') ? 'active' : ''}}"><a href="{{route('merchant.home')}}"><i class="fas fa-tachometer-alt"></i> <span> {{__('merchant_side_bar_left.option_dashboard')}}</span></a></li>
             {{--<li class="{{Request::is('merchant/tickets*') ? 'active' : ''}}"><a href="{{route('merchant.tickets.index')}}"><i class="fas fa-book"></i> <span> {{__('merchant_side_bar_left.option_tickets')}}</span></a></li>
             <li class="{{Request::is('merchant/bookings*') ? 'active' : ''}}"><a href="{{route('merchant.bookings.index')}}"><i class="fas fa-book"></i> <span> {{__('merchant_side_bar_left.option_bookings')}}</span></a></li>

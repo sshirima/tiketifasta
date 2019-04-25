@@ -27,24 +27,10 @@ trait AddBookingService
         $this->paymentManager = $paymentManager;
     }
 
-    public function processNewBooking(array $bookingDetails, $busId, $scheduleId, $tripId){
+    public function processNewBooking(array $bookingDetails, $seat, $scheduleId, $tripId){
 
         try{
-            $seat = Seat::select(['*'])->where([Seat::COLUMN_BUS_ID => $busId, Seat::COLUMN_SEAT_NAME => $bookingDetails['seat']])->first();
-
-            if (!isset($seat)) {
-                return ['status'=>false,'error'=>'Selected seat id invalid'];
-            }
-
-            $isBooked = $this->checkSeatIsBooked($seat->id, $scheduleId);
-
-            if ($isBooked){
-                return ['status'=>false, 'error'=>'The seat has already booked'];
-            }
-
             $booking = $this->createNewBooking($bookingDetails, $scheduleId, $tripId, $seat);
-
-            $scheduleSeat = $this->markSeatAsBooked($scheduleId, $seat);
 
             //ConfirmBookingPayment::dispatch($booking, $scheduleSeat)->delay(now()->addMinutes(5));
 
@@ -97,6 +83,30 @@ trait AddBookingService
 
                 }
         }*/
+    }
+
+    /**
+     * @param $seat
+     * @param $busId
+     * @param $scheduleId
+     * @return array
+     */
+    public function reserveSeat($seat, $busId, $scheduleId){
+        $seat = Seat::select(['*'])->where([Seat::COLUMN_BUS_ID => $busId, Seat::COLUMN_SEAT_NAME => $seat])->first();
+
+        if (!isset($seat)) {
+            return ['status'=>false,'error'=>'Selected seat id invalid'];
+        }
+
+        $isBooked = $this->checkSeatIsBooked($seat->id, $scheduleId);
+
+        if ($isBooked){
+            return ['status'=>false, 'error'=>'The seat has already booked'];
+        }
+
+        $this->markSeatAsBooked($scheduleId, $seat);
+
+        return ['status'=>true];
     }
 
     private function checkSeatIsBooked($seatId, $scheduleId){

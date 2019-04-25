@@ -12,7 +12,9 @@ namespace App\Services\Trips;
 
 use App\Models\Bus;
 use App\Models\Schedule;
+use App\Models\Station;
 use App\Models\Trip;
+use Illuminate\Support\Facades\DB;
 
 trait SearchTripsService
 {
@@ -44,20 +46,25 @@ trait SearchTripsService
         $conditions[] = ['schedules.status', '=', 1];
 
 
-        $results = Schedule::select('trips.id as trip_id', 'A.name as from', 'trips.price', 'B.name as to',
-            'trips.bus_id', 'days.date', 'trips.arrival_time', 'trips.depart_time', 'schedules.id as schedule_id')
+        $results = Schedule::select('trips.bus_id as bus_id','trips.id as trip_id', 'A.name as from', 'trips.price',
+            'B.name as to', 'days.date', 'trips.arrival_time', 'trips.depart_time', 'schedules.id as schedule_id'/*,
+            DB::raw('count(seats.id) as bus_seats')*/)
             ->join('days','days.id','=','schedules.day_id')
             ->join('buses','buses.id','=','schedules.bus_id')
+            /*->join('seats','seats.bus_id','=','buses.id')*/
             ->join('trips', function ($join){
                 $join->on('trips.bus_id','=','schedules.bus_id');
                 $join->on('trips.direction','=','schedules.direction');
             })
             ->join('locations as A', 'A.id', '=', 'trips.source')
             ->join('locations as B', 'B.id', '=', 'trips.destination')
-            ->where($conditions)->get();
+            ->where($conditions)->paginate(10);
 
         foreach ($results as $result){
             $images = $result->bus->images;
+            $result->bus->seat_counts = $result->bus->seats->count();
+            $result->booked_seats = $result->bookedSeats->count();
+            //Fetch images
             $url = '[%s]';
             if(count($images) > 0){
                 $imgs = '';
@@ -98,7 +105,7 @@ trait SearchTripsService
 
         $trip =   Trip::with([
             'bus','bus.merchant'
-        ])->select(['trips.id as trip_id','trips.price','A.name as from','B.name as to','trips.bus_id','days.date','trips.arrival_time','trips.depart_time','schedules.id as schedule_id'])
+        ])->select(['trips.id as trip_id','trips.price','A.name as from','B.name as to','trips.bus_id','A.id as from_id','B.id as to_id','days.date','trips.arrival_time','trips.depart_time','schedules.id as schedule_id'])
             ->join('locations as A','A.id','=','source')
             ->join('locations as B','B.id','=','destination')
             ->join('schedules','schedules.bus_id','=','trips.bus_id')
@@ -113,5 +120,16 @@ trait SearchTripsService
 
         return $trip;
     }
+
+    public function getStations($location_id){
+        $stations = Station::select(['id','st_name'])->where(['location_id'=>$location_id])->get();
+        $stations_array =[];
+        foreach ($stations as $station){
+            $stations_array[$station->id] = $station->st_name;
+        }
+        return $stations_array;
+    }
+
+
 
 }

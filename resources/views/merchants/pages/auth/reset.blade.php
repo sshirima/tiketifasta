@@ -1,7 +1,7 @@
 @extends('merchants.layouts.master-auth')
 
 @section('title')
-    {{ __('page_auth_reset.page_title') }}
+    {{ __('Merchant ')| @lang('Reset password') }}
 @endsection
 
 @section('content-body')
@@ -48,7 +48,7 @@
                 </div>
 
                 <div class="form-group{{ $errors->has('password_confirmation') ? ' has-error' : '' }}">
-                    <label for="password-confirm" class="col-md-4 control-label">{{__('page_auth_reset.label_confirm_password')}}</label>
+                    <label for="password-confirm" class="col-md-4 control-label">{{__('Confirm password')}}</label>
                     <div class="col-md-8">
                         <input id="password-confirm" type="password" class="form-control"
                                name="password_confirmation" required>
@@ -64,7 +64,7 @@
                 <div class="form-group">
                     <div class="col-md-6 col-md-offset-4">
                         <button type="submit" class="btn btn-primary">
-                            {{__('page_auth_reset.button_reset_password')}}
+                            {{__('Reset password')}}
                         </button>
                     </div>
                 </div>

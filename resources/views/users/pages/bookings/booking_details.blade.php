@@ -7,65 +7,82 @@
 
 @section('content')
     <section class="showcase">
-
-        <div class="container-fluid p-0">
-
-            <div class="row no-gutters">
-                <div class="col-lg-7 order-lg-1 my-auto showcase-text">
-                    <div class="text-center">
-                        @include('users.pages.bookings.booking_details_fields')
+        <div class="container-fluid showcase-text">
+            @include('users.pages.bookings.progress_bar')
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            @lang('Personal information')
+                        </div>
+                        <div class="panel-body">
+                            @include('users.pages.bookings.booking_details_fields')
+                        </div>
                     </div>
                 </div>
-                <div class="col-lg-5 order-lg-1 my-auto showcase-text">
-
-                        <h3 class="mb-5">Journey details</h3>
-                        <fieldset class="border p-2">
-                            <legend  class="w-auto">{{$trip->from}} to {{$trip->to}}</legend>
+                <div class="col-md-5">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            @lang('Trip details')
+                        </div>
+                        <div class="panel-body">
                             <div class="row form-group">
-                                <div  class="control-label col-sm-4 pull-right"><strong class="pull-right">Date:</strong></div>
+                                <div  class="control-label col-sm-4 pull-right"><strong class="pull-right">@lang('From')</strong></div>
+                                <div class="col-sm-8">
+                                    {{$trip->from}}
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div  class="control-label col-sm-4 pull-right"><strong class="pull-right">@lang('To')</strong></div>
+                                <div class="col-sm-8">
+                                    {{$trip->to}}
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div  class="control-label col-sm-4 pull-right"><strong class="pull-right">@lang('Date')</strong></div>
                                 <div class="col-sm-8">
                                     {{$trip->date}}
                                 </div>
                             </div>
 
                             <div class="row  form-group">
-                                <div  class="control-label col-sm-4 pull-right"><strong class="pull-right">Departing:</strong></div>
+                                <div  class="control-label col-sm-4 pull-right"><strong class="pull-right">@lang('Departures')</strong></div>
                                 <div class="col-sm-8">
                                     {{$trip->depart_time}}
                                 </div>
                             </div>
                             <div class="row  form-group">
-                                <div  class="control-label col-sm-4 pull-right"><strong class="pull-right">Arriving:</strong></div>
+                                <div  class="control-label col-sm-4 pull-right"><strong class="pull-right">@lang('Arrival')</strong></div>
                                 <div class="col-sm-8">
                                     {{$trip->arrival_time}}
                                 </div>
                             </div>
                             <div class="row  form-group">
-                                <div  class="control-label col-sm-4 pull-right"><strong class="pull-right">Reg #:</strong></div>
+                                <div  class="control-label col-sm-4 pull-right"><strong class="pull-right">@lang('Bus Registration')</strong></div>
                                 <div class="col-sm-8">
                                     {{$trip->bus->reg_number}}
                                 </div>
                             </div>
                             <div class="row  form-group">
-                                <div  class="control-label col-sm-4 pull-right"><strong class="pull-right">Company:</strong></div>
+                                <div  class="control-label col-sm-4 pull-right"><strong class="pull-right">@lang('Company')</strong></div>
                                 <div class="col-sm-8">
                                     {{$trip->bus->merchant->name}}
                                 </div>
                             </div>
                             <div class="row  form-group">
-                                <div  class="control-label col-sm-4 pull-right"><strong class="pull-right">Seat:</strong></div>
+                                <div  class="control-label col-sm-4 pull-right"><strong class="pull-right">@lang('Seat number')</strong></div>
                                 <div class="col-sm-8">
                                     {{$trip->bus->seat_name}}
                                 </div>
                             </div>
                             <div class="row  form-group">
-                                <div  class="control-label col-sm-4 pull-right"><strong class="pull-right">Price:</strong></div>
+                                <div  class="control-label col-sm-4 pull-right"><strong class="pull-right">@lang('Price')</strong></div>
                                 <div class="col-sm-8">
-                                    {{$trip->price}} Tsh.
+                                    {{$trip->price}} @lang('Tshs').
                                 </div>
                             </div>
-
-                        </fieldset>
+                        </div>
+                    </div>
                     {{--<h3 class="mb-5">Journey details</h3>
                     <div>
                         <span>Date: </span><span><strong>{{$trip->date}}</strong></span>
@@ -90,23 +107,15 @@
                 </div>
             </div>
         </div>
+
     </section>
+
+@endsection
+
+@section('import_css')
+    <link rel="stylesheet" href="{{asset('css/user_booking.css')}}">
 @endsection
 
 @section('import_js')
-
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.1/bootstrap3-typeahead.min.js"></script>
-
-    <script type="text/javascript">
-        var path = "{{ route('auto_complete_query') }}";
-        $('input.typeahead').typeahead({
-            source: function (query, process) {
-                return $.get(path, {query: query}, function (data) {
-                    return process(data);
-                });
-            }
-        });
-    </script>
 
 @endsection

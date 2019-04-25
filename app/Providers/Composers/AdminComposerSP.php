@@ -67,6 +67,9 @@ class AdminComposerSP extends ServiceProvider
                 'admins.pages.reports.disbursement_reports',
                 'admins.pages.scheduled_tasks.index',
                 'admins.pages.staff.email',
+                'admins.pages.stations.index',
+                'admins.pages.stations.create',
+                'admins.pages.stations.edit',
             ],
             AdminComposer::class
         );

@@ -87,6 +87,17 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label class="col-sm-3 control-label">@lang('Stations status')</label>
+                            <div class="col-sm-8">
+                                @if($bus->stations_status)
+                                    <h5><span class="label label-success"> @lang('Trips stations are set')</span></h5>
+                                @else
+                                    <h5><span class="label label-warning">  @lang('Trips stations not set')</span></h5>
+                                    <p>{{$bus->station_error_message}}</p>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label class="col-sm-3 control-label">Bus status</label>
                             <div class="col-sm-3">
                                 @if($bus->state == 'DISABLED')
@@ -102,7 +113,7 @@
                             <label class="col-sm-3 control-label"></label>
                             <div class="col-sm-3">
                                 @if($bus->state == 'DISABLED' && $bus->condition == 'OPERATIONAL' && count($bus->trips) > 0 && isset($bus->route) && $bus->trip_price_status &&
-                                isset($bus->go_trip) && isset($bus->return_trip) )
+                                isset($bus->go_trip) && isset($bus->return_trip) && $bus->stations_status)
                                     {!! Form::open(['route' => ['admin.buses.enable', $bus->id], 'method' => 'post','class'=>'form-horizontal']) !!}
                                     <button class="btn btn-primary" type="submit"> Enable bus</button>
                                     {!! Form::close() !!}

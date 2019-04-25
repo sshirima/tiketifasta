@@ -68,7 +68,7 @@ class ScheduleController extends BaseController
      */
     private function setTableColumns($table)
     {
-        $table->addColumn('date')->setTitle('Date')->isSortable()->isSearchable()->sortByDefault()->setCustomTable('days');
+        $table->addColumn('date')->setTitle('Date')->isSortable()->isSearchable()->sortByDefault('desc')->setCustomTable('days');
 
         $table->addColumn('name')->setTitle('Company')->isSortable()->isSearchable()->setCustomTable('merchants');
 

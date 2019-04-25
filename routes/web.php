@@ -15,7 +15,12 @@ Route::get('/analyse-config-file-all', 'FileAnalyserController@analyseConfigFile
 Route::get('/get-directories', 'FileAnalyserController@getDirectories');
 Route::get('/analyse-config-file', 'FileAnalyserController@analyseConfigFileRequest');
 
+
+
+
+
 Route::get('/', 'Users\UserController@homepage')->name('user.home');
+Route::get('/language', 'Users\HomepageController@changeLanguage')->name('language.change');
 Route::get('/home', 'Users\UserController@homepage');
 Route::get('/about-us', 'Users\UserController@aboutUs')->name('user.about_us');
 Route::get('/contact-us', 'Users\UserController@contactUs')->name('user.contact_us');
@@ -31,7 +36,7 @@ Route::get('logout', 'Users\Auth\LoginController@logout')->name('logout');
 Route::get('register', 'Users\Auth\RegisterController@showRegistrationForm')->name('register');
 Route::post('register', 'Users\Auth\RegisterController@register')->name('register.submit');
 
-Route::get('search/bus', 'Users\Bookings\SelectBusController@search')->name('booking.buses.search');
+Route::get('search/bus','Users\Bookings\SelectBusController@search')->name('booking.buses.search');
 Route::get('bus/{b_id}/schedule/{s_id}/trip/{t_id}/select/seat', 'Users\Bookings\SelectBusController@selectBus')->name('booking.buses.select');
 Route::get('bus/{b_id}/schedule/{s_id}/trip/{t_id}/booking-info', 'Users\Bookings\SelectBusController@selectSeat')->name('booking.seat.select');
 Route::get('bus/{b_id}/schedule/{s_id}/trip/{t_id}/booking/store', 'Users\Bookings\SelectBusController@bookingStore')->name('booking.store');
@@ -46,6 +51,31 @@ Route::get('password/reset/{token}', 'Users\Auth\ResetPasswordController@showRes
 Route::post('password/reset', 'Users\Auth\ResetPasswordController@reset')->name('password.reset');
 
 Route::get('auto-complete-query', 'Users\HomepageController@autoCompleteLocationQuery')->name('auto_complete_query');
+Route::get('stations/auto-query', 'Users\HomepageController@autoCompleteLocationQuery')->name('stations.auto_complete');
+
+/*Route::prefix('{lang?}')->group(function () {
+    Route::get('/', 'Users\UserController@homepage');
+    Route::get('/language', 'Users\HomepageController@changeLanguage');
+    Route::get('/home', 'Users\UserController@homepage');
+    Route::get('/about-us', 'Users\UserController@aboutUs');
+    Route::get('/contact-us', 'Users\UserController@contactUs');
+    Route::get('/testimonials', 'Users\UserController@testimonials');
+    Route::get('/verify-ticket', 'Users\VerifyTicketController@displayForm');
+    Route::post('/verify-ticket', 'Users\VerifyTicketController@verifyReference');
+
+    Route::get('login', 'Users\Auth\LoginController@showLoginForm');
+    Route::post('login', 'Users\Auth\LoginController@login');
+    Route::get('logout', 'Users\Auth\LoginController@logout');
+
+// Registration Routes...
+    Route::get('register', 'Users\Auth\RegisterController@showRegistrationForm');
+    Route::post('register', 'Users\Auth\RegisterController@register');
+
+    Route::get('search/bus','Users\Bookings\SelectBusController@search');
+    Route::get('bus/{b_id}/schedule/{s_id}/trip/{t_id}/select/seat', 'Users\Bookings\SelectBusController@selectBus');
+    Route::get('bus/{b_id}/schedule/{s_id}/trip/{t_id}/booking-info', 'Users\Bookings\SelectBusController@selectSeat');
+    Route::get('bus/{b_id}/schedule/{s_id}/trip/{t_id}/booking/store', 'Users\Bookings\SelectBusController@bookingStore');
+});*/
 
 Route::prefix('user')->group(function () {
     Route::get('dashboard', 'Users\DashboardController@showDashboard')->name('user.dashboard.show');
@@ -213,6 +243,13 @@ Route::prefix('admin')->group(function () {
 
     Route::post('monitor/server', 'Admins\MonitorSystemController@pingServerIp')->name('admin.monitor.ping');
     Route::get('monitor/server/telnet', 'Admins\MonitorSystemController@telnetServerIp')->name('admin.monitor.telnet');
+
+    Route::get('stations/index', 'Admins\StationController@index')->name('admin.stations.index');
+    Route::get('stations/create', 'Admins\StationController@create')->name('admin.stations.create');
+    Route::post('stations/store', 'Admins\StationController@store')->name('admin.stations.store');
+    Route::get('stations/{id}/edit', 'Admins\StationController@edit')->name('admin.stations.edit');
+    Route::put('stations/{id}/update', 'Admins\StationController@update')->name('admin.stations.update');
+    Route::delete('stations/{id}/destroy', 'Admins\StationController@destroy')->name('admin.stations.destroy');
 
 });
 
